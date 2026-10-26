@@ -1,0 +1,332 @@
+# ----------------------------------------------------------------------------------------
+# Wrestling codex: Monkey, emergency Crab, nearby picked enemies for Spider, Chi Thrust.
+# ----------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------
+# @ config
+#
+#   config__wrestling_stance_main
+#      Stance outside emergency recovery and a nearby pack, by wiki slot.
+#        1  Dragon
+#        2  Crab
+#        3  Spider
+#        4  Monkey
+#        5  Crane
+#
+#   config__wrestling_stance_pack
+#      Stance when the current target and another picked enemy are within one tile.
+#        0  keep the main stance
+#        3  Spider
+#
+#   config__crab_enter_diff
+#      Missing health at or above this latches Crab, even during a stance hold.
+#
+#   config__crab_leave_diff
+#      Missing health must remain at or below this throughout the recovery hold.
+#
+#   config__wrestling_finisher_main
+#      Finisher to keep selected. The game handles its target health threshold.
+#        0  leave it alone
+#        1  Chi Thrust
+#        2  Zen Strike
+# ----------------------------------------------------------------------------------------
+@setvar! config__wrestling_stance_main 4
+@setvar! config__wrestling_stance_pack 3
+@setvar! config__crab_enter_diff 45
+@setvar! config__crab_leave_diff 30
+@setvar! config__wrestling_finisher_main 1
+
+
+# ----------------------------------------------------------------------------------------
+# @ wait
+#
+#   interval__wrestling_check
+#      Time between nearby picked enemy counts.
+#
+#   interval__wrestling_retry
+#      Minimum time between codex label reads.
+#
+#   interval__wrestling_resync
+#      Time before cached stance and finisher selections are read again.
+#
+#   interval__wrestling_hold
+#      Minimum time after a stance request before a non-emergency stance change.
+#
+#   interval__wrestling_recover
+#      Continuous time below the recovery line before releasing emergency Crab.
+#
+#   interval__wrestling_pack_hold
+#      Time to retain Spider after the last nearby pack observation.
+# ----------------------------------------------------------------------------------------
+@setvar! interval__wrestling_check 2000
+@setvar! interval__wrestling_retry 3000
+@setvar! interval__wrestling_resync 30000
+@setvar! interval__wrestling_hold 8000
+@setvar! interval__wrestling_recover 5000
+@setvar! interval__wrestling_pack_hold 6000
+
+
+# ----------------------------------------------------------------------------------------
+# @ timer
+# ----------------------------------------------------------------------------------------
+timer__wrestling_check interval__wrestling_check
+timer__wrestling_retry interval__wrestling_retry
+timer__wrestling_resync 0
+timer__wrestling_hold interval__wrestling_hold
+timer__wrestling_recover 0
+timer__wrestling_pack 0
+
+
+# ----------------------------------------------------------------------------------------
+# @ state
+#
+#   var__wrestling_want, var__wrestling_active
+#      Wanted and observed stance slots. 0 active means unknown.
+#
+#   var__wrestling_finisher_active
+#      Observed finisher slot. 0 means unknown.
+#
+#   var__wrestling_disabled, var__wrestling_finisher_off
+#      That selection stands down for this Play if its label is ambiguous.
+#
+#   var__wrestling_hurt, var__wrestling_recovering
+#      Emergency latch and a continuous safe-health observation in progress.
+#
+#   var__wrestling_pack
+#      Nearby picked pack latch, retained briefly after enemies separate.
+#
+#   var__wrestling_read
+#      Scratch flag for a selection that needs a codex label read.
+#
+#   var__wrestling_confirm, var__wrestling_sent
+#      Re-read after a request. The last requested stance may retry through its hold
+#      only when a fresh label still proves another stance is active.
+# ----------------------------------------------------------------------------------------
+@setvar! var__wrestling_want config__wrestling_stance_main
+@setvar! var__wrestling_active 0
+@setvar! var__wrestling_finisher_active 0
+@setvar! var__wrestling_disabled 0
+@setvar! var__wrestling_finisher_off 0
+@setvar! var__wrestling_hurt 0
+@setvar! var__wrestling_recovering 0
+@setvar! var__wrestling_pack 0
+@setvar! var__wrestling_read 0
+@setvar! var__wrestling_confirm 0
+@setvar! var__wrestling_sent 0
+
+
+# ----------------------------------------------------------------------------------------
+# @ setup
+# ----------------------------------------------------------------------------------------
+if not listexists 'list__wrestling_near'
+    createlist 'list__wrestling_near'
+endif
+
+if not listexists 'list__wrestling_stances'
+    createlist 'list__wrestling_stances'
+endif
+
+
+# ----------------------------------------------------------------------------------------
+# @ loop
+# ----------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
+    # WRESTLING CODEX
+    #
+    # Wrestling codex stance changes reset the combo meter (wiki Wrestling). Monkey
+    # stays selected for a single enemy. An emergency interrupts any hold for Crab.
+    # Recovery and pack holds keep bandage ticks and enemy movement from cycling stances.
+    # Break alone does not change the stance. Monster health, armor, hit rate and combo
+    # count are not available inputs. Dragon and Crane need separately verified rules.
+    #
+    # Spider is selected only when the current target and another distinct picked
+    # creature are both within one tile of the player. They must then be within two
+    # tiles of each other too. Distant candidates, duplicate picks and corpses do not
+    # count. The short pack hold knowingly permits a brief Spider window after separation.
+    #
+    # Commands toggle. Only a label naming exactly one stance authorizes a switch.
+    # Missing label responses retry, while ambiguous text disables that selection for
+    # this Play. Finisher management is independent. A request prompts another label
+    # read after the retry interval. It is not proof that the server accepted it.
+    # ------------------------------------------------------------------------------------
+    if diffhits >= config__crab_enter_diff
+        if var__wrestling_hurt = 0
+            settimer "timer__wrestling_retry" interval__wrestling_retry
+        endif
+        @setvar! var__wrestling_hurt 1
+        @setvar! var__wrestling_recovering 0
+    elseif var__wrestling_hurt = 1
+        if diffhits <= config__crab_leave_diff
+            if var__wrestling_recovering = 0
+                @setvar! var__wrestling_recovering 1
+                settimer "timer__wrestling_recover" 0
+            elseif timer "timer__wrestling_recover" >= interval__wrestling_recover
+                @setvar! var__wrestling_hurt 0
+                @setvar! var__wrestling_recovering 0
+            endif
+        else
+            @setvar! var__wrestling_recovering 0
+        endif
+    endif
+
+    if timer "timer__wrestling_check" >= interval__wrestling_check
+        settimer "timer__wrestling_check" 0
+        clearlist 'list__wrestling_near'
+
+        if var__fighting = 1 and find var__combat_target ground -1 -1 1 as alias__wrestling_target
+            if not dead alias__wrestling_target
+                pushlist 'list__wrestling_near' var__combat_target
+
+                foreach wrestling_mob in list__provo_candidates
+                    if not inlist 'list__wrestling_near' wrestling_mob
+                        if find wrestling_mob ground -1 -1 1 as alias__wrestling_mob
+                            if not dead alias__wrestling_mob
+                                pushlist 'list__wrestling_near' wrestling_mob
+                            endif
+                        endif
+                    endif
+                endfor
+            endif
+        endif
+
+        if list 'list__wrestling_near' >= 2
+            @setvar! var__wrestling_pack 1
+            settimer "timer__wrestling_pack" 0
+        elseif timer "timer__wrestling_pack" >= interval__wrestling_pack_hold
+            @setvar! var__wrestling_pack 0
+        endif
+    endif
+
+    if timer "timer__wrestling_resync" >= interval__wrestling_resync
+        @setvar! var__wrestling_active 0
+        @setvar! var__wrestling_finisher_active 0
+        settimer "timer__wrestling_resync" 0
+    endif
+
+    if var__wrestling_hurt = 1
+        @setvar! var__wrestling_want 2
+    elseif var__wrestling_pack = 1 and config__wrestling_stance_pack != 0
+        @setvar! var__wrestling_want config__wrestling_stance_pack
+    else
+        @setvar! var__wrestling_want config__wrestling_stance_main
+    endif
+
+    @setvar! var__wrestling_read 0
+
+    if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
+        if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
+            @setvar! var__wrestling_read 1
+        endif
+    endif
+
+    if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0 and config__wrestling_finisher_main != var__wrestling_finisher_active
+        @setvar! var__wrestling_read 1
+    endif
+
+    if var__wrestling_confirm = 1
+        @setvar! var__wrestling_read 1
+    endif
+
+    if var__wrestling_read = 1 and timer "timer__wrestling_retry" >= interval__wrestling_retry and not hidden and not queued and not casting and not targetexists
+        settimer "timer__wrestling_retry" 0
+
+        if findtype 11891 backpack as alias__wrestling_codex
+            @unsetvar! label__wrestling_codex
+            @setvar! label__wrestling_codex 0
+            getlabel alias__wrestling_codex label__wrestling_codex
+
+            if label__wrestling_codex = 0
+                # No response yet. Retry without disabling either selection.
+            else
+                @setvar! var__wrestling_confirm 0
+                if var__wrestling_disabled = 0
+                    clearlist 'list__wrestling_stances'
+
+                    if "Dragon" in label__wrestling_codex
+                        pushlist 'list__wrestling_stances' 1
+                        @setvar! var__wrestling_active 1
+                    endif
+                    if "Crab" in label__wrestling_codex
+                        pushlist 'list__wrestling_stances' 2
+                        @setvar! var__wrestling_active 2
+                    endif
+                    if "Spider" in label__wrestling_codex
+                        pushlist 'list__wrestling_stances' 3
+                        @setvar! var__wrestling_active 3
+                    endif
+                    if "Monkey" in label__wrestling_codex
+                        pushlist 'list__wrestling_stances' 4
+                        @setvar! var__wrestling_active 4
+                    endif
+                    if "Crane" in label__wrestling_codex
+                        pushlist 'list__wrestling_stances' 5
+                        @setvar! var__wrestling_active 5
+                    endif
+
+                    if list 'list__wrestling_stances' != 1
+                        @setvar! var__wrestling_disabled 1
+                        overhead "[ wrestling stance, off ]" 254
+                        if config__sysmsg = 1
+                            sysmsg "Wrestling codex label names no single stance: {{label__wrestling_codex}}" 88
+                        endif
+                    endif
+                endif
+
+                if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0
+                    if "Chi Thrust" in label__wrestling_codex and "Zen Strike" in label__wrestling_codex
+                        @setvar! var__wrestling_finisher_off 1
+                    elseif "Chi Thrust" in label__wrestling_codex
+                        @setvar! var__wrestling_finisher_active 1
+                    elseif "Zen Strike" in label__wrestling_codex
+                        @setvar! var__wrestling_finisher_active 2
+                    else
+                        @setvar! var__wrestling_finisher_off 1
+                    endif
+
+                    if var__wrestling_finisher_off = 1
+                        overhead "[ wrestling finisher, off ]" 254
+                    elseif config__wrestling_finisher_main != var__wrestling_finisher_active
+                        if config__wrestling_finisher_main = 1
+                            say "[WrestlingFinisher1"
+                        elseif config__wrestling_finisher_main = 2
+                            say "[WrestlingFinisher2"
+                        endif
+                        @setvar! var__wrestling_finisher_active config__wrestling_finisher_main
+                        @setvar! var__wrestling_confirm 1
+                        if config__chatty = 1
+                            overhead "[ wrestling finisher, on ]" 290
+                        endif
+                        wait wait__short
+                    endif
+                endif
+
+                if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
+                    if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
+                        if var__wrestling_want = 1
+                            say "[WrestlingStance1"
+                        elseif var__wrestling_want = 2
+                            say "[WrestlingStance2"
+                        elseif var__wrestling_want = 3
+                            say "[WrestlingStance3"
+                        elseif var__wrestling_want = 4
+                            say "[WrestlingStance4"
+                        elseif var__wrestling_want = 5
+                            say "[WrestlingStance5"
+                        endif
+                        @setvar! var__wrestling_active var__wrestling_want
+                        @setvar! var__wrestling_sent var__wrestling_want
+                        @setvar! var__wrestling_confirm 1
+                        settimer "timer__wrestling_hold" 0
+                        settimer "timer__wrestling_resync" 0
+                        if config__sysmsg = 1
+                            sysmsg "Wrestling stance request: slot {{var__wrestling_want}}." 88
+                        endif
+                    endif
+                endif
+            endif
+        elseif timer "timer__message" >= interval__message
+            overhead "[ wrestling codex, out ]" 254
+            settimer "timer__message" 0
+        endif
+    endif

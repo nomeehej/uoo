@@ -78,6 +78,8 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 아처리 자세, 피니셔, 무기 능력   | [Archery](content/public/mechanics/archery.md)                                                                                                             |
 | Bard Archer 캐릭터, 코덱스, 부활 | [Bard Archer](content/public/templates/bard-archer.md)                                                                                                     |
 | bard-archer-enhanced 루프 설계   | [Bard Archer Enhanced](content/public/loops/bard-archer-enhanced.md)                                                                                       |
+| Bard Wrestling 캐릭터와 코덱스 | [Bard Wrestling](content/public/templates/bard-wrestling.md) |
+| bard-wrestling-enhanced 루프 설계 | [Bard Wrestling Enhanced](content/public/loops/bard-wrestling-enhanced.md) |
 | 키 배치                          | [Hotkeys](content/public/game/hotkeys.md)                                                                                                                  |
 | `findtype` 인자(graphic id, hue) | [Item list](content/public/game/item-list.md)                                                                                                              |
 | 문서 수정이나 새 문서            | [Writing](content/public/working/writing.md)                                                                                                               |

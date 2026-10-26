@@ -26,6 +26,7 @@ Combat loops are named after the template (`dexxer-basic`), variants get a suffi
 |------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | `bard-necro-enhanced`  | Discord / Peace / Provo + Necromancy summons kept out and refreshed + Spirit Speak, with the Grimoire proc rotation            |
 | `bard-archer-enhanced` | Discord / Peace / Provo with Virtuoso kept up + archery codex stance and finisher by enemy count + Repeater. Shots stay manual |
+| `bard-wrestling-enhanced` | [Bard Wrestling](../content/public/templates/bard-wrestling.md): Monkey, Crab, 근접 다수전 Spider 자동 선택, Chi Thrust, Brawl과 Parry Codex. 공격은 손 |
 | `tamer-mage-enhanced`  | Tamer mage: veterinary supplies for you and the pets, self buffs, Flamestrike for the aspect proc                              |
 | `tamer-archer-enhanced` | Tamer archer: veterinary supplies for you and the pets, Herding crook, Full Draw, the bow re-armed after a cast. Codex, shots and pets stay manual          |
 | `pvp`                  | Shared field PvP self sustain with Magery, bandage, potion and swing-based weapon settings. All offense stays manual           |

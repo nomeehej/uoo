@@ -56,6 +56,8 @@ flowchart LR
 | [Archery](../mechanics/archery.md) | 아처리 무기와 사격 간격, 자세, 피니셔, 무기 능력, PvP에서 빠지는 것 |
 | [Bard Archer](../templates/bard-archer.md) | Bard Archer의 스킬과 코덱스, 갑옷과 마나, 부활, bard 프로필 |
 | [Bard Archer Enhanced](../loops/bard-archer-enhanced.md) | bard-archer-enhanced 루프의 블록 순서, 여러 마리 판정, Virtuoso 유지 |
+| [Bard Wrestling](../templates/bard-wrestling.md) | Bard Wrestling의 스킬 계획, 무기와 코덱스 선택 |
+| [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md) | 바드 레슬링 루프의 자동 자세, Parry Codex, 능력과 장착 조건 |
 | [Open items](../questions/open-items.md) | 사용자에게 물을 것. 뜨지 않는 바, 규칙과 어긋난 줄, 출처 없는 숫자, 인게임 확인 목록 |
 
 ::part[근거]

@@ -67,7 +67,7 @@ order: 30
 | `module/bard/` | 바드 스킬 | `instrument`(악기 찾기와 점검), `disco`(대상마다 한 번, 설정에 따라 Virtuoso가 빠지면 다시), `peace`, `provo-picks`(별도 후보 입력), `provo`(등록 후보 가운데 풀린 둘씩 서로에게 프로보), `song`(적이 기억돼 있지 않은 이동 중 노래 셋을 차례로) |
 | `module/necro/` | 네크로 핫바와 소환수 | `symbols`(핫바 열어 두기, Unholy Symbol 수 읽기), `summon-names`(소환수 이름 바꾸기), `resummon`(Vengeful Spirit 뒤 빠진 소환수 재소환, 마나가 낮으면 Wither, 오래된 소환수 교체), `burst`(Blood Oath, Corpse Skin, Evil Omen), `poison-strike`, `vampiric-embrace` |
 | `module/tamer/` | 펫 스킬 | `herding`(목동 지팡이), `vet-kit`(나와 펫에게 수의사 키트) |
-| `module/fight/` | 무기 전투 보조 | `target`(기억한 적), `weapon-swap`(스윙 바별 무기 슬롯), `remember-hands`(주문 전에 현재 손 장비 기록), `rearm`(기억한 장비 복구), `sword-codex`, `parry-codex`, `archery-codex`(자세와 피니셔, 고른 적 수로 전환), `weapon-ability`(Swords나 Archery 코덱스의 능력, 사거리 설정) |
+| `module/fight/` | 무기 전투 보조 | `target`(기억한 적), `weapon-swap`(스윙 바별 무기 슬롯), `remember-hands`(주문 전에 현재 손 장비 기록), `rearm`(기억한 장비 복구), `sword-codex`, `parry-codex`, `archery-codex`, `wrestling-codex`(자세와 피니셔, 고른 적 수로 전환), `weapon-ability`(Swords, Archery, Wrestling 코덱스의 능력, 사거리 설정) |
 | `module/gather/` | 채집 | `lumberjacking`(Smart Harvest), `skinning`(칼질) |
 | `module/pack/` | 무게, 보급 파우치와 루팅 백 | `gold-drop`, `leather`(가죽 → 루팅 백), `lumber`(Logs → Boards → 루팅 백), `scavenger`(스캐빈저 캐시 비우기), `pouches`(보급 파우치와 루팅 백 지정), `sorting`(백팩 아래쪽 더미와 트랩 파우치, 파우치 안 정리) |
 | `module/escape/` | PK 피하기 | `tracking`(헌트 필터 설정과 Hunting 점검), `recall`(자동 리콜 한 번) |
@@ -378,7 +378,7 @@ order: 30
   - `gather/skinning`은 칼 커서를 든 동안 고른 적을 여기에 기록
 - `escape/tracking`의 `var__tracking_*`와 `tracking_color` ← `escape/recall`
 - `bard/instrument`의 `var__my_instrument`, `var__instrument_ok`, `wait__bard_target` ← `bard/disco`, `bard/peace`, `bard/provo`, `bard/song`
-- `bard/provo-picks`의 `list__provo_candidates` ← `bard/provo`의 짝 선택, `fight/archery-codex`의 마릿수 판정. `var__provo_added` ← `bard/provo`의 탐색 대기 단축
+- `bard/provo-picks`의 `list__provo_candidates` ← `bard/provo`의 짝 선택, `fight/archery-codex`와 `fight/wrestling-codex`의 마릿수 판정. `var__provo_added` ← `bard/provo`의 탐색 대기 단축
 - `necro/symbols`의 `list__necro_symbols`, `var__symbols_spent`, `interval__necro_action`, `wait__message`, `wait__ability_target` ← 네크로 능력 블록
   - `var__symbols_listed` ← `necro/resummon`. VS를 쓴 패스에 리스트를 비우고 다시 읽게 함
 - `necro/summon-names`의 `config__summon_range` ← `necro/resummon`. 교체가 summon-names의 이름으로 놓으므로 둘은 함께

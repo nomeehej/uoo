@@ -141,6 +141,7 @@
 @setvar! config__ability_codex 2
 @setvar! config__ability_main 3
 @setvar! config__ability_range 8
+@setvar! config__ability_weapon_graphic 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -577,6 +578,12 @@ endif
 # ----------------------------------------------------------------------------------------
 @setvar! var__disco_seen 0
 @setvar! var__disco_again 0
+
+
+# ----------------------------------------------------------------------------------------
+# module/fight/weapon-ability.razor
+# ----------------------------------------------------------------------------------------
+@setvar! var__ability_weapon_ok 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -1912,35 +1919,55 @@ while not dead
         # --------------------------------------------------------------------------------
         # WEAPON ABILITY                                 module/fight/weapon-ability.razor
         # --------------------------------------------------------------------------------
-        if timer "timer__ability" >= interval__ability and find var__combat_target ground -1 -1 config__ability_range
-            if config__ability_main = 1
-                say "[WeaponAbility1"
-            elseif config__ability_main = 2
-                say "[WeaponAbility2"
-            elseif config__ability_main = 3
-                say "[WeaponAbility3"
-            endif
+        if timer "timer__ability" >= interval__ability and not hidden and not queued and not casting and not targetexists and find var__combat_target ground -1 -1 config__ability_range as alias__ability_target
+            if not dead alias__ability_target
+                @setvar! var__ability_weapon_ok 0
 
-            settimer "timer__ability" 0
-            if config__sysmsg = 1
-                sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
-            endif
+                if config__ability_weapon_graphic = 0
+                    @setvar! var__ability_weapon_ok 1
+                elseif findtype config__ability_weapon_graphic self
+                    @setvar! var__ability_weapon_ok 1
+                endif
 
-            if config__chatty = 1
-                if config__ability_codex = 2
-                    if config__ability_main = 3
-                        overhead "[ repeater ]" 219
+                if var__ability_weapon_ok = 1
+                    if config__ability_main = 1
+                        say "[WeaponAbility1"
                     elseif config__ability_main = 2
-                        overhead "[ full draw ]" 219
-                    elseif config__ability_main = 1
-                        overhead "[ skirmish ]" 219
+                        say "[WeaponAbility2"
+                    elseif config__ability_main = 3
+                        say "[WeaponAbility3"
                     endif
-                elseif config__ability_main = 3
-                    overhead "[ chop ]" 219
-                elseif config__ability_main = 1
-                    overhead "[ spinslash ]" 219
-                elseif config__ability_main = 2
-                    overhead "[ rend ]" 219
+
+                    settimer "timer__ability" 0
+                    if config__sysmsg = 1
+                        sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
+                    endif
+
+                    if config__chatty = 1
+                        if config__ability_codex = 2
+                            if config__ability_main = 3
+                                overhead "[ repeater ]" 219
+                            elseif config__ability_main = 2
+                                overhead "[ full draw ]" 219
+                            elseif config__ability_main = 1
+                                overhead "[ skirmish ]" 219
+                            endif
+                        elseif config__ability_codex = 3
+                            if config__ability_main = 1
+                                overhead "[ brawl ]" 219
+                            elseif config__ability_main = 2
+                                overhead "[ haymaker ]" 219
+                            elseif config__ability_main = 3
+                                overhead "[ takedown ]" 219
+                            endif
+                        elseif config__ability_main = 3
+                            overhead "[ chop ]" 219
+                        elseif config__ability_main = 1
+                            overhead "[ spinslash ]" 219
+                        elseif config__ability_main = 2
+                            overhead "[ rend ]" 219
+                        endif
+                    endif
                 endif
             endif
         endif

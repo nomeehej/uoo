@@ -10,20 +10,26 @@
 #      The codex the held weapon belongs to, which names the three ability slots.
 #        1  Swords: Spinslash, Rend, Chop
 #        2  Archery: Skirmish, Full Draw, Repeater
+#        3  Wrestling: Brawl, Haymaker, Takedown
 #
 #   config__ability_main
 #      Weapon ability to use, by its slot in that codex.
-#        1  Spinslash, or Skirmish
-#        2  Rend, or Full Draw
-#        3  Chop, or Repeater
+#        1  Spinslash, Skirmish, or Brawl
+#        2  Rend, Full Draw, or Haymaker
+#        3  Chop, Repeater, or Takedown
 #
 #   config__ability_range
 #      How far, in tiles, the remembered enemy may be for the request. 2 for a melee
 #      weapon, the weapon's reach for a bow.
+#
+#   config__ability_weapon_graphic
+#      Required equipped weapon graphic. 0 keeps the existing unrestricted behavior.
+#      A weapon in the backpack never satisfies this guard.
 # ----------------------------------------------------------------------------------------
 @setvar! config__ability_codex 1
 @setvar! config__ability_main 3
 @setvar! config__ability_range 2
+@setvar! config__ability_weapon_graphic 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -42,6 +48,15 @@ timer__ability interval__ability
 
 
 # ----------------------------------------------------------------------------------------
+# @ state
+#
+#   var__ability_weapon_ok
+#      Scratch flag. 1 when no equipment restriction is set or that weapon is equipped.
+# ----------------------------------------------------------------------------------------
+@setvar! var__ability_weapon_ok 0
+
+
+# ----------------------------------------------------------------------------------------
 # @ loop
 # ----------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------
@@ -55,37 +70,60 @@ timer__ability interval__ability
     # times in that, so 208% against 225%, and only while standing. Skirmish adds 35% and
     # fires on the move (Archery 04). Chop and Repeater are further scaled by weapon
     # speed, and that formula is not documented. A timer spaces the request, as in
-    # archive/bard-mace. A wrong interval only shifts the timing.
+    # archive/bard-mace. This spaces requests, not confirmed activations. Requests can
+    # precede the next hit and the server can reject one if the meter is not ready.
+    # Wrestling defaults to Brawl for sustained attacks. All three share the same meter.
+    # Effects and slots: wiki Wrestling and Weapon_and_Parry_Codex, read 2026-10-27.
     # ------------------------------------------------------------------------------------
-    if timer "timer__ability" >= interval__ability and find var__combat_target ground -1 -1 config__ability_range
-        if config__ability_main = 1
-            say "[WeaponAbility1"
-        elseif config__ability_main = 2
-            say "[WeaponAbility2"
-        elseif config__ability_main = 3
-            say "[WeaponAbility3"
-        endif
+    if timer "timer__ability" >= interval__ability and not hidden and not queued and not casting and not targetexists and find var__combat_target ground -1 -1 config__ability_range as alias__ability_target
+        if not dead alias__ability_target
+            @setvar! var__ability_weapon_ok 0
 
-        settimer "timer__ability" 0
-        if config__sysmsg = 1
-            sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
-        endif
+            if config__ability_weapon_graphic = 0
+                @setvar! var__ability_weapon_ok 1
+            elseif findtype config__ability_weapon_graphic self
+                @setvar! var__ability_weapon_ok 1
+            endif
 
-        if config__chatty = 1
-            if config__ability_codex = 2
-                if config__ability_main = 3
-                    overhead "[ repeater ]" 219
+            if var__ability_weapon_ok = 1
+                if config__ability_main = 1
+                    say "[WeaponAbility1"
                 elseif config__ability_main = 2
-                    overhead "[ full draw ]" 219
-                elseif config__ability_main = 1
-                    overhead "[ skirmish ]" 219
+                    say "[WeaponAbility2"
+                elseif config__ability_main = 3
+                    say "[WeaponAbility3"
                 endif
-            elseif config__ability_main = 3
-                overhead "[ chop ]" 219
-            elseif config__ability_main = 1
-                overhead "[ spinslash ]" 219
-            elseif config__ability_main = 2
-                overhead "[ rend ]" 219
+
+                settimer "timer__ability" 0
+                if config__sysmsg = 1
+                    sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
+                endif
+
+                if config__chatty = 1
+                    if config__ability_codex = 2
+                        if config__ability_main = 3
+                            overhead "[ repeater ]" 219
+                        elseif config__ability_main = 2
+                            overhead "[ full draw ]" 219
+                        elseif config__ability_main = 1
+                            overhead "[ skirmish ]" 219
+                        endif
+                    elseif config__ability_codex = 3
+                        if config__ability_main = 1
+                            overhead "[ brawl ]" 219
+                        elseif config__ability_main = 2
+                            overhead "[ haymaker ]" 219
+                        elseif config__ability_main = 3
+                            overhead "[ takedown ]" 219
+                        endif
+                    elseif config__ability_main = 3
+                        overhead "[ chop ]" 219
+                    elseif config__ability_main = 1
+                        overhead "[ spinslash ]" 219
+                    elseif config__ability_main = 2
+                        overhead "[ rend ]" 219
+                    endif
+                endif
             endif
         endif
     endif

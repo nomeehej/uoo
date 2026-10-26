@@ -115,6 +115,7 @@
 @setvar! config__ability_codex 1
 @setvar! config__ability_main 3
 @setvar! config__ability_range 2
+@setvar! config__ability_weapon_graphic 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -445,6 +446,13 @@ endif
 @setvar! var__parry_disabled 0
 @setvar! var__parry_finisher_checked 0
 @setvar! var__parry_finisher_state 0
+@setvar! var__parry_confirm 0
+
+
+# ----------------------------------------------------------------------------------------
+# module/fight/weapon-ability.razor
+# ----------------------------------------------------------------------------------------
+@setvar! var__ability_weapon_ok 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -533,6 +541,14 @@ if findlayer self righthand as alias__rearm_right
     if config__sysmsg = 1
         sysmsg "Rearm: one-handed layer remembered, serial={{alias__rearm_right}}." 88
     endif
+endif
+
+
+# ----------------------------------------------------------------------------------------
+# module/fight/parry-codex.razor
+# ----------------------------------------------------------------------------------------
+if not listexists 'list__parry_stances'
+    createlist 'list__parry_stances'
 endif
 
 
@@ -1125,6 +1141,9 @@ while not dead
     # PARRY CODEX                                           module/fight/parry-codex.razor
     # ------------------------------------------------------------------------------------
     if var__parry_disabled = 0
+        if var__parry_confirm = 1
+            @setvar! var__parry_active 0
+        endif
         if timer "timer__parry_resync" > interval__parry_resync
             @setvar! var__parry_active 0
             settimer "timer__parry_resync" 0
@@ -1142,101 +1161,138 @@ while not dead
             settimer "timer__parry_retry" 0
 
             if findtype 11889 backpack as alias__parry_codex
+                @unsetvar! label__parry_codex
+                @setvar! label__parry_codex 0
                 getlabel alias__parry_codex label__parry_codex
 
-                if "Testudo" in label__parry_codex
-                    @setvar! var__parry_active 3
-                elseif "Warding" in label__parry_codex
-                    @setvar! var__parry_active 2
-                elseif "Shield Bash" in label__parry_codex
-                    @setvar! var__parry_active 1
-                elseif "Mirror" in label__parry_codex
-                    @setvar! var__parry_active 4
-                elseif "Bulwark" in label__parry_codex
-                    @setvar! var__parry_active 5
+                if label__parry_codex = 0
+                    # No response yet. Leave protection enabled and retry.
                 else
-                    @setvar! var__parry_disabled 1
-                    overhead "[ parry stance, off ]" 254
-                    if config__sysmsg = 1
-                        sysmsg "Parry codex label names no stance, parry stance stands down: {{label__parry_codex}}" 88
+                    @setvar! var__parry_confirm 0
+
+                    clearlist 'list__parry_stances'
+                    if "Shield Bash" in label__parry_codex
+                        pushlist 'list__parry_stances' 1
                     endif
-                endif
-
-                if var__parry_disabled = 0 and var__parry_finisher_checked = 0 and config__parry_finisher_main != 0
-                    @setvar! var__parry_finisher_checked 1
-                    @setvar! var__parry_finisher_state 0
-
-                    if config__parry_finisher_main = 1
-                        if "Last Stand" in label__parry_codex
-                            @setvar! var__parry_finisher_state 1
-                        elseif "Barrier" in label__parry_codex
-                            @setvar! var__parry_finisher_state 2
-                        endif
-                    else
-                        if "Barrier" in label__parry_codex
-                            @setvar! var__parry_finisher_state 1
-                        elseif "Last Stand" in label__parry_codex
-                            @setvar! var__parry_finisher_state 2
-                        endif
+                    if "Warding" in label__parry_codex
+                        pushlist 'list__parry_stances' 2
+                    endif
+                    if "Testudo" in label__parry_codex
+                        pushlist 'list__parry_stances' 3
+                    endif
+                    if "Mirror" in label__parry_codex
+                        pushlist 'list__parry_stances' 4
+                    endif
+                    if "Bulwark" in label__parry_codex
+                        pushlist 'list__parry_stances' 5
                     endif
 
-                    if var__parry_finisher_state = 2
-                        if config__parry_finisher_main = 1
-                            say "[ShieldsFinisher1"
-                        elseif config__parry_finisher_main = 2
-                            say "[ShieldsFinisher2"
-                        endif
+                    if list 'list__parry_stances' != 1
+                        @setvar! var__parry_disabled 1
+                    endif
+
+                    if var__parry_disabled = 1
+                        overhead "[ parry stance, off ]" 254
                         if config__sysmsg = 1
-                            sysmsg "Parry finisher switch: slot {{config__parry_finisher_main}}." 88
+                            sysmsg "Parry codex label names no single stance: {{label__parry_codex}}" 88
                         endif
-                        wait wait__short
-                        if config__chatty = 1
-                            if config__parry_finisher_main = 1
-                                overhead "[ parry, last stand ]" 290
-                            else
-                                overhead "[ parry, barrier ]" 290
+                    elseif "Testudo" in label__parry_codex
+                        @setvar! var__parry_active 3
+                    elseif "Warding" in label__parry_codex
+                        @setvar! var__parry_active 2
+                    elseif "Shield Bash" in label__parry_codex
+                        @setvar! var__parry_active 1
+                    elseif "Mirror" in label__parry_codex
+                        @setvar! var__parry_active 4
+                    elseif "Bulwark" in label__parry_codex
+                        @setvar! var__parry_active 5
+                    else
+                        @setvar! var__parry_disabled 1
+                        overhead "[ parry stance, off ]" 254
+                        if config__sysmsg = 1
+                            sysmsg "Parry codex label names no stance, parry stance stands down: {{label__parry_codex}}" 88
+                        endif
+                    endif
+
+                    if var__parry_disabled = 0 and var__parry_finisher_checked = 0 and config__parry_finisher_main != 0
+                        @setvar! var__parry_finisher_checked 1
+                        @setvar! var__parry_finisher_state 0
+
+                        if config__parry_finisher_main = 1
+                            if "Last Stand" in label__parry_codex
+                                @setvar! var__parry_finisher_state 1
+                            elseif "Barrier" in label__parry_codex
+                                @setvar! var__parry_finisher_state 2
+                            endif
+                        else
+                            if "Barrier" in label__parry_codex
+                                @setvar! var__parry_finisher_state 1
+                            elseif "Last Stand" in label__parry_codex
+                                @setvar! var__parry_finisher_state 2
                             endif
                         endif
-                    elseif var__parry_finisher_state = 0
-                        if config__parry_finisher_main = 1
-                            overhead "[ last stand, off ]" 254
-                        else
-                            overhead "[ barrier, off ]" 254
+
+                        if var__parry_finisher_state = 2
+                            @setvar! var__parry_confirm 1
+                            @setvar! var__parry_finisher_checked 0
+                            if config__parry_finisher_main = 1
+                                say "[ShieldsFinisher1"
+                            elseif config__parry_finisher_main = 2
+                                say "[ShieldsFinisher2"
+                            endif
+                            if config__sysmsg = 1
+                                sysmsg "Parry finisher switch: slot {{config__parry_finisher_main}}." 88
+                            endif
+                            wait wait__short
+                            if config__chatty = 1
+                                if config__parry_finisher_main = 1
+                                    overhead "[ parry, last stand ]" 290
+                                else
+                                    overhead "[ parry, barrier ]" 290
+                                endif
+                            endif
+                        elseif var__parry_finisher_state = 0
+                            if config__parry_finisher_main = 1
+                                overhead "[ last stand, off ]" 254
+                            else
+                                overhead "[ barrier, off ]" 254
+                            endif
                         endif
                     endif
-                endif
 
-                if var__parry_disabled = 0 and var__parry_want != var__parry_active
-                    if config__sysmsg = 1
-                        sysmsg "Parry stance switch: slot {{var__parry_active}} to {{var__parry_want}}. Damage over time and melee decide Warding." 88
-                    endif
+                    if var__parry_disabled = 0 and var__parry_want != var__parry_active
+                        if config__sysmsg = 1
+                            sysmsg "Parry stance switch: slot {{var__parry_active}} to {{var__parry_want}}. Damage over time and melee decide Warding." 88
+                        endif
 
-                    if var__parry_want = 1
-                        say "[ShieldsStance1"
-                    elseif var__parry_want = 2
-                        say "[ShieldsStance2"
-                    elseif var__parry_want = 3
-                        say "[ShieldsStance3"
-                    elseif var__parry_want = 4
-                        say "[ShieldsStance4"
-                    elseif var__parry_want = 5
-                        say "[ShieldsStance5"
-                    endif
-
-                    @setvar! var__parry_active var__parry_want
-                    settimer "timer__parry_resync" 0
-
-                    if config__chatty = 1
-                        if var__parry_want = 3
-                            overhead "[ parry, testudo ]" 290
+                        if var__parry_want = 1
+                            say "[ShieldsStance1"
                         elseif var__parry_want = 2
-                            overhead "[ parry, warding ]" 290
-                        elseif var__parry_want = 1
-                            overhead "[ parry, shield bash ]" 290
+                            say "[ShieldsStance2"
+                        elseif var__parry_want = 3
+                            say "[ShieldsStance3"
                         elseif var__parry_want = 4
-                            overhead "[ parry, mirror ]" 290
+                            say "[ShieldsStance4"
                         elseif var__parry_want = 5
-                            overhead "[ parry, bulwark ]" 290
+                            say "[ShieldsStance5"
+                        endif
+
+                        @setvar! var__parry_active var__parry_want
+                        @setvar! var__parry_confirm 1
+                        settimer "timer__parry_resync" 0
+
+                        if config__chatty = 1
+                            if var__parry_want = 3
+                                overhead "[ parry, testudo ]" 290
+                            elseif var__parry_want = 2
+                                overhead "[ parry, warding ]" 290
+                            elseif var__parry_want = 1
+                                overhead "[ parry, shield bash ]" 290
+                            elseif var__parry_want = 4
+                                overhead "[ parry, mirror ]" 290
+                            elseif var__parry_want = 5
+                                overhead "[ parry, bulwark ]" 290
+                            endif
                         endif
                     endif
                 endif
@@ -1250,35 +1306,55 @@ while not dead
     # ------------------------------------------------------------------------------------
     # WEAPON ABILITY                                     module/fight/weapon-ability.razor
     # ------------------------------------------------------------------------------------
-    if timer "timer__ability" >= interval__ability and find var__combat_target ground -1 -1 config__ability_range
-        if config__ability_main = 1
-            say "[WeaponAbility1"
-        elseif config__ability_main = 2
-            say "[WeaponAbility2"
-        elseif config__ability_main = 3
-            say "[WeaponAbility3"
-        endif
+    if timer "timer__ability" >= interval__ability and not hidden and not queued and not casting and not targetexists and find var__combat_target ground -1 -1 config__ability_range as alias__ability_target
+        if not dead alias__ability_target
+            @setvar! var__ability_weapon_ok 0
 
-        settimer "timer__ability" 0
-        if config__sysmsg = 1
-            sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
-        endif
+            if config__ability_weapon_graphic = 0
+                @setvar! var__ability_weapon_ok 1
+            elseif findtype config__ability_weapon_graphic self
+                @setvar! var__ability_weapon_ok 1
+            endif
 
-        if config__chatty = 1
-            if config__ability_codex = 2
-                if config__ability_main = 3
-                    overhead "[ repeater ]" 219
+            if var__ability_weapon_ok = 1
+                if config__ability_main = 1
+                    say "[WeaponAbility1"
                 elseif config__ability_main = 2
-                    overhead "[ full draw ]" 219
-                elseif config__ability_main = 1
-                    overhead "[ skirmish ]" 219
+                    say "[WeaponAbility2"
+                elseif config__ability_main = 3
+                    say "[WeaponAbility3"
                 endif
-            elseif config__ability_main = 3
-                overhead "[ chop ]" 219
-            elseif config__ability_main = 1
-                overhead "[ spinslash ]" 219
-            elseif config__ability_main = 2
-                overhead "[ rend ]" 219
+
+                settimer "timer__ability" 0
+                if config__sysmsg = 1
+                    sysmsg "Weapon ability request: codex {{config__ability_codex}}, slot {{config__ability_main}}. Fires on the next hit." 88
+                endif
+
+                if config__chatty = 1
+                    if config__ability_codex = 2
+                        if config__ability_main = 3
+                            overhead "[ repeater ]" 219
+                        elseif config__ability_main = 2
+                            overhead "[ full draw ]" 219
+                        elseif config__ability_main = 1
+                            overhead "[ skirmish ]" 219
+                        endif
+                    elseif config__ability_codex = 3
+                        if config__ability_main = 1
+                            overhead "[ brawl ]" 219
+                        elseif config__ability_main = 2
+                            overhead "[ haymaker ]" 219
+                        elseif config__ability_main = 3
+                            overhead "[ takedown ]" 219
+                        endif
+                    elseif config__ability_main = 3
+                        overhead "[ chop ]" 219
+                    elseif config__ability_main = 1
+                        overhead "[ spinslash ]" 219
+                    elseif config__ability_main = 2
+                        overhead "[ rend ]" 219
+                    endif
+                endif
             endif
         endif
     endif

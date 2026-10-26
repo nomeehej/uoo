@@ -125,6 +125,20 @@ Healer's Codex 20점: Immunize 5, Triage 5, Self Treatment 5, Specialist 5.
 - **Lyric Aspect 방어구.** bard-necro는 Lyric 방어구로 Effective Barding 170, 벗으면 136([Barding](../mechanics/barding.md#02.C) 02.C절).
   체인으로 바꾸며 Lyric을 유지하는지 확인되지 않았다 → 송 메시지가 `8.5%`면 170, `6.8%`면 136
 
+### <a id="01.D"></a>01.D 무방패 무기 전환 검토
+
+2026-10-27 비교 조건: 일반 몬스터 한 마리당 약 30\~60초, Barding Break가 잦음, Lyric 무기 15, 방패 제외.
+Archery 자리의 무기 스킬 80과 Resisting Spells 자리의 Parrying 80을 비교, 나머지는 01.A절 배분.
+모든 무기 코덱스의 자세 7랭크, 피니셔 5티어, 능력 전체 해금 가정.
+
+- **Wrestling과 Fencing 중 추천 검토안: Wrestling 80과 Parrying 80. 무기는 Fistblade, Cestus, Martial Manual 중 선택**
+- 같은 몹을 오래 치며 콤보를 유지하고, Hamstring과 시전 중 방어, 마나 반환을 회복에 활용하는 선택
+- Hamstring 자격과 몬스터 이동 봉쇄의 범위는 [Combat](../mechanics/combat.md#02.H) 02.H절. 직접 피해 증가로 계산하지 않음
+- 전환 템플릿은 [Bard Wrestling](bard-wrestling.md), 구현한 자동 선택은 [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md#02) 02절
+- Fencing Blackguard도 이 처치 시간에서는 유력. 후퇴 중에도 기존 질병은 계속 해결되므로 공격 공백이 길면 다시 비교
+- 선택 기준은 공격 유지와 생존, 회복을 합친 사냥 운용. 둘 중 인게임 DPS 1위는 확인되지 않았다
+- 최대 효과와 미공개 계산, 자세 변경의 초기화는 [Combat](../mechanics/combat.md#02.G) 02.G절
+
 ## <a id="02"></a>02 부활
 
 **손으로.** 루프에 없음. 붕대 먼저, 마나가 차면 스크롤.

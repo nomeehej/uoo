@@ -1239,7 +1239,7 @@ UO Outlands 아이템 이름과 graphic ID 목록. `findtype` 인자와 hue 조�
     #Wrestling - all IDs: 22187|31141|31142
         #cestus "caesti" 31141
         #fistblade "fistblade" 31142
-        #martial manual "martial arts scroll" 22187
+        #martial manual "martial arts scroll" 22187  (인게임 확인됨 2026-10-27)
 ```
 
 ## <a id="30"></a>30 Other items
