@@ -38,10 +38,10 @@
 # @ wait
 #
 #   interval__parry_retry
-#      A failed stance switch is tried again after this.
+#      Minimum time between codex label reads and request confirmations.
 #
 #   interval__parry_resync
-#      The stance cache is dropped this often, so a stance changed by hand is picked up.
+#      Both selection caches are dropped this often to pick up changes made by hand.
 # ----------------------------------------------------------------------------------------
 @setvar! interval__parry_retry 3000
 @setvar! interval__parry_resync 30000
@@ -58,29 +58,27 @@ timer__parry_resync 0
 # @ state
 #
 #   var__parry_want, var__parry_active
-#      Parry stance cache. 0 means unknown, which forces a codex label read on the first
-#      pass.
+#      Wanted and cached stance slots. The cache is tentative after a request.
 #
-#   var__parry_disabled
-#      1 when the codex label names no single stance. Switching blind could toggle the stance
-#      off.
+#   var__parry_finisher_active
+#      Cached finisher slot. 0 means unknown and prompts a label read.
 #
-#   var__parry_finisher_checked
-#      The finisher is checked once per Play, on the first codex label read.
-#
-#   var__parry_finisher_state
-#      Scratch: 0 neither finisher named, 1 wanted finisher active, 2 the other one
-#      active.
+#   var__parry_disabled, var__parry_finisher_off
+#      That selection stands down for this Play when the label is ambiguous.
 #
 #   var__parry_confirm
 #      1 after a request until another label response checks the resulting selection.
+#
+#   var__parry_read
+#      Scratch flag for a managed selection that needs a codex label read.
 # ----------------------------------------------------------------------------------------
 @setvar! var__parry_want config__parry_stance_main
 @setvar! var__parry_active 0
+@setvar! var__parry_finisher_active 0
 @setvar! var__parry_disabled 0
-@setvar! var__parry_finisher_checked 0
-@setvar! var__parry_finisher_state 0
+@setvar! var__parry_finisher_off 0
 @setvar! var__parry_confirm 0
+@setvar! var__parry_read 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -97,35 +95,24 @@ endif
     # ------------------------------------------------------------------------------------
     # PARRY CODEX
     #
-    # Parrying works with a two handed weapon and the codex needs Parrying 80 and Tactics
-    # 80 (wiki Parrying). Per rank, from Weapon_and_Parry_Codex:
-    #   Testudo  damage resistance 3%, 6% while you are in the front arc of the target
-    #   Warding  damage resistance 2%, and poison, bleed and disease ticks 6% lower
-    #   Bulwark  5% after 3 seconds standing still. Mirror 2% and spell damage 6% lower.
-    # Testudo is the stance to hold once ranked. A creature meleeing you nearly always has
-    # you in its front arc. Warding takes over while poisoned, bleeding or diseased, but
-    # only away from melee. Next to the remembered enemy Testudo still blocks 4% per rank
-    # more of every hit, which outweighs the tick reduction unless the ticks deal most of
-    # the damage. config__parry_dot_in_melee 1 switches anyway. Bleed and Disease are buff
-    # bar icons on the wiki, Template:BuffIcons.
+    # Stance and finisher choices are independent, as in WRESTLING CODEX. A fresh label
+    # must name exactly one choice before a toggle command is sent. Ambiguous text
+    # stops only that selection for this Play. Missing responses retry. Confirmation
+    # reads and periodic resync apply to both choices, including the finisher.
     #
-    # Last Stand is the default finisher: below the parry threshold it has a 5% chance per
-    # rank to turn a hit into 1 damage. Barrier takes a flat 0.6 per rank off each hit,
-    # which is less against the big hits that matter there.
-    #
-    # Same label machinery as SWORD CODEX. No stance name in the label means none is
-    # selected or the label does not show it, and a blind command could toggle it off, so
-    # the block warns once and stands down for this Play.
+    # Warding follows the player's poison, Bleed and Disease icons and distance from
+    # the remembered target. This does not detect other attackers or the target's arc.
+    # Effects and equipment requirements: content/public/mechanics/combat.md part 3.B.
     # ------------------------------------------------------------------------------------
-    if var__parry_disabled = 0
-        if var__parry_confirm = 1
-            @setvar! var__parry_active 0
-        endif
-        if timer "timer__parry_resync" > interval__parry_resync
-            @setvar! var__parry_active 0
-            settimer "timer__parry_resync" 0
-        endif
+    if timer "timer__parry_resync" >= interval__parry_resync
+        @setvar! var__parry_active 0
+        @setvar! var__parry_finisher_active 0
+        settimer "timer__parry_resync" 0
+    endif
 
+    @setvar! var__parry_read 0
+
+    if var__parry_disabled = 0
         @setvar! var__parry_want config__parry_stance_main
 
         if poisoned or findbuff "Bleed" or findbuff "Disease"
@@ -134,151 +121,138 @@ endif
             endif
         endif
 
-        if var__parry_want != var__parry_active and timer "timer__parry_retry" > interval__parry_retry
-            settimer "timer__parry_retry" 0
+        if var__parry_want != var__parry_active
+            @setvar! var__parry_read 1
+        endif
+    endif
 
-            if findtype 11889 backpack as alias__parry_codex
-                @unsetvar! label__parry_codex
-                @setvar! label__parry_codex 0
-                getlabel alias__parry_codex label__parry_codex
+    if var__parry_finisher_off = 0 and config__parry_finisher_main != 0 and config__parry_finisher_main != var__parry_finisher_active
+        @setvar! var__parry_read 1
+    endif
 
-                if label__parry_codex = 0
-                    # No response yet. Leave protection enabled and retry.
-                else
-                    @setvar! var__parry_confirm 0
+    if var__parry_confirm = 1
+        @setvar! var__parry_read 1
+    endif
 
+    if var__parry_read = 1 and timer "timer__parry_retry" >= interval__parry_retry and not hidden and not queued and not casting and not targetexists
+        settimer "timer__parry_retry" 0
+
+        if findtype 11889 backpack as alias__parry_codex
+            @unsetvar! label__parry_codex
+            @setvar! label__parry_codex 0
+            getlabel alias__parry_codex label__parry_codex
+
+            if label__parry_codex = 0
+                # No response yet. Leave protection enabled and retry.
+            else
+                @setvar! var__parry_confirm 0
+
+                if var__parry_disabled = 0
                     clearlist 'list__parry_stances'
+
                     if "Shield Bash" in label__parry_codex
                         pushlist 'list__parry_stances' 1
+                        @setvar! var__parry_active 1
                     endif
                     if "Warding" in label__parry_codex
                         pushlist 'list__parry_stances' 2
+                        @setvar! var__parry_active 2
                     endif
                     if "Testudo" in label__parry_codex
                         pushlist 'list__parry_stances' 3
+                        @setvar! var__parry_active 3
                     endif
                     if "Mirror" in label__parry_codex
                         pushlist 'list__parry_stances' 4
+                        @setvar! var__parry_active 4
                     endif
                     if "Bulwark" in label__parry_codex
                         pushlist 'list__parry_stances' 5
+                        @setvar! var__parry_active 5
                     endif
 
                     if list 'list__parry_stances' != 1
                         @setvar! var__parry_disabled 1
-                    endif
-
-                    if var__parry_disabled = 1
                         overhead "[ parry stance, off ]" 254
                         if config__sysmsg = 1
                             sysmsg "Parry codex label names no single stance: {{label__parry_codex}}" 88
                         endif
-                    elseif "Testudo" in label__parry_codex
-                        @setvar! var__parry_active 3
-                    elseif "Warding" in label__parry_codex
-                        @setvar! var__parry_active 2
-                    elseif "Shield Bash" in label__parry_codex
-                        @setvar! var__parry_active 1
-                    elseif "Mirror" in label__parry_codex
-                        @setvar! var__parry_active 4
-                    elseif "Bulwark" in label__parry_codex
-                        @setvar! var__parry_active 5
+                    endif
+                endif
+
+                if var__parry_finisher_off = 0 and config__parry_finisher_main != 0
+                    if "Last Stand" in label__parry_codex and "Barrier" in label__parry_codex
+                        @setvar! var__parry_finisher_off 1
+                    elseif "Last Stand" in label__parry_codex
+                        @setvar! var__parry_finisher_active 1
+                    elseif "Barrier" in label__parry_codex
+                        @setvar! var__parry_finisher_active 2
                     else
-                        @setvar! var__parry_disabled 1
-                        overhead "[ parry stance, off ]" 254
-                        if config__sysmsg = 1
-                            sysmsg "Parry codex label names no stance, parry stance stands down: {{label__parry_codex}}" 88
-                        endif
+                        @setvar! var__parry_finisher_off 1
                     endif
 
-                    # FINISHER: checked once per Play, only when the label proved it carries the stance.
-                    if var__parry_disabled = 0 and var__parry_finisher_checked = 0 and config__parry_finisher_main != 0
-                        @setvar! var__parry_finisher_checked 1
-                        @setvar! var__parry_finisher_state 0
-
+                    if var__parry_finisher_off = 1
+                        overhead "[ parry finisher, off ]" 254
+                        if config__sysmsg = 1
+                            sysmsg "Parry codex label names no single finisher: {{label__parry_codex}}" 88
+                        endif
+                    elseif config__parry_finisher_main != var__parry_finisher_active
                         if config__parry_finisher_main = 1
-                            if "Last Stand" in label__parry_codex
-                                @setvar! var__parry_finisher_state 1
-                            elseif "Barrier" in label__parry_codex
-                                @setvar! var__parry_finisher_state 2
-                            endif
-                        else
-                            if "Barrier" in label__parry_codex
-                                @setvar! var__parry_finisher_state 1
-                            elseif "Last Stand" in label__parry_codex
-                                @setvar! var__parry_finisher_state 2
-                            endif
+                            say "[ShieldsFinisher1"
+                        elseif config__parry_finisher_main = 2
+                            say "[ShieldsFinisher2"
                         endif
-
-                        if var__parry_finisher_state = 2
-                            @setvar! var__parry_confirm 1
-                            @setvar! var__parry_finisher_checked 0
-                            if config__parry_finisher_main = 1
-                                say "[ShieldsFinisher1"
-                            elseif config__parry_finisher_main = 2
-                                say "[ShieldsFinisher2"
-                            endif
-                            if config__sysmsg = 1
-                                sysmsg "Parry finisher switch: slot {{config__parry_finisher_main}}." 88
-                            endif
-                            # Keep the finisher and stance commands apart.
-                            wait wait__short
-                            if config__chatty = 1
-                                if config__parry_finisher_main = 1
-                                    overhead "[ parry, last stand ]" 290
-                                else
-                                    overhead "[ parry, barrier ]" 290
-                                endif
-                            endif
-                        elseif var__parry_finisher_state = 0
-                            if config__parry_finisher_main = 1
-                                overhead "[ last stand, off ]" 254
-                            else
-                                overhead "[ barrier, off ]" 254
-                            endif
-                        endif
-                    endif
-
-                    if var__parry_disabled = 0 and var__parry_want != var__parry_active
-                        if config__sysmsg = 1
-                            sysmsg "Parry stance switch: slot {{var__parry_active}} to {{var__parry_want}}. Damage over time and melee decide Warding." 88
-                        endif
-
-                        if var__parry_want = 1
-                            say "[ShieldsStance1"
-                        elseif var__parry_want = 2
-                            say "[ShieldsStance2"
-                        elseif var__parry_want = 3
-                            say "[ShieldsStance3"
-                        elseif var__parry_want = 4
-                            say "[ShieldsStance4"
-                        elseif var__parry_want = 5
-                            say "[ShieldsStance5"
-                        endif
-
-                        # Assume it took, as in SWORD CODEX.
-                        @setvar! var__parry_active var__parry_want
+                        @setvar! var__parry_finisher_active config__parry_finisher_main
                         @setvar! var__parry_confirm 1
-                        settimer "timer__parry_resync" 0
-
+                        if config__sysmsg = 1
+                            sysmsg "Parry finisher request: slot {{config__parry_finisher_main}}." 88
+                        endif
                         if config__chatty = 1
-                            if var__parry_want = 3
-                                overhead "[ parry, testudo ]" 290
-                            elseif var__parry_want = 2
-                                overhead "[ parry, warding ]" 290
-                            elseif var__parry_want = 1
-                                overhead "[ parry, shield bash ]" 290
-                            elseif var__parry_want = 4
-                                overhead "[ parry, mirror ]" 290
-                            elseif var__parry_want = 5
-                                overhead "[ parry, bulwark ]" 290
+                            if config__parry_finisher_main = 1
+                                overhead "[ parry, last stand ]" 290
+                            else
+                                overhead "[ parry, barrier ]" 290
                             endif
+                        endif
+                        wait wait__short
+                    endif
+                endif
+
+                if var__parry_disabled = 0 and var__parry_want != var__parry_active
+                    if var__parry_want = 1
+                        say "[ShieldsStance1"
+                    elseif var__parry_want = 2
+                        say "[ShieldsStance2"
+                    elseif var__parry_want = 3
+                        say "[ShieldsStance3"
+                    elseif var__parry_want = 4
+                        say "[ShieldsStance4"
+                    elseif var__parry_want = 5
+                        say "[ShieldsStance5"
+                    endif
+                    @setvar! var__parry_active var__parry_want
+                    @setvar! var__parry_confirm 1
+                    settimer "timer__parry_resync" 0
+                    if config__sysmsg = 1
+                        sysmsg "Parry stance request: slot {{var__parry_want}}." 88
+                    endif
+                    if config__chatty = 1
+                        if var__parry_want = 3
+                            overhead "[ parry, testudo ]" 290
+                        elseif var__parry_want = 2
+                            overhead "[ parry, warding ]" 290
+                        elseif var__parry_want = 1
+                            overhead "[ parry, shield bash ]" 290
+                        elseif var__parry_want = 4
+                            overhead "[ parry, mirror ]" 290
+                        elseif var__parry_want = 5
+                            overhead "[ parry, bulwark ]" 290
                         endif
                     endif
                 endif
-            elseif timer "timer__message" >= interval__message
-                overhead "[ shield codex, out ]" 254
-                settimer "timer__message" 0
             endif
+        elseif timer "timer__message" >= interval__message
+            overhead "[ shield codex, out ]" 254
+            settimer "timer__message" 0
         endif
     endif

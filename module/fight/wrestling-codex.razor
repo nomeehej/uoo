@@ -82,7 +82,7 @@ timer__wrestling_pack 0
 # @ state
 #
 #   var__wrestling_want, var__wrestling_active
-#      Wanted and observed stance slots. 0 active means unknown.
+#      Wanted and cached stance slots. The cache is tentative after a request.
 #
 #   var__wrestling_finisher_active
 #      Observed finisher slot. 0 means unknown.
@@ -99,6 +99,9 @@ timer__wrestling_pack 0
 #   var__wrestling_read
 #      Scratch flag for a selection that needs a codex label read.
 #
+#   var__wrestling_can_switch
+#      One decision per pass for the stance hold, emergency and same-request retry.
+#
 #   var__wrestling_confirm, var__wrestling_sent
 #      Re-read after a request. The last requested stance may retry through its hold
 #      only when a fresh label still proves another stance is active.
@@ -112,6 +115,7 @@ timer__wrestling_pack 0
 @setvar! var__wrestling_recovering 0
 @setvar! var__wrestling_pack 0
 @setvar! var__wrestling_read 0
+@setvar! var__wrestling_can_switch 0
 @setvar! var__wrestling_confirm 0
 @setvar! var__wrestling_sent 0
 
@@ -212,10 +216,15 @@ endif
         @setvar! var__wrestling_want config__wrestling_stance_main
     endif
 
+    @setvar! var__wrestling_can_switch 0
+    if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
+        @setvar! var__wrestling_can_switch 1
+    endif
+
     @setvar! var__wrestling_read 0
 
     if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
-        if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
+        if var__wrestling_can_switch = 1
             @setvar! var__wrestling_read 1
         endif
     endif
@@ -302,7 +311,7 @@ endif
                 endif
 
                 if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
-                    if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
+                    if var__wrestling_can_switch = 1
                         if var__wrestling_want = 1
                             say "[WrestlingStance1"
                         elseif var__wrestling_want = 2

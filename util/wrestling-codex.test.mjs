@@ -403,3 +403,69 @@ test("parry stance and finisher converge under actual toggle semantics", () => {
     assert.ok(run.items.get(11889).label.includes("Testudo"));
     assert.ok(run.items.get(11889).label.includes("Last Stand"));
 });
+
+test("parry restores the selected finisher after periodic resync", () => {
+    const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+    run.pass(1);
+    run.items.get(11889).label = "Testudo, Barrier";
+    run.pass(31000).pass(3100);
+    assert.deepEqual(run.said(), ["[ShieldsFinisher1"]);
+});
+
+test("an ambiguous parry stance does not block a clearly identified finisher", () => {
+    const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+    run.items.get(11889).label = "Warding, Mirror, Barrier";
+    run.pass(1).pass(3100).pass(31000);
+    assert.deepEqual(run.said(), ["[ShieldsFinisher1"]);
+    assert.equal(run.events.filter(({value}) => value === "[ parry stance, off ]").length, 1);
+});
+
+test("an ambiguous parry finisher is reported once while stance management continues", () => {
+    const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+    run.items.get(11889).label = "Bulwark, Last Stand, Barrier";
+    run.pass(1).pass(3100).pass(31000);
+    assert.deepEqual(run.said(), ["[ShieldsStance3"]);
+    assert.equal(run.events.filter(({value}) => value === "[ parry finisher, off ]").length, 1);
+});
+
+for (const flag of ["targetexists", "casting", "queued", "hidden"]) {
+    test("parry requests wait while " + flag + " and resume when free", () => {
+        const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+        run.items.get(11889).label = "Bulwark, Barrier";
+        run.flags[flag] = true;
+        run.pass(1);
+        assert.deepEqual(run.said(), []);
+        run.flags[flag] = false;
+        run.pass(3100).pass(3100);
+        assert.deepEqual(run.said(), ["[ShieldsFinisher1", "[ShieldsStance3"]);
+    });
+}
+
+for (const dot of ["poisoned", "Bleed", "Disease"]) {
+    test("parry holds Testudo near the target and Warding away while " + dot, () => {
+        const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+        run.flags[dot] = true;
+        run.pass();
+        assert.deepEqual(run.said(), []);
+        run.mobs.get(101).range = 3;
+        run.pass(3100);
+        assert.deepEqual(run.said(), ["[ShieldsStance2"]);
+        run.mobs.get(101).range = 1;
+        run.pass(3100);
+        assert.deepEqual(run.said(), ["[ShieldsStance2", "[ShieldsStance3"]);
+        run.flags[dot] = false;
+        run.mobs.get(101).range = 3;
+        run.pass(3100);
+        assert.deepEqual(run.said(), ["[ShieldsStance2", "[ShieldsStance3"]);
+    });
+}
+
+test("unmanaged parry finishers need no finisher text or warning", () => {
+    const run = new ModuleRun("parry-codex", {
+        config__parry_stance_main: 3, config__parry_finisher_main: 0,
+    });
+    run.items.get(11889).label = "Bulwark";
+    run.pass().pass(3100).pass(31000);
+    assert.deepEqual(run.said(), ["[ShieldsStance3"]);
+    assert.ok(!run.events.some(({value}) => value === "[ parry finisher, off ]"));
+});
