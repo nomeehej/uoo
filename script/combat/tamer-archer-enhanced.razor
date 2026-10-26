@@ -60,6 +60,7 @@
 # module/fight/rearm.razor
 # ----------------------------------------------------------------------------------------
 @setvar! config__rearm_graphic 5042
+@setvar! config__rearm_follow_hands 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -329,6 +330,8 @@ endif
 @setvar! var__rearm_pending 0
 @setvar! var__rearm_sent 0
 @setvar! var__rearm_due 0
+@setvar! var__rearm_seen_left 0
+@setvar! var__rearm_seen_right 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -406,6 +409,13 @@ endif
 # ----------------------------------------------------------------------------------------
 # module/fight/rearm.razor
 # ----------------------------------------------------------------------------------------
+if config__rearm_follow_hands = 1
+    if not lhandempty or not rhandempty
+        @setvar! var__rearm_left 0
+        @setvar! var__rearm_right 0
+    endif
+endif
+
 if findlayer self lefthand as alias__rearm_left
     @setvar! var__rearm_left alias__rearm_left
 
@@ -626,47 +636,73 @@ while not dead
         if not hidden and not queued and not casting and not targetexists
             settimer "timer__equip" 0
             @setvar! var__rearm_sent 0
+            @setvar! var__rearm_seen_left 0
+            @setvar! var__rearm_seen_right 0
 
             if findlayer self lefthand as alias__rearm_left
+                @setvar! var__rearm_seen_left alias__rearm_left
+            endif
+
+            if findlayer self righthand as alias__rearm_right
+                @setvar! var__rearm_seen_right alias__rearm_right
+            endif
+
+            if config__rearm_follow_hands = 1
+                if var__rearm_seen_left != 0 and var__rearm_seen_left != var__rearm_left
+                    @setvar! var__rearm_left 0
+                    @setvar! var__rearm_right 0
+                elseif var__rearm_seen_right != 0 and var__rearm_seen_right != var__rearm_right
+                    @setvar! var__rearm_left 0
+                    @setvar! var__rearm_right 0
+                endif
+            endif
+
+            if var__rearm_seen_left != 0
                 @setvar! var__rearm_pending 0
 
-                if var__rearm_left != alias__rearm_left
-                    @setvar! var__rearm_left alias__rearm_left
+                if var__rearm_left != var__rearm_seen_left
+                    @setvar! var__rearm_left var__rearm_seen_left
 
                     if config__sysmsg = 1
-                        sysmsg "Rearm: two-handed layer remembered, serial={{alias__rearm_left}}." 88
+                        sysmsg "Rearm: two-handed layer remembered, serial={{var__rearm_left}}." 88
                     endif
                 endif
-            elseif var__rearm_left != 0 and timer "timer__equip_sent" >= interval__equip_retry
-                if find var__rearm_left backpack as alias__rearm_packed
-                    lift alias__rearm_packed
-                    drop self lefthand
-                    @setvar! var__rearm_sent 1
-                    settimer "timer__equip_sent" 0
+            endif
+
+            if var__rearm_seen_right != 0
+                @setvar! var__rearm_pending 0
+
+                if var__rearm_right != var__rearm_seen_right
+                    @setvar! var__rearm_right var__rearm_seen_right
 
                     if config__sysmsg = 1
-                        sysmsg "Rearm: equip requested on the two-handed layer, serial={{alias__rearm_packed}}. The next check reads the hands." 88
+                        sysmsg "Rearm: one-handed layer remembered, serial={{var__rearm_right}}." 88
                     endif
+                endif
+            endif
 
-                    wait wait__short
+            if var__rearm_seen_left = 0 and var__rearm_left != 0 and timer "timer__equip_sent" >= interval__equip_retry
+                if find var__rearm_left backpack as alias__rearm_packed
+                    if not hidden and not queued and not casting and not targetexists
+                        lift alias__rearm_packed
+                        drop self lefthand
+                        @setvar! var__rearm_sent 1
+                        settimer "timer__equip_sent" 0
+
+                        if config__sysmsg = 1
+                            sysmsg "Rearm: equip requested on the two-handed layer, serial={{alias__rearm_packed}}. The next check reads the hands." 88
+                        endif
+
+                        wait wait__short
+                    endif
                 else
                     @setvar! var__rearm_left 0
                 endif
             endif
 
-            if var__rearm_sent = 0
-                if findlayer self righthand as alias__rearm_right
-                    @setvar! var__rearm_pending 0
-
-                    if var__rearm_right != alias__rearm_right
-                        @setvar! var__rearm_right alias__rearm_right
-
-                        if config__sysmsg = 1
-                            sysmsg "Rearm: one-handed layer remembered, serial={{alias__rearm_right}}." 88
-                        endif
-                    endif
-                elseif var__rearm_right != 0 and timer "timer__equip_sent" >= interval__equip_retry
-                    if find var__rearm_right backpack as alias__rearm_packed
+            if var__rearm_sent = 0 and var__rearm_seen_right = 0 and var__rearm_right != 0 and timer "timer__equip_sent" >= interval__equip_retry
+                if find var__rearm_right backpack as alias__rearm_packed
+                    if not hidden and not queued and not casting and not targetexists
                         lift alias__rearm_packed
                         drop self righthand
                         @setvar! var__rearm_sent 1
@@ -677,9 +713,9 @@ while not dead
                         endif
 
                         wait wait__short
-                    else
-                        @setvar! var__rearm_right 0
                     endif
+                else
+                    @setvar! var__rearm_right 0
                 endif
             endif
 
@@ -693,15 +729,17 @@ while not dead
                 endif
 
                 if find var__rearm_pending backpack as alias__rearm_found
-                    lift alias__rearm_found
-                    drop self lefthand
-                    settimer "timer__equip_sent" 0
+                    if not hidden and not queued and not casting and not targetexists
+                        lift alias__rearm_found
+                        drop self lefthand
+                        settimer "timer__equip_sent" 0
 
-                    if config__sysmsg = 1
-                        sysmsg "Rearm: graphic {{config__rearm_graphic}} picked from the backpack, serial={{alias__rearm_found}}. The next check reads the hands." 88
+                        if config__sysmsg = 1
+                            sysmsg "Rearm: graphic {{config__rearm_graphic}} picked from the backpack, serial={{alias__rearm_found}}. The next check reads the hands." 88
+                        endif
+
+                        wait wait__short
                     endif
-
-                    wait wait__short
                 elseif timer "timer__message" >= interval__message
                     overhead "[ weapon, out ]" 254
                     settimer "timer__message" 0
@@ -1110,7 +1148,7 @@ while not dead
 
                             wait wait__poll
                         endfor
-                    elseif config__use_protection = 1 and not warmode and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
+                    elseif config__use_protection = 1 and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
                         if insysmsg "Your concentration is disturbed, thus ruining thy spell."
                             # consumed, nothing else to do
                         endif

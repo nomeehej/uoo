@@ -467,14 +467,14 @@ Tracking 규칙은 [Combat](../mechanics/combat.md#05) 05절, Hunting 판정의 
 
 - [combat/pvp.razor](https://github.com/minu-ha/uoo/blob/master/script/combat/pvp.razor)는 `config__use_magery = 1`로
   공통 [PvP Loop](../loops/pvp.md)의 자기 마법 사용
-- 무기 교체가 필요 없으면 [recipe/pvp-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/pvp-recipe.razor)에서
-  `fight/weapon-swap` 줄을 빼고 재조립([Modules](../scripting/modules.md#07.B) 07.B절). 기능별로 켜고 끔, 템플릿 프리셋 없음
+- 무기 복구가 필요 없으면 [recipe/pvp-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/pvp-recipe.razor)에서
+  `fight/remember-hands`, `fight/rearm` 블록과 그 설정을 빼고 재조립([Modules](../scripting/modules.md#07.B) 07.B절). 기능별로 켜고 끔, 템플릿 프리셋 없음
 - PK를 만나면 F1을 끄고 이것을 켬. 템플릿별 예전 PvP 파일은 삭제 → F4를 Razor에서
   `Play Script: combat\pvp`로 재연결([Hotkeys](../game/hotkeys.md#04) 04절)
-- 이 템플릿은 붕대와 무기 옵션을 끔. 공통 레시피가 무기 교체를 기본으로 켜 두므로 직접 끔
+- 이 템플릿은 붕대와 무기 옵션을 끔. 공통 레시피가 무기 복구를 기본으로 켜 두므로 직접 끔
 - 자동과 수동의 구분, 세부 스위치와 타이머, 손으로 든 커서를 지키는 조건은 공통 문서 [PvP Loop](../loops/pvp.md)이 정본
 - 2026-10-05 상대 탐색, Q 대상 캐시, 자동 TK, Explosion에서 EB로 잇기, 소환수 공격 제거
-- TK, 공격 주문, 폭발 포션, 소환수 명령은 사용자가 시전하고 타겟. 상대의 색, 거리, 사망은 루프의 실행 조건이 아님.
+- 상대 TK, 공격 주문, 폭발 포션, 소환수 명령은 사용자가 시전하고 타겟. 시작 자기 TK는 공통 루프 설계대로. 상대의 색, 거리, 사망은 루프의 실행 조건이 아님.
   Q는 사용자가 손으로 Last Target을 고르는 데만
 - 직접 serial을 쓰던 이전 버전에서 alt TK와, Explosion 뒤 EB 잇기 동작 확인(인게임 확인됨 2026-10-04).
   결과는 [Razor](../scripting/razor.md#03) 03절의 진단 근거

@@ -63,11 +63,11 @@ order: 30
 | `module/base.razor` | 모든 루프와 루틴의 뼈대 | 공용 설정, 표준 대기, 경고 간격, 블록 사이 신호, 구조적 PvP 정지, 시작 4줄, 패스 끝 대기(06절) |
 | `module/recovery/` | 살아남기 | `cure`(마비면 파우치, 독이면 포션이나 에이전트), `heal`, `bandage`, `light-heal`, `refresh`, `heal-first`(루틴 시작에 먼저 힐) |
 | `module/magery/` | 공격 주문과 시약 | `reagents`(모든 마법 블록이 읽는 시약 표시와 서클별 마나), `rotation`(Mana Drain과 Curse, Grimoire 프록 넷, 그 사이 Energy Bolt), `flamestrike`(aspect 발동용) |
-| `module/buff/` | 버프 아이콘 유지 | `spells`(Reactive Armor, Magic Reflection, 설정에 따라 Protection, Bless, Arch Protection, Spell Siphon용 자기 Magic Arrow), `potions`(Strength, Agility, Magic Resist), `food`(Food Satisfaction), `mushroom`(Magic Mushroom 먹기와 Create Food) |
+| `module/buff/` | 버프와 시작 방어 | `self-telekinesis`(시작 자기 TK), `spells`(Reactive Armor, Magic Reflection, 설정에 따라 Protection, Bless, Arch Protection, Spell Siphon용 자기 Magic Arrow), `potions`(Strength, Agility, Magic Resist), `food`(Food Satisfaction), `mushroom`(Magic Mushroom 먹기와 Create Food) |
 | `module/bard/` | 바드 스킬 | `instrument`(악기 찾기와 점검), `disco`(대상마다 한 번, 설정에 따라 Virtuoso가 빠지면 다시), `peace`, `provo-picks`(별도 후보 입력), `provo`(등록 후보 가운데 풀린 둘씩 서로에게 프로보), `song`(적이 기억돼 있지 않은 이동 중 노래 셋을 차례로) |
 | `module/necro/` | 네크로 핫바와 소환수 | `symbols`(핫바 열어 두기, Unholy Symbol 수 읽기), `summon-names`(소환수 이름 바꾸기), `resummon`(Vengeful Spirit 뒤 빠진 소환수 재소환, 마나가 낮으면 Wither, 오래된 소환수 교체), `burst`(Blood Oath, Corpse Skin, Evil Omen), `poison-strike`, `vampiric-embrace` |
 | `module/tamer/` | 펫 스킬 | `herding`(목동 지팡이), `vet-kit`(나와 펫에게 수의사 키트) |
-| `module/fight/` | 무기 전투 보조 | `target`(기억한 적), `weapon-swap`(pvp 무기 슬롯), `rearm`(들고 있던 무기를 레이어마다 기억, 손이 비면 다시 들기), `sword-codex`, `parry-codex`, `archery-codex`(자세와 피니셔, 고른 적 수로 전환), `weapon-ability`(Swords나 Archery 코덱스의 능력, 사거리 설정) |
+| `module/fight/` | 무기 전투 보조 | `target`(기억한 적), `weapon-swap`(스윙 바별 무기 슬롯), `remember-hands`(주문 전에 현재 손 장비 기록), `rearm`(기억한 장비 복구), `sword-codex`, `parry-codex`, `archery-codex`(자세와 피니셔, 고른 적 수로 전환), `weapon-ability`(Swords나 Archery 코덱스의 능력, 사거리 설정) |
 | `module/gather/` | 채집 | `lumberjacking`(Smart Harvest), `skinning`(칼질) |
 | `module/pack/` | 무게, 보급 파우치와 루팅 백 | `gold-drop`, `leather`(가죽 → 루팅 백), `lumber`(Logs → Boards → 루팅 백), `scavenger`(스캐빈저 캐시 비우기), `pouches`(보급 파우치와 루팅 백 지정), `sorting`(백팩 아래쪽 더미와 트랩 파우치, 파우치 안 정리) |
 | `module/escape/` | PK 피하기 | `tracking`(헌트 필터 설정과 Hunting 점검), `recall`(자동 리콜 한 번) |
@@ -404,7 +404,7 @@ order: 30
 
 - 기존 블록 사용: 레시피 `# @ blocks`의 도는 순서 자리에 `# @ use <폴더>/<이름>` 한 줄. 설정은 기본값. 회복 블록은 회복 그룹 안(03절)
   - 필요한 모듈이 빠지면 조립기가 이름을 알려 줌
-- 블록 끄기: 그 줄 삭제. 다른 블록이 그 모듈의 이름을 쓰면 조립기가 알려 줌
+- 블록 끄기: 그 블록과 그 설정을 레시피에서 삭제. 다른 블록이 그 모듈의 이름을 쓰면 조립기가 알려 줌
 - **모듈에 없는 동작은 결과물에 손으로 넣지 않음.** 다음 조립이 덮어씀
   - `node util/build-scripts.mjs --new-module <폴더>/<이름>`으로 빈 틀 생성 → 채움 → 레시피에 `# @ use`
   - 폴더는 블록이 맡는 일로(02절). 맞는 폴더가 없으면 새 관심사 → 폴더 먼저 생성

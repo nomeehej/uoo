@@ -441,33 +441,30 @@ Tracking 주문 보조의 결합 순서를 단정하지 않으려고 첫 표에�
 
 ### <a id="08.A"></a>08.A 수동 공격, 자동 회복과 장착
 
-- 수동: Q 대상 선택, Tab, 근접 공격 요청, Hamstring, MA와 Harm, TK, 폭발 포션, Teleport, Rope
+- 수동: Q 대상 선택, Tab, 근접 공격 요청, Hamstring, MA와 Harm, 상대 TK, 폭발 포션, Teleport, Rope
 - 없음: 상대 noto 필터, 거리 검색, 사망 조회, 공격 재요청. 서버에 이미 남은 자동공격과 반격은 사용자 제어
 - 자동: 자기 파우치, 큐어, 힐, Refresh, Strength와 Agility 포션, Healing이 있으면 붕대, 큰 피해의 GH, 해독과 붕대 부족 때의 Heal
-- 무기 옵션 켬 → 시전과 커서가 없을 때 스윙 바를 읽고 Great Axe나 Norse 자동 장착
-- 준비된 무기와 빈손 재장착 순서는 공통 문서 [PvP Loop](../loops/pvp.md). 무기를 들어도 새 공격 요청 없음
+- 시작 자기 TK, 방어 버프, 기억한 무기 복구는 공통 문서 [PvP Loop](../loops/pvp.md). Great Axe와 Norse Axe 사이 선택은 수동
 - Warmode나 상대 선택과 무관하게 자기 상태만 확인
-- 평소엔 수동 시전과 커서를 기다림, 준비된 긴급 회복은 수동 주문을 끊고 먼저 사용
+- 수동 시전과 커서는 긴급 회복 때도 기다림
 - HP 가득일 때 다음 붕대 준비용 자기 MA는 수동으로 남김. 기준과 입력 경합의 한계는 공통 문서 [PvP Loop](../loops/pvp.md)
 
 ### <a id="08.B"></a>08.B 독립 설정
 
-- 마법과 붕대: `config__use_magery`, `config__use_bandages` 기본 1. 무기 교체: 레시피의 `fight/weapon-swap` 블록
+- 마법과 붕대: `config__use_magery`, `config__use_bandages` 기본 1. 무기 기록과 복구: `fight/remember-hands`, `fight/rearm` 블록
 - 지금 pvp에는 셋 모두 포함. Magery 없는 템플릿은 Magery만 0
-- 회복 마나와 자원 절약 → RA, Reflect, Resist 포션 중 불필요한 옵션을 각각 0
+- 회복 마나와 자원 절약 → RA, Reflect, Protection, Resist 포션 중 불필요한 옵션을 각각 0
 - 시폰용 자기 MA와 버섯 자동화는 안 씀. pvp 레시피에 `buff/mushroom` 없음, `buff/spells`의 `use_spell_siphon`은 기본 0 그대로
 - 한 기능을 바꿔도 다른 기능의 설정은 그대로
-- 이 도끼 조합: `swing 4`에 Great Axe, `swing 1`에 Norse Axe
-- 바 시간은 지금 STA로 낸 [03절 계산](#03)과 비교해 쓰는 클라이언트에서 조정
-- 빠른 스윙 때문에 큰 한 방의 시점이 밀릴 수 있음. 그 시점을 수동으로 고르려면 무기 옵션 끔
-- 슬롯 ID, 충돌 장비 해제, 회복 임계값, 상태, 타이머의 정본은 공통 문서 [PvP Loop](../loops/pvp.md)
+- 빠른 스윙 때문에 큰 한 방의 시점이 밀릴 수 있음([03절](#03)). 무기 선택과 공격 요청의 시점은 수동으로 결정
+- 재장착 조건, 회복 임계값, 상태, 타이머의 정본은 공통 문서 [PvP Loop](../loops/pvp.md)
 
 ### <a id="08.C"></a>08.C 인게임 반영과 확인
 
 - `recipe/pvp-recipe.razor`의 설정 수정 → `pnpm build`로 루프 재생성. 생성된 루프의 CONFIG 직접 수정 금지
-- Stop, Reload all scripts, `pvp` Play 순서로 `PvP sustain v9 loaded` 확인
-- Q로 alt를 골라도 자동 공격이나 자동 TK 없음. 피해와 독에는 자기 회복 동작
-- 지금 본문(v9)은 아직 인게임에서 확인되지 않았다
+- Stop, Reload all scripts, `pvp` Play 순서로 `PvP sustain v10 loaded` 확인
+- Q로 alt를 골라도 자동 공격이나 상대 TK 없음. 시작 자기 TK와 피해, 독에 대한 회복은 공통 루프 설계대로
+- 지금 본문(v10)은 아직 인게임에서 확인되지 않았다
 - 수동 프리캐스트, 회복, 무기 교체, 옵션, 정지 조건별 예상 알림과 실패 판정: [Open items](../questions/open-items.md#10) 10절
 - 외부 수정 뒤 기존 핫키로 실행하면 [Workflow](../working/workflow.md#04.A) 04.A절대로 재시작해 옛 캐시 정리
 - 게임 종료 뒤 `git status --short`로 덮어쓰기 확인

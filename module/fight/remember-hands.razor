@@ -1,0 +1,49 @@
+# ----------------------------------------------------------------------------------------
+# Records the current hand pair before another block can cast and drop its weapon.
+# Use before every cast block, with fight/rearm and rearm_follow_hands 1. This only reads
+# equipment and updates memory, so an existing manual cast, cursor or queue is kept.
+# Empty hands do not replace the memory needed after a cast or disarm.
+# ----------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------
+# @ loop
+# ----------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
+    # REMEMBER HANDS
+    #
+    # A manual weapon change must be seen before a buff drops the new weapon. Read both
+    # layers before replacing the remembered pair. Only a new nonempty item adopts the
+    # pair. An unchanged shield alone must not erase a weapon dropped by a cast.
+    # REARM checks the input guards again later, before requesting any equip.
+    # ------------------------------------------------------------------------------------
+    if config__rearm_follow_hands = 1
+        if not lhandempty or not rhandempty
+            @setvar! var__rearm_seen_left 0
+            @setvar! var__rearm_seen_right 0
+
+            if findlayer self lefthand as alias__remember_left
+                @setvar! var__rearm_seen_left alias__remember_left
+            endif
+
+            if findlayer self righthand as alias__remember_right
+                @setvar! var__rearm_seen_right alias__remember_right
+            endif
+
+            if var__rearm_seen_left != 0 and var__rearm_left != var__rearm_seen_left
+                @setvar! var__rearm_left var__rearm_seen_left
+                @setvar! var__rearm_right var__rearm_seen_right
+
+                if config__sysmsg = 1
+                    sysmsg "Rearm: current hands remembered, left={{var__rearm_left}}, right={{var__rearm_right}}." 88
+                endif
+            elseif var__rearm_seen_right != 0 and var__rearm_right != var__rearm_seen_right
+                @setvar! var__rearm_left var__rearm_seen_left
+                @setvar! var__rearm_right var__rearm_seen_right
+
+                if config__sysmsg = 1
+                    sysmsg "Rearm: current hands remembered, left={{var__rearm_left}}, right={{var__rearm_right}}." 88
+                endif
+            endif
+        endif
+    endif

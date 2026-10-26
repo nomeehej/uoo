@@ -22,9 +22,9 @@
 #      Minimum current mana to start Magic Reflection.
 #
 #   config__use_protection
-#      1 keeps Protection on yourself, in a fight too. Warmode off, since it may open a
-#      cursor like Bless. Arch Protection shows the same Protection icon, so one of the
-#      two is enough.
+#      1 keeps Protection on yourself, in a fight too. Follows warmode_is_manual, like
+#      Reactive Armor and Magic Reflection. Arch Protection shows the same Protection
+#      icon, so one of the two is enough.
 #
 #   config__mana_protection
 #      Minimum current mana to start Protection.
@@ -81,8 +81,8 @@
     # the next pass can heal. With config__buff_when_poisoned 0 poison holds them back and
     # cuts them too, so the cure goes first. var__hold_casts lets another block keep the
     # cast window (a latched Recall). config__walk_guard and config__warmode_is_manual
-    # apply as for the heal agents, and the cursor casts, Protection with them, also stand
-    # down in warmode.
+    # apply as for the heal agents. Bless, Arch Protection and the Spell Siphon arrow
+    # also stand down in warmode.
     #
     # The reflect bar is the server's recast lock after Reflect is used up. Bless shows
     # Strength, Agility and Cunning, and only Cunning is Bless alone, since the stat potions
@@ -154,7 +154,7 @@
 
                             wait wait__poll
                         endfor
-                    elseif config__use_protection = 1 and not warmode and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
+                    elseif config__use_protection = 1 and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
                         # A disturb line an earlier cast left is read off first, so the poll sees only its own.
                         if insysmsg "Your concentration is disturbed, thus ruining thy spell."
                             # consumed, nothing else to do

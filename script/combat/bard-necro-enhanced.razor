@@ -2842,7 +2842,7 @@ while not dead
 
                                 wait wait__poll
                             endfor
-                        elseif config__use_protection = 1 and not warmode and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
+                        elseif config__use_protection = 1 and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
                             if insysmsg "Your concentration is disturbed, thus ruining thy spell."
                                 # consumed, nothing else to do
                             endif

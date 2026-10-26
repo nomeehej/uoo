@@ -1,0 +1,71 @@
+# ----------------------------------------------------------------------------------------
+# Tries defensive Telekinesis on yourself once in the first free cast window after Play.
+# Run before the reagent sweep and other casts. Movement and warmode do not delay it.
+# Reagents and circle: wiki.uooutlands.com/Magery, checked 2026-10-26.
+# The teleki, me bar may come from another caster. It means skip, not outgoing success.
+#
+# @ hotkeys Cancel Current Target
+# ----------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------
+# @ state
+#
+#   var__self_telekinesis_pending
+#      1 after each Play until an active incoming TK bar is seen or a cast is requested.
+#      A held cursor, casting, the item queue, hiding, paralysis or missing resources
+#      leaves it pending. A request is not proof of application and is not repeated.
+# ----------------------------------------------------------------------------------------
+@setvar! var__self_telekinesis_pending 1
+
+
+# ----------------------------------------------------------------------------------------
+# @ loop
+# ----------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------
+    # OPENING TELEKINESIS
+    #
+    # This check runs before every other action until its one request goes out. Check
+    # just the two needed reagents here, so the full reagent sweep does not delay it.
+    # Never take a cast or cursor already in progress. Drain an old disturb line before
+    # polling our own cursor. The fork's TK cursor flags are not established, so accept
+    # a harmful or neutral cursor after this cast. Existing cursors are left alone.
+    # ------------------------------------------------------------------------------------
+    if var__self_telekinesis_pending = 1 and config__use_magery = 1
+        if cooldown "teleki, me" > 0
+            @setvar! var__self_telekinesis_pending 0
+        elseif not paralyzed and not hidden and not queued and not casting and not targetexists and mana >= config__mana_3rd
+            if findtype 3963 self and findtype 3974 self and not queued and not casting and not targetexists
+                if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                    # consumed, nothing else to do
+                endif
+
+                @setvar! var__self_telekinesis_pending 0
+                cast "Telekinesis"
+                if config__sysmsg = 1
+                    sysmsg "Opening: Telekinesis on self requested." 88
+                endif
+                wait wait__short
+
+                for 60
+                    if targetexists
+                        break
+                    endif
+
+                    if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                        break
+                    endif
+
+                    wait wait__poll
+                endfor
+
+                if targetexists "harmful" or targetexists "neutral"
+                    target self
+                    wait wait__cast
+                elseif targetexists
+                    hotkey "Cancel Current Target"
+                    wait wait__short
+                endif
+            endif
+        endif
+    endif

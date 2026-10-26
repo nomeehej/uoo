@@ -7,12 +7,12 @@
 # @ header
 # ========================================================================================
 
-# Shared field PvP self-sustain: instant items first, healing agents, PvP buffs kept up, swing based weapon swap.
-# Needs: the heal pot and reflect bars, and a swing N bar (WeaponSwing type) for each enabled weapon slot.
-# Turn it on when a PvP fight starts. All offense stays manual: attack spells, TK, explosion potions,
+# Shared field PvP self-sustain: opening self TK, recovery, RA, Reflect, Protection and remembered hands.
+# Needs: the heal pot, reflect and teleki, me bars. Hold the weapon to remember before Play.
+# Turn it on when a PvP fight starts. All offense stays manual: attack spells, offensive TK, explosion potions,
 # pets, targeting and melee requests. The script never cuts a manual cast or cursor.
 # No start 4 lines (conventions 02.D, config__clear_at_start 0): a manual cursor or cast held at Play is kept.
-# Arm/Dress must remove conflicting equipment.
+# Each hand is remembered before the opening cast. Re-arm only without casting, a cursor or an item queue.
 # Design: content/public/loops/pvp.md. In-game checks: content/public/questions/open-items.md part 10.
 #
 # Shape
@@ -29,7 +29,8 @@
 #   No walk guard (config__walk_guard 0): in a fight there is no better moment to wait for.
 #
 # Cost (content/public/scripting/razor.md part 6)
-#   findtype is the most expensive statement. Reagents are read in REAGENTS every
+#   findtype is the most expensive statement. Opening TK checks just its two reagents.
+#   Other reagents are read in REAGENTS every
 #   interval__reagents and right after a "More reagents are needed" refusal, and the cast
 #   blocks read the flags. Potions are looked up only inside a block that already needs one.
 
@@ -64,6 +65,18 @@
 # ----------------------------------------------------------------------------------------
 @setvar! config__clear_at_start 0
 @setvar! config__walk_guard 0
+
+# ----------------------------------------------------------------------------------------
+# @ use fight/remember-hands
+#
+#   Records the current hand pair before another block can cast and drop its weapon.
+# ----------------------------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------------------
+# @ use buff/self-telekinesis
+#
+#   Tries defensive Telekinesis on yourself once in the first free cast window after Play.
+# ----------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------
 # @ use magery/reagents
@@ -127,17 +140,56 @@
 #
 #   Reactive Armor, then Magic Reflection, whenever one is missing.
 #
+#   use_reactive_armor (default 1, the same value)
+#      1 keeps Reactive Armor up.
+#
+#   use_magic_reflect (default 1, the same value)
+#      1 keeps Magic Reflection up.
+#
+#   use_protection (default 0)
+#      1 keeps Protection on yourself, in a fight too. Follows warmode_is_manual, like
+#      Reactive Armor and Magic Reflection. Arch Protection shows the same Protection
+#      icon, so one of the two is enough.
+#      > Keep the three defensive buffs up during a field fight, including in warmode.
+#
+#   use_bless (default 0, the same value)
+#      1 keeps Bless on yourself, and Arch Protection on you and the followers around you,
+#      while no enemy is engaged (var__fighting 0) and warmode is off. Both open a cursor
+#      answered with yourself, Bless a beneficial one and Arch Protection a neutral one, so
+#      they never take a cast from a fight.
+#
+#   use_arch_protection (default 0, the same value)
+#      1 keeps Bless on yourself, and Arch Protection on you and the followers around you,
+#      while no enemy is engaged (var__fighting 0) and warmode is off. Both open a cursor
+#      answered with yourself, Bless a beneficial one and Arch Protection a neutral one, so
+#      they never take a cast from a fight.
+#
 #   buff_max_loss (default 35, the same value)
 #      Missing hit points at which buffs are not started, and cut mid cast.
 #      > Keep this equal to config__emergency_hits.
 # ----------------------------------------------------------------------------------------
+@setvar! config__use_reactive_armor 1
+@setvar! config__use_magic_reflect 1
+@setvar! config__use_protection 1
+@setvar! config__use_bless 0
+@setvar! config__use_arch_protection 0
 @setvar! config__buff_max_loss 35
 
 # ----------------------------------------------------------------------------------------
-# @ use fight/weapon-swap
+# @ use fight/rearm
 #
-#   Four weapon slots, each on its own swing bar. Arms the slot whose swing is ready.
+#   Re-arms what each hand held, out of the backpack, when a cast or a disarm empties it.
+#
+#   rearm_follow_hands (default 0)
+#      What to remember when equipment changes.
+#        0  remember each hand independently
+#        1  adopt both current hands at Play and when a new held item is seen. Forget an
+#           empty opposite hand in that case. If both hands are empty, keep the memory
+#           so a cast or disarm can still be repaired
+#      Also read by fight/remember-hands.
+#      > Follow the currently chosen hands, including a manual one-handed or two-handed swap.
 # ----------------------------------------------------------------------------------------
+@setvar! config__rearm_follow_hands 1
 
 
 # ========================================================================================
@@ -154,5 +206,5 @@
 
 overhead "[ pvp, on ]" 290
 if config__sysmsg = 1
-    sysmsg "PvP sustain v9 loaded. Manual offense, recovery first." 88
+    sysmsg "PvP sustain v10 loaded. Opening self TK, defensive buffs, remembered hands." 88
 endif

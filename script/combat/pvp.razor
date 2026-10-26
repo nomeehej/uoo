@@ -1,9 +1,9 @@
-# Shared field PvP self-sustain: instant items first, healing agents, PvP buffs kept up, swing based weapon swap.
-# Needs: the heal pot and reflect bars, and a swing N bar (WeaponSwing type) for each enabled weapon slot.
-# Turn it on when a PvP fight starts. All offense stays manual: attack spells, TK, explosion potions,
+# Shared field PvP self-sustain: opening self TK, recovery, RA, Reflect, Protection and remembered hands.
+# Needs: the heal pot, reflect and teleki, me bars. Hold the weapon to remember before Play.
+# Turn it on when a PvP fight starts. All offense stays manual: attack spells, offensive TK, explosion potions,
 # pets, targeting and melee requests. The script never cuts a manual cast or cursor.
 # No start 4 lines (conventions 02.D, config__clear_at_start 0): a manual cursor or cast held at Play is kept.
-# Arm/Dress must remove conflicting equipment.
+# Each hand is remembered before the opening cast. Re-arm only without casting, a cursor or an item queue.
 # Design: content/public/loops/pvp.md. In-game checks: content/public/questions/open-items.md part 10.
 #
 # Shape
@@ -20,11 +20,12 @@
 #   No walk guard (config__walk_guard 0): in a fight there is no better moment to wait for.
 #
 # Cost (content/public/scripting/razor.md part 6)
-#   findtype is the most expensive statement. Reagents are read in REAGENTS every
+#   findtype is the most expensive statement. Opening TK checks just its two reagents.
+#   Other reagents are read in REAGENTS every
 #   interval__reagents and right after a "More reagents are needed" refusal, and the cast
 #   blocks read the flags. Potions are looked up only inside a block that already needs one.
-# Hotkeys: Drink Cure, > Smart Heal/Cure Self, Drink Heal, > Greater Heal/Cure Self,
-#          Cancel Current Target, Bandage Self, Drink Refresh, Drink Strength, Drink Agility,
+# Hotkeys: Cancel Current Target, Drink Cure, > Smart Heal/Cure Self, Drink Heal,
+#          > Greater Heal/Cure Self, Bandage Self, Drink Refresh, Drink Strength, Drink Agility,
 #          Drink Magic Resist, > Interrupt, Target Self.
 # Generated from recipe/pvp-recipe.razor by util/build-scripts.mjs. Edit module/ and recipe/, not this file.
 
@@ -102,7 +103,7 @@
 @setvar! config__use_magic_reflect 1
 @setvar! config__mana_reactive_armor 4
 @setvar! config__mana_magic_reflect 14
-@setvar! config__use_protection 0
+@setvar! config__use_protection 1
 @setvar! config__mana_protection 6
 @setvar! config__use_bless 0
 @setvar! config__use_arch_protection 0
@@ -115,12 +116,10 @@
 
 
 # ----------------------------------------------------------------------------------------
-# module/fight/weapon-swap.razor
+# module/fight/rearm.razor
 # ----------------------------------------------------------------------------------------
-@setvar! config__weapon_1_graphic 31128
-@setvar! config__weapon_2_graphic 0
-@setvar! config__weapon_3_graphic 0
-@setvar! config__weapon_4_graphic 31190
+@setvar! config__rearm_graphic 0
+@setvar! config__rearm_follow_hands 1
 
 
 # ========================================================================================
@@ -154,6 +153,12 @@
 # ----------------------------------------------------------------------------------------
 @setvar! interval__stat_potion 5000
 @setvar! interval__potion_check 5000
+
+
+# ----------------------------------------------------------------------------------------
+# module/fight/rearm.razor
+# ----------------------------------------------------------------------------------------
+@setvar! interval__equip_retry 2000
 
 
 # ========================================================================================
@@ -197,6 +202,20 @@ endif
 settimer "timer__potion_check" interval__potion_check
 
 
+# ----------------------------------------------------------------------------------------
+# module/fight/rearm.razor
+# ----------------------------------------------------------------------------------------
+if not timerexists "timer__equip"
+    createtimer "timer__equip"
+endif
+settimer "timer__equip" interval__equip_retry
+
+if not timerexists "timer__equip_sent"
+    createtimer "timer__equip_sent"
+endif
+settimer "timer__equip_sent" interval__equip_retry
+
+
 # ========================================================================================
 # STATE
 # ========================================================================================
@@ -208,6 +227,12 @@ settimer "timer__potion_check" interval__potion_check
 @setvar! var__hold_casts 0
 @setvar! var__hold_gathering 0
 @setvar! var__hold_symbols 0
+
+
+# ----------------------------------------------------------------------------------------
+# module/buff/self-telekinesis.razor
+# ----------------------------------------------------------------------------------------
+@setvar! var__self_telekinesis_pending 1
 
 
 # ----------------------------------------------------------------------------------------
@@ -255,16 +280,19 @@ settimer "timer__potion_check" interval__potion_check
 
 
 # ----------------------------------------------------------------------------------------
-# module/fight/weapon-swap.razor
+# module/fight/rearm.razor
 # ----------------------------------------------------------------------------------------
-if not varexist var__weapon_armed_serial
-    @setvar! var__weapon_armed_serial 0
+if not varexist var__rearm_left
+    @setvar! var__rearm_left 0
 endif
-if not varexist var__weapon_armed_graphic
-    @setvar! var__weapon_armed_graphic 0
+if not varexist var__rearm_right
+    @setvar! var__rearm_right 0
 endif
-@setvar! var__weapon_want 0
-@setvar! var__weapon_held 0
+@setvar! var__rearm_pending 0
+@setvar! var__rearm_sent 0
+@setvar! var__rearm_due 0
+@setvar! var__rearm_seen_left 0
+@setvar! var__rearm_seen_right 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -290,11 +318,38 @@ endif
 
 
 # ----------------------------------------------------------------------------------------
+# module/fight/rearm.razor
+# ----------------------------------------------------------------------------------------
+if config__rearm_follow_hands = 1
+    if not lhandempty or not rhandempty
+        @setvar! var__rearm_left 0
+        @setvar! var__rearm_right 0
+    endif
+endif
+
+if findlayer self lefthand as alias__rearm_left
+    @setvar! var__rearm_left alias__rearm_left
+
+    if config__sysmsg = 1
+        sysmsg "Rearm: two-handed layer remembered, serial={{alias__rearm_left}}." 88
+    endif
+endif
+
+if findlayer self righthand as alias__rearm_right
+    @setvar! var__rearm_right alias__rearm_right
+
+    if config__sysmsg = 1
+        sysmsg "Rearm: one-handed layer remembered, serial={{alias__rearm_right}}." 88
+    endif
+endif
+
+
+# ----------------------------------------------------------------------------------------
 # recipe/pvp-recipe.razor
 # ----------------------------------------------------------------------------------------
 overhead "[ pvp, on ]" 290
 if config__sysmsg = 1
-    sysmsg "PvP sustain v9 loaded. Manual offense, recovery first." 88
+    sysmsg "PvP sustain v10 loaded. Opening self TK, defensive buffs, remembered hands." 88
 endif
 
 
@@ -314,6 +369,82 @@ while not dead
         while queued or casting
             wait wait__short
         endwhile
+    endif
+
+    # ------------------------------------------------------------------------------------
+    # REMEMBER HANDS                                     module/fight/remember-hands.razor
+    # ------------------------------------------------------------------------------------
+    if config__rearm_follow_hands = 1
+        if not lhandempty or not rhandempty
+            @setvar! var__rearm_seen_left 0
+            @setvar! var__rearm_seen_right 0
+
+            if findlayer self lefthand as alias__remember_left
+                @setvar! var__rearm_seen_left alias__remember_left
+            endif
+
+            if findlayer self righthand as alias__remember_right
+                @setvar! var__rearm_seen_right alias__remember_right
+            endif
+
+            if var__rearm_seen_left != 0 and var__rearm_left != var__rearm_seen_left
+                @setvar! var__rearm_left var__rearm_seen_left
+                @setvar! var__rearm_right var__rearm_seen_right
+
+                if config__sysmsg = 1
+                    sysmsg "Rearm: current hands remembered, left={{var__rearm_left}}, right={{var__rearm_right}}." 88
+                endif
+            elseif var__rearm_seen_right != 0 and var__rearm_right != var__rearm_seen_right
+                @setvar! var__rearm_left var__rearm_seen_left
+                @setvar! var__rearm_right var__rearm_seen_right
+
+                if config__sysmsg = 1
+                    sysmsg "Rearm: current hands remembered, left={{var__rearm_left}}, right={{var__rearm_right}}." 88
+                endif
+            endif
+        endif
+    endif
+
+    # ------------------------------------------------------------------------------------
+    # OPENING TELEKINESIS                               module/buff/self-telekinesis.razor
+    # ------------------------------------------------------------------------------------
+    if var__self_telekinesis_pending = 1 and config__use_magery = 1
+        if cooldown "teleki, me" > 0
+            @setvar! var__self_telekinesis_pending 0
+        elseif not paralyzed and not hidden and not queued and not casting and not targetexists and mana >= config__mana_3rd
+            if findtype 3963 self and findtype 3974 self and not queued and not casting and not targetexists
+                if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                    # consumed, nothing else to do
+                endif
+
+                @setvar! var__self_telekinesis_pending 0
+                cast "Telekinesis"
+                if config__sysmsg = 1
+                    sysmsg "Opening: Telekinesis on self requested." 88
+                endif
+                wait wait__short
+
+                for 60
+                    if targetexists
+                        break
+                    endif
+
+                    if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                        break
+                    endif
+
+                    wait wait__poll
+                endfor
+
+                if targetexists "harmful" or targetexists "neutral"
+                    target self
+                    wait wait__cast
+                elseif targetexists
+                    hotkey "Cancel Current Target"
+                    wait wait__short
+                endif
+            endif
+        endif
     endif
 
     # ------------------------------------------------------------------------------------
@@ -730,7 +861,7 @@ while not dead
 
                             wait wait__poll
                         endfor
-                    elseif config__use_protection = 1 and not warmode and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
+                    elseif config__use_protection = 1 and var__regs_protection = 1 and mana >= config__mana_protection and not findbuff "Protection"
                         if insysmsg "Your concentration is disturbed, thus ruining thy spell."
                             # consumed, nothing else to do
                         endif
@@ -914,69 +1045,129 @@ while not dead
     endif
 
     # ------------------------------------------------------------------------------------
-    # WEAPON                                                module/fight/weapon-swap.razor
+    # REARM                                                       module/fight/rearm.razor
     # ------------------------------------------------------------------------------------
-    if not paralyzed and not hidden and not queued and not casting and not targetexists
-        @setvar! var__weapon_want 0
+    @setvar! var__rearm_due 0
 
-        if config__weapon_4_graphic != 0 and cooldown "swing 4" = 0
-            @setvar! var__weapon_want config__weapon_4_graphic
-        elseif config__weapon_3_graphic != 0 and cooldown "swing 3" = 0
-            @setvar! var__weapon_want config__weapon_3_graphic
-        elseif config__weapon_2_graphic != 0 and cooldown "swing 2" = 0
-            @setvar! var__weapon_want config__weapon_2_graphic
-        elseif config__weapon_1_graphic != 0 and cooldown "swing 1" = 0
-            @setvar! var__weapon_want config__weapon_1_graphic
-        elseif lhandempty and rhandempty
-            if config__weapon_1_graphic != 0
-                @setvar! var__weapon_want config__weapon_1_graphic
-            elseif config__weapon_2_graphic != 0
-                @setvar! var__weapon_want config__weapon_2_graphic
-            elseif config__weapon_3_graphic != 0
-                @setvar! var__weapon_want config__weapon_3_graphic
-            elseif config__weapon_4_graphic != 0
-                @setvar! var__weapon_want config__weapon_4_graphic
+    if timer "timer__equip" >= interval__equip_retry
+        @setvar! var__rearm_due 1
+    elseif var__rearm_left != 0 and lhandempty
+        @setvar! var__rearm_due 1
+    elseif var__rearm_right != 0 and rhandempty
+        @setvar! var__rearm_due 1
+    endif
+
+    if var__rearm_due = 1
+        if not hidden and not queued and not casting and not targetexists
+            settimer "timer__equip" 0
+            @setvar! var__rearm_sent 0
+            @setvar! var__rearm_seen_left 0
+            @setvar! var__rearm_seen_right 0
+
+            if findlayer self lefthand as alias__rearm_left
+                @setvar! var__rearm_seen_left alias__rearm_left
             endif
-        endif
 
-        if var__weapon_want != 0
-            if var__weapon_armed_graphic != var__weapon_want
-                @setvar! var__weapon_armed_graphic var__weapon_want
-                @setvar! var__weapon_armed_serial 0
+            if findlayer self righthand as alias__rearm_right
+                @setvar! var__rearm_seen_right alias__rearm_right
+            endif
 
-                if findtype var__weapon_want self as alias__own_weapon
-                    @setvar! var__weapon_armed_serial alias__own_weapon
+            if config__rearm_follow_hands = 1
+                if var__rearm_seen_left != 0 and var__rearm_seen_left != var__rearm_left
+                    @setvar! var__rearm_left 0
+                    @setvar! var__rearm_right 0
+                elseif var__rearm_seen_right != 0 and var__rearm_seen_right != var__rearm_right
+                    @setvar! var__rearm_left 0
+                    @setvar! var__rearm_right 0
                 endif
             endif
 
-            @setvar! var__weapon_held 0
+            if var__rearm_seen_left != 0
+                @setvar! var__rearm_pending 0
 
-            if findlayer self lefthand as alias__held_left
-                if alias__held_left = var__weapon_armed_serial
-                    @setvar! var__weapon_held 1
-                endif
-            endif
+                if var__rearm_left != var__rearm_seen_left
+                    @setvar! var__rearm_left var__rearm_seen_left
 
-            if findlayer self righthand as alias__held_right
-                if alias__held_right = var__weapon_armed_serial
-                    @setvar! var__weapon_held 1
-                endif
-            endif
-
-            if var__weapon_held = 0
-                if find var__weapon_armed_serial backpack
-                    dress var__weapon_armed_serial
                     if config__sysmsg = 1
-                        sysmsg "PvP weapon: equip requested, graphic={{var__weapon_want}}, serial={{var__weapon_armed_serial}}." 88
+                        sysmsg "Rearm: two-handed layer remembered, serial={{var__rearm_left}}." 88
                     endif
-                    wait wait__short
-                else
-                    @setvar! var__weapon_armed_graphic 0
+                endif
+            endif
 
-                    if lhandempty and rhandempty and timer "timer__message" >= interval__message
-                        overhead "[ weapon, out ]" 254
-                        settimer "timer__message" 0
+            if var__rearm_seen_right != 0
+                @setvar! var__rearm_pending 0
+
+                if var__rearm_right != var__rearm_seen_right
+                    @setvar! var__rearm_right var__rearm_seen_right
+
+                    if config__sysmsg = 1
+                        sysmsg "Rearm: one-handed layer remembered, serial={{var__rearm_right}}." 88
                     endif
+                endif
+            endif
+
+            if var__rearm_seen_left = 0 and var__rearm_left != 0 and timer "timer__equip_sent" >= interval__equip_retry
+                if find var__rearm_left backpack as alias__rearm_packed
+                    if not hidden and not queued and not casting and not targetexists
+                        lift alias__rearm_packed
+                        drop self lefthand
+                        @setvar! var__rearm_sent 1
+                        settimer "timer__equip_sent" 0
+
+                        if config__sysmsg = 1
+                            sysmsg "Rearm: equip requested on the two-handed layer, serial={{alias__rearm_packed}}. The next check reads the hands." 88
+                        endif
+
+                        wait wait__short
+                    endif
+                else
+                    @setvar! var__rearm_left 0
+                endif
+            endif
+
+            if var__rearm_sent = 0 and var__rearm_seen_right = 0 and var__rearm_right != 0 and timer "timer__equip_sent" >= interval__equip_retry
+                if find var__rearm_right backpack as alias__rearm_packed
+                    if not hidden and not queued and not casting and not targetexists
+                        lift alias__rearm_packed
+                        drop self righthand
+                        @setvar! var__rearm_sent 1
+                        settimer "timer__equip_sent" 0
+
+                        if config__sysmsg = 1
+                            sysmsg "Rearm: equip requested on the one-handed layer, serial={{alias__rearm_packed}}. The next check reads the hands." 88
+                        endif
+
+                        wait wait__short
+                    endif
+                else
+                    @setvar! var__rearm_right 0
+                endif
+            endif
+
+            if var__rearm_sent = 0 and config__rearm_graphic != 0 and var__rearm_left = 0 and var__rearm_right = 0 and lhandempty and rhandempty and timer "timer__equip_sent" >= interval__equip_retry
+                if not find var__rearm_pending backpack
+                    @setvar! var__rearm_pending 0
+
+                    if findtype config__rearm_graphic backpack as alias__rearm_pick
+                        @setvar! var__rearm_pending alias__rearm_pick
+                    endif
+                endif
+
+                if find var__rearm_pending backpack as alias__rearm_found
+                    if not hidden and not queued and not casting and not targetexists
+                        lift alias__rearm_found
+                        drop self lefthand
+                        settimer "timer__equip_sent" 0
+
+                        if config__sysmsg = 1
+                            sysmsg "Rearm: graphic {{config__rearm_graphic}} picked from the backpack, serial={{alias__rearm_found}}. The next check reads the hands." 88
+                        endif
+
+                        wait wait__short
+                    endif
+                elseif timer "timer__message" >= interval__message
+                    overhead "[ weapon, out ]" 254
+                    settimer "timer__message" 0
                 endif
             endif
         endif
