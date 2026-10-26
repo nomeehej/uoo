@@ -161,7 +161,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
   - Outlands에서의 실패 원인은 확인되지 않았다 → 벌목은 기존 무기 핫키처럼 `lift` 후 `drop self lefthand`
 - v9: 빈손인데 백팩 도끼 미장착 보고. 인게임 확인됨 2026-10-05
   - `findtype … self`의 실제 반환, 실패한 가드는 기록 없음 → 검색 범위를 원인으로 확정하지 않음
-- v10: [bard-mace의 장착 선례](https://github.com/minu-ha/uoo/blob/master/script/archive/bard-mace.razor)처럼 `lhandempty` 먼저
+- v10: [bard-mace의 장착 선례](https://github.com/nomeehej/uoo/blob/master/script/archive/bard-mace.razor)처럼 `lhandempty` 먼저
   - 캐시 serial 장착 후 `findlayer self lefthand` 결과가 그 serial과 같아야 도구 사용
   - [CE 공식 문서](https://www.razorce.com/guide/expressions/#lhandempty)도 `lhandempty`를 빈손 표현식으로 설명. 이 경로의 실제 장착은 아직 확인되지 않았다
 - [CE UseItemInHand](https://github.com/markdwags/Razor/blob/master/Razor/HotKeys/Misc.cs): 오른손 먼저 사용 → 왼손 Hatchet만 확인하고 일반 손 사용 핫키를 부르면 오른손의 다른 도구 사용 가능
@@ -199,8 +199,8 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 ### <a id="03.A"></a>03.A 대상 조회 진단 핫키
 
 - 용도: 몬스터에서는 되던 조회가 플레이어에서 실패할 때의 단발 진단
-- [debug-target-find](https://github.com/minu-ha/uoo/blob/master/script/debug/debug-target-find.razor): 검색
-- [debug-target-state](https://github.com/minu-ha/uoo/blob/master/script/debug/debug-target-state.razor): 상태, 변수 비교, 시전 전 조건
+- [debug-target-find](https://github.com/nomeehej/uoo/blob/master/script/debug/debug-target-find.razor): 검색
+- [debug-target-state](https://github.com/nomeehej/uoo/blob/master/script/debug/debug-target-state.razor): 상태, 변수 비교, 시전 전 조건
 - 주문, 공격, 소환수 명령은 보내지 않음
 - v1의 alt 검색, NPC 검색, 상태 조회는 인게임 확인됨 2026-10-04
 - 실행별 반환값과 아직 안 한 검사: 아래 결과 표

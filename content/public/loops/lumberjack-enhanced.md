@@ -54,7 +54,7 @@ order: 30
 - 손의 Hatchet 확인 → `Use item in hand`, 커서 대기, `Target Self` 순서로 채집. 이미 수동으로 연 커서가 있으면 새 채집 시작 안 함
 - 빈손: `lhandempty` 먼저 확인 → 저장한 `var__my_hatchet`을 백팩에서 찾아 `lift`, `drop self lefthand`로 장착.
   Hatchet은 Outlands 무기표에서 2H("(2H) Axe, Battle Axe, … Two-Handed Axe, Hatchet" -- [Armor & Weapons](https://wiki.uooutlands.com/Armor_%26_Weapons)) → Razor의 `lefthand`가 맞는 레이어
-  방식은 [bard-mace](https://github.com/minu-ha/uoo/blob/master/script/archive/bard-mace.razor)를 따름
+  방식은 [bard-mace](https://github.com/nomeehej/uoo/blob/master/script/archive/bard-mace.razor)를 따름
 - 장착 다음 시도에서는 `findlayer self lefthand`의 serial이 저장한 도끼와 같을 때만 사용.
   검색 성공이나 장착 요청만으로 실제 장착으로 보지 않음
 - 다른 왼손 장비만 비움, 오른손 무기는 수동 장비 핫키 담당
@@ -130,7 +130,7 @@ Hatchet은 [공식 무기 표](https://wiki.uooutlands.com/Template:SwordsWeapon
 - **`pack/lumber` 블록**(v17까지 `config__pack_lumber`): 레시피의 `#@ use pack/lumber`. Logs 가공과 Boards 루팅 백 이동을 한 묶음으로.
   빼고 조립하면 정리 없음. `loadout`에서 고른 `global__my_loot_bag` 재사용, 없거나 백팩에 없으면 시작 시 루팅 백 선택.
   2026-10-19까지는 보급품과 같은 파우치(`global__my_looting_pouch`).
-  나눈 이유는 [pack/pouches](https://github.com/minu-ha/uoo/blob/master/module/pack/pouches.razor), 배치는 [pack/sorting](https://github.com/minu-ha/uoo/blob/master/module/pack/sorting.razor)
+  나눈 이유는 [pack/pouches](https://github.com/nomeehej/uoo/blob/master/module/pack/pouches.razor), 배치는 [pack/sorting](https://github.com/nomeehej/uoo/blob/master/module/pack/sorting.razor)
   Logs 7133, Boards 7127은 [Item list](../game/item-list.md#15) 15절 값, 색 구분 없음.
   가공은 [공식 Lumberjacking 문서](https://wiki.uooutlands.com/Lumberjacking)의 Logs 더블클릭 경로
 

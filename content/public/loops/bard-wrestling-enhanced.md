@@ -7,7 +7,7 @@ order: 50
 
 Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 요청과 재확인.
 캐릭터 배분은 [Bard Wrestling](../templates/bard-wrestling.md), 공통 규칙은 [Combat](../mechanics/combat.md), 바딩은 [Barding](../mechanics/barding.md).
-레시피는 [bard-wrestling-enhanced-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/bard-wrestling-enhanced-recipe.razor).
+레시피는 [bard-wrestling-enhanced-recipe.razor](https://github.com/nomeehej/uoo/blob/master/recipe/bard-wrestling-enhanced-recipe.razor).
 
 ## <a id="00"></a>00 한눈에
 

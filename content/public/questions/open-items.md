@@ -582,7 +582,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 - Parry Codex: 랭크가 오를 때까지 Bulwark, 근접 밖에서 독, 출혈, 질병이면 Warding
 - 할 일: Testudo 랭크가 오르면 `config__parry_stance_main`을 `config__parry_stance_testudo`로
 - 스탠스, 피니셔, 어빌리티는 Arms Lore가 없어 무기 특수 확률 기본 10%인 점을 반영해 선택. 근거는 `fight/sword-codex`, `fight/weapon-ability` 모듈 주석
-- Sword Codex 기본값은 [sword-codex 모듈](https://github.com/minu-ha/uoo/blob/master/module/fight/sword-codex.razor)
+- Sword Codex 기본값은 [sword-codex 모듈](https://github.com/nomeehej/uoo/blob/master/module/fight/sword-codex.razor)
 - `config__sysmsg`: 전투 대상 변화, 칼질 요청과 결과, codex 전환, 회복과 버프 시전, 도끼 장착, 골드와 가죽 정리를 Journal에 기록
 - 할 일: 게임 종료 상태에서 두 프로필에 칼질 결과 오버헤드 추가
 
@@ -751,7 +751,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 - `list__resume_script`의 각 항목을 `hotkey`로 실행. 정상 완료, 컨테이너 선택 실패, 도구 부족, 처리 실패 모두 같은 경로
 - bard-necro-enhanced, bard-archer-enhanced, tamer-mage-enhanced, dexxer-basic, skinning-enhanced, lumberjack-enhanced가 Play할 때 자기 핫키 이름 등록
 - archive의 bard-mace와 bard-throwing은 archive 이름 등록. pvp는 등록하지 않음
-- 이름의 저장 형식은 [script/README.md](https://github.com/minu-ha/uoo/blob/master/script/README.md#returning-to-the-loop)
+- 이름의 저장 형식은 [script/README.md](https://github.com/nomeehej/uoo/blob/master/script/README.md#returning-to-the-loop)
 
 ## <a id="14"></a>14 bard-necro-enhanced 인게임 확인
 
@@ -944,7 +944,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 
 ## <a id="18"></a>18 tamer-archer-enhanced 인게임 확인
 
-블록 순서와 설정의 정본은 [recipe/tamer-archer-enhanced-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/tamer-archer-enhanced-recipe.razor).
+블록 순서와 설정의 정본은 [recipe/tamer-archer-enhanced-recipe.razor](https://github.com/nomeehej/uoo/blob/master/recipe/tamer-archer-enhanced-recipe.razor).
 반영은 핫키면 클라이언트 재시작, Scripts 탭은 리로드 뒤 Play([Workflow](../working/workflow.md#04) 04절).
 
 | 검사 | 하는 것 | 통과 기준 | 상태 |

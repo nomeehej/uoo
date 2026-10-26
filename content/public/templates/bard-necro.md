@@ -465,9 +465,9 @@ Tracking 규칙은 [Combat](../mechanics/combat.md#05) 05절, Hunting 판정의 
 
 ### <a id="04.F"></a>04.F 공통 pvp의 mage 설정
 
-- [combat/pvp.razor](https://github.com/minu-ha/uoo/blob/master/script/combat/pvp.razor)는 `config__use_magery = 1`로
+- [combat/pvp.razor](https://github.com/nomeehej/uoo/blob/master/script/combat/pvp.razor)는 `config__use_magery = 1`로
   공통 [PvP Loop](../loops/pvp.md)의 자기 마법 사용
-- 무기 복구가 필요 없으면 [recipe/pvp-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/pvp-recipe.razor)에서
+- 무기 복구가 필요 없으면 [recipe/pvp-recipe.razor](https://github.com/nomeehej/uoo/blob/master/recipe/pvp-recipe.razor)에서
   `fight/remember-hands`, `fight/rearm` 블록과 그 설정을 빼고 재조립([Modules](../scripting/modules.md#07.B) 07.B절). 기능별로 켜고 끔, 템플릿 프리셋 없음
 - PK를 만나면 F1을 끄고 이것을 켬. 템플릿별 예전 PvP 파일은 삭제 → F4를 Razor에서
   `Play Script: combat\pvp`로 재연결([Hotkeys](../game/hotkeys.md#04) 04절)

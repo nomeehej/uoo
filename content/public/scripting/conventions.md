@@ -34,7 +34,7 @@ order: 10
 | --- | --- |
 | `script/` | Razor 스크립트. 모두 공용 |
 | `module/`, `recipe/` | 한 벌만 둔 블록, 루프와 루틴마다 레시피 하나. `util/build-scripts.mjs`가 `script/combat/*`, `script/gather/*`와 loadout 같은 루틴으로 조립([Modules](modules.md)) |
-| `config/` | 사람마다 클라이언트 설정 원본 하나(`config/<이름>/`). 링크 방식과 파일별 설명은 [config/README.md](https://github.com/minu-ha/uoo/blob/master/config/README.md) |
+| `config/` | 사람마다 클라이언트 설정 원본 하나(`config/<이름>/`). 링크 방식과 파일별 설명은 [config/README.md](https://github.com/nomeehej/uoo/blob/master/config/README.md) |
 | `content/` | 설계 문서. 공개 문서는 `public/` 아래 묶음별 폴더, 홈은 `README.md`, 공용 자원은 `asset/`. for-humanity 사이트로 읽음(`pnpm docs:dev`). 문서 목록은 [Workflow](../working/workflow.md#00.A) 00.A절, 쓰는 법은 [Writing](../working/writing.md) |
 | `language/` | README 번역본. 규칙은 [Writing](../working/writing.md#07) 07절 |
 | `util/` | 저장소 도구. 아래 표 |
@@ -70,7 +70,7 @@ order: 10
 | `script/archive/` | 쓰지 않는 스크립트. 핫키 없음, 수정 없음, `util/check.sh` 제외. 다시 쓰려면 원래 폴더로 이동 | 원래 이름 그대로 | `bard-mace`, `hally-mage`, `lumberjack` |
 | `script/shelf/` | outlandsbutler.com이 만든 Storage Shelf 로드아웃 | `<템플릿>` | `bard-dexxer`, `sailing` |
 
-- 전투 루프와 템플릿 대응의 정본: [script/README.md](https://github.com/minu-ha/uoo/blob/master/script/README.md) 전투 루프 표
+- 전투 루프와 템플릿 대응의 정본: [script/README.md](https://github.com/nomeehej/uoo/blob/master/script/README.md) 전투 루프 표
 - `combat/pvp`: 여러 템플릿 공용 자기관리 루프. Magery, 무기, 붕대는 레시피 설정으로 켜고 끔. 템플릿별 PvP 진입 파일 없음([PvP Loop](../loops/pvp.md))
 
 ### <a id="01.C"></a>01.C 파일 규칙

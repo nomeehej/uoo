@@ -62,7 +62,7 @@ order: 20
 | `pnpm typecheck` | `for-humanity.config.ts`의 설정 타입 검사 |
 | `node util/check-docs.mjs` | 끊긴 링크와 앵커, 번호 제목의 앵커 검사 |
 
-공개 사이트: [minu-ha.github.io/uoo](https://minu-ha.github.io/uoo/). 배포 경로는 `for-humanity.config.ts`의 `basePath`, 도메인은 `url`에서 지정.
+공개 사이트: [nomeehej.github.io/uoo](https://nomeehej.github.io/uoo/). 배포 경로는 `for-humanity.config.ts`의 `basePath`, 도메인은 `url`에서 지정.
 GitHub 저장소의 Pages 소스는 `GitHub Actions`. `master` push 또는 `Documentation` 수동 실행 시 `.github/workflows/docs.yml`이 빌드 후 `content/dist` 전체 배포.
 링크 검사는 빌드된 홈의 대표 주소에서 배포 경로 판별. 하위 경로 밖의 사이트 내부 링크는 오류.
 
@@ -79,7 +79,7 @@ GitHub 저장소의 Pages 소스는 `GitHub Actions`. `master` push 또는 `Docu
    - `order`: 묶음 안 순서. 10 단위
 4. 두 곳에 한 줄씩 추가
    - [Workflow](workflow.md#00.A) 00.A절 문서별 정본 표
-   - [AGENTS.md](https://github.com/minu-ha/uoo/blob/master/AGENTS.md) "언제 무엇을 읽나" 표. 읽을 일이 있는 문서만
+   - [AGENTS.md](https://github.com/nomeehej/uoo/blob/master/AGENTS.md) "언제 무엇을 읽나" 표. 읽을 일이 있는 문서만
 
 ## <a id="03"></a>03 빈 틀
 
@@ -172,7 +172,7 @@ order: {묶음 안 순서}
   날짜까지 알약(`인게임 확인됨 2026-09-28`), 괄호는 숨김. 코드, 링크, 제목 안은 그대로. 문구는 `for-humanity.config.ts`의 `status`
 - 색 값만 든 인라인 코드(`#e80030`)에 색 칩
 - 같은 공개 문서끼리는 기존 상대 경로 `.md` 링크. 홈에서 공개 문서는 `public/` 포함, 공개 문서에서 홈은 실제 위치에 맞춰 `../` 추가
-- `content/` 밖 파일(AGENTS.md, `script/`, `util/` 등): GitHub 주소(`https://github.com/minu-ha/uoo/blob/master/<경로>`)
+- `content/` 밖 파일(AGENTS.md, `script/`, `util/` 등): GitHub 주소(`https://github.com/nomeehej/uoo/blob/master/<경로>`)
 
 ## <a id="07"></a>07 언어와 번역본
 

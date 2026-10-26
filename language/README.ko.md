@@ -12,7 +12,7 @@
 ![UO Outlands](https://img.shields.io/badge/UO-Outlands-8b1a1a?style=flat-square)
 ![Razor](https://img.shields.io/badge/Razor-Outlands%20fork-2b6cb0?style=flat-square)
 
-[문서](https://minu-ha.github.io/uoo/) | [스크립트](../script/README.md) | [설정](config.ko.md) | [English](../README.md)
+[문서](https://nomeehej.github.io/uoo/) | [스크립트](../script/README.md) | [설정](config.ko.md) | [English](../README.md)
 
 </div>
 

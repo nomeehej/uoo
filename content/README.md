@@ -8,12 +8,12 @@
 
 Hunt, gather, train and keep house. Shared blocks for the routines, notes for the decisions.
 
-[![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](https://github.com/minu-ha/uoo/blob/master/LICENSE)
+[![MIT](https://img.shields.io/badge/license-MIT-1111aa?style=flat-square)](https://github.com/nomeehej/uoo/blob/master/LICENSE)
 ![UO Outlands](https://img.shields.io/badge/UO-Outlands-8b1a1a?style=flat-square)
 ![Razor](https://img.shields.io/badge/Razor-Outlands%20fork-2b6cb0?style=flat-square)
 
-[Docs](public/working/workflow.md#00.A) | [Scripts](https://github.com/minu-ha/uoo/blob/master/script/README.md) |
-[Config](https://github.com/minu-ha/uoo/blob/master/config/README.md) | [한국어](https://github.com/minu-ha/uoo/blob/master/language/README.ko.md)
+[Docs](public/working/workflow.md#00.A) | [Scripts](https://github.com/nomeehej/uoo/blob/master/script/README.md) |
+[Config](https://github.com/nomeehej/uoo/blob/master/config/README.md) | [한국어](https://github.com/nomeehej/uoo/blob/master/language/README.ko.md)
 
 </div>
 
@@ -33,7 +33,7 @@ The collection covers the activities around a character, both in the field and b
 | Training | Scripts for repeated skill practice |
 
 The scripts use the Razor bundled with the Outlands client and its extended scripting syntax.
-The [script catalogue](https://github.com/minu-ha/uoo/blob/master/script/README.md) describes individual loops and which actions remain manual.
+The [script catalogue](https://github.com/nomeehej/uoo/blob/master/script/README.md) describes individual loops and which actions remain manual.
 
 ## Shared modules, template recipes
 
@@ -52,7 +52,7 @@ Razor and ClassicUO profiles keep hotkeys, agents, cooldown bars and character l
 They also hold personal selections such as containers, so shared scripts can refer to profile variables.
 
 Keeping scripts and profiles in the same repository makes their relationship visible as bindings, equipment and templates change.
-The [configuration guide](https://github.com/minu-ha/uoo/blob/master/config/README.md) documents the profile layout and game connection.
+The [configuration guide](https://github.com/nomeehej/uoo/blob/master/config/README.md) documents the profile layout and game connection.
 
 ## Mechanics and decisions kept in writing
 

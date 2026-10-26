@@ -12,7 +12,7 @@ Hunt, gather, train and keep house. Shared blocks for the routines, notes for th
 ![UO Outlands](https://img.shields.io/badge/UO-Outlands-8b1a1a?style=flat-square)
 ![Razor](https://img.shields.io/badge/Razor-Outlands%20fork-2b6cb0?style=flat-square)
 
-[Docs](https://minu-ha.github.io/uoo/) | [Scripts](script/README.md) | [Config](config/README.md) | [한국어](language/README.ko.md)
+[Docs](https://nomeehej.github.io/uoo/) | [Scripts](script/README.md) | [Config](config/README.md) | [한국어](language/README.ko.md)
 
 </div>
 

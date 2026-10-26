@@ -299,8 +299,8 @@ TK에서 포션까지의 완전 자동 처리가 안전하게 풀렸다는 뜻 �
 - 필드 Hamstring의 이동 제한은 목표 근접 유지율에 포함한 가정. DEX 80의 조직 PvP 강화 피해는 필드에 미적용
 - 버섯 마나 보충, 시폰의 PvM 효과 제외. 실제 Razor, 게임 서버, 전투 로그로 보정한 모형 아님
 
-- 입력, 공식, 정책: [util/pvp-sim.mjs](https://github.com/minu-ha/uoo/blob/master/util/pvp-sim.mjs)
-- 수치와 일정 검사: [util/pvp-sim.test.mjs](https://github.com/minu-ha/uoo/blob/master/util/pvp-sim.test.mjs). Node 표준 라이브러리만 사용
+- 입력, 공식, 정책: [util/pvp-sim.mjs](https://github.com/nomeehej/uoo/blob/master/util/pvp-sim.mjs)
+- 수치와 일정 검사: [util/pvp-sim.test.mjs](https://github.com/nomeehej/uoo/blob/master/util/pvp-sim.test.mjs). Node 표준 라이브러리만 사용
 - 검사는 모형 계산 확인용, 인게임 동작 증명 아님
 
 ```
@@ -435,7 +435,7 @@ Tracking 주문 보조의 결합 순서를 단정하지 않으려고 첫 표에�
 
 ## <a id="08"></a>08 공통 pvp의 마법, 무기, 붕대 설정
 
-[combat/pvp.razor](https://github.com/minu-ha/uoo/blob/master/script/combat/pvp.razor)의 독립 옵션으로 공통 [PvP 자기관리 루프](../loops/pvp.md) 사용.
+[combat/pvp.razor](https://github.com/nomeehej/uoo/blob/master/script/combat/pvp.razor)의 독립 옵션으로 공통 [PvP 자기관리 루프](../loops/pvp.md) 사용.
 채집 루프를 멈추고 `Play Script: combat\pvp`에 연결한 별도 핫키로 전환.
 템플릿별 PvP 파일과 프리셋 분기는 삭제. 설정은 레시피 `recipe/pvp-recipe.razor` 하나에서.
 

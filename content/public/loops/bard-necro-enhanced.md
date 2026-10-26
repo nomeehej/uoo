@@ -552,7 +552,7 @@ endif
 ### <a id="02.C"></a>02.C 재소환과 교체, RESUMMON 블록
 
 - 소환수 둘을 늘 내보냄. 빠지면 다시 뽑고, 오래된 것은 놓고 다시 뽑음
-- 블록은 [necro/resummon](https://github.com/minu-ha/uoo/blob/master/module/necro/resummon.razor). 설정의 뜻은 그 파일, 이 루프의 값은 레시피
+- 블록은 [necro/resummon](https://github.com/nomeehej/uoo/blob/master/module/necro/resummon.razor). 설정의 뜻은 그 파일, 이 루프의 값은 레시피
 - 2026-10-18 사용자 요청으로 구현. 그전의 "수동 유지" 판단과 설계 메모는 git 이력
 
 #### 언제 도나

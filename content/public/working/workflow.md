@@ -31,7 +31,7 @@ flowchart LR
 ### <a id="00.A"></a>00.A 문서별 정본
 
 문서별 정본은 이 표 한 곳. 같은 내용은 다시 쓰지 않고 해당 문서로 링크.
-언제나 지킬 규칙과 커밋 규칙은 [AGENTS.md](https://github.com/minu-ha/uoo/blob/master/AGENTS.md).
+언제나 지킬 규칙과 커밋 규칙은 [AGENTS.md](https://github.com/nomeehej/uoo/blob/master/AGENTS.md).
 
 | 문서 | 정본인 내용 |
 | --- | --- |
@@ -69,7 +69,7 @@ flowchart LR
 규칙이 다르면 앞의 것.
 
 1. 사용자 요청
-2. [AGENTS.md](https://github.com/minu-ha/uoo/blob/master/AGENTS.md)와 `content/`의 규칙 문서
+2. [AGENTS.md](https://github.com/nomeehej/uoo/blob/master/AGENTS.md)와 `content/`의 규칙 문서
 3. 같은 폴더의 기존 스크립트
 4. 공식 위키
 
@@ -116,8 +116,8 @@ flowchart LR
 | `pnpm check` | 스크립트, 조립 결과, 설정 타입과 문서 링크 검사 |
 | `pnpm test` | `util/`의 PvP 시뮬레이터와 문서 검사 테스트 실행 |
 
-- 단일 스크립트 사용: [스크립트 목록](https://github.com/minu-ha/uoo/blob/master/script/README.md)에서 `.razor` 파일을 골라 Razor의 `Scripts` 폴더에 복사
-- 게임에 저장소 연결: [설정 안내](https://github.com/minu-ha/uoo/blob/master/language/config.ko.md)
+- 단일 스크립트 사용: [스크립트 목록](https://github.com/nomeehej/uoo/blob/master/script/README.md)에서 `.razor` 파일을 골라 Razor의 `Scripts` 폴더에 복사
+- 게임에 저장소 연결: [설정 안내](https://github.com/nomeehej/uoo/blob/master/language/config.ko.md)
 
 ### <a id="02.B"></a>02.B 수정 순서
 
@@ -125,7 +125,7 @@ flowchart LR
 2. [Razor](../scripting/razor.md#03) 03절 확인된 함정 표. 새 패턴은 같은 문서 04절 선례부터
 3. 요청 범위만. 저장소에 근거 없는 패턴 금지
 4. `util/check.sh <파일>`: `if`와 `endif`, `while`과 `endwhile`, `for`와 `endfor` 짝, 값 없이 쓴 접두 변수 검사
-5. 새 전투 루프는 [script/README.md](https://github.com/minu-ha/uoo/blob/master/script/README.md) 전투 루프 표에 추가
+5. 새 전투 루프는 [script/README.md](https://github.com/nomeehej/uoo/blob/master/script/README.md) 전투 루프 표에 추가
 
 ## <a id="03"></a>03 변경 보고
 
@@ -177,4 +177,4 @@ Razor 프로필 xml, ClassicUO의 `cooldowns.xml`, `macros.xml` 모두 해당. �
 ## <a id="05"></a>05 문서와 커밋
 
 - 문서 쓰는 법, 글의 언어와 번역본: [Writing](writing.md)
-- 커밋 규칙, 제목의 좋은 예와 나쁜 예: [AGENTS.md](https://github.com/minu-ha/uoo/blob/master/AGENTS.md) 2절에만
+- 커밋 규칙, 제목의 좋은 예와 나쁜 예: [AGENTS.md](https://github.com/nomeehej/uoo/blob/master/AGENTS.md) 2절에만

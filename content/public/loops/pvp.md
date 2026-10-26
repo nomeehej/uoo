@@ -18,7 +18,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 
 ## <a id="01"></a>01 수동 공격과 공통 자기관리 루프
 
-[combat/pvp.razor](https://github.com/minu-ha/uoo/blob/master/script/combat/pvp.razor): PvP 시작 시 켜는 공통 자기관리 루프.
+[combat/pvp.razor](https://github.com/nomeehej/uoo/blob/master/script/combat/pvp.razor): PvP 시작 시 켜는 공통 자기관리 루프.
 
 - 공격은 전부 수동. 상대에게 쓰는 TK, Magic Arrow와 Harm, Explosion과 Energy Bolt, 폭발 포션, 소환수 공격, Hamstring, 상대 지정, 근접 공격 요청
 - 상대의 serial, 색, 거리, 사망 여부 조회 없음. PvP 핫키는 `Play Script: combat\pvp`

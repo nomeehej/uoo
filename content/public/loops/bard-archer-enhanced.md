@@ -8,7 +8,7 @@ order: 20
 Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서와 전환 규칙. 템플릿의 판단은 [Bard Archer](../templates/bard-archer.md), 아처리 규칙은 [Archery](../mechanics/archery.md).
 인게임 확인은 [Open items](../questions/open-items.md#16) 16절.
 
-정본은 레시피 [recipe/bard-archer-enhanced-recipe.razor](https://github.com/minu-ha/uoo/blob/master/recipe/bard-archer-enhanced-recipe.razor). 블록 동작은 각 모듈 파일 머리 주석.
+정본은 레시피 [recipe/bard-archer-enhanced-recipe.razor](https://github.com/nomeehej/uoo/blob/master/recipe/bard-archer-enhanced-recipe.razor). 블록 동작은 각 모듈 파일 머리 주석.
 
 ## <a id="00"></a>00 한눈에
 
