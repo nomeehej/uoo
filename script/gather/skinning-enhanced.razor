@@ -454,6 +454,7 @@ endif
 # module/fight/weapon-ability.razor
 # ----------------------------------------------------------------------------------------
 @setvar! var__ability_weapon_ok 0
+@setvar! var__ability_weapon 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -1303,8 +1304,20 @@ while not dead
 
             if config__ability_weapon_graphic = 0
                 @setvar! var__ability_weapon_ok 1
-            elseif findtype config__ability_weapon_graphic self
-                @setvar! var__ability_weapon_ok 1
+            elseif findtype config__ability_weapon_graphic self as alias__ability_weapon
+                @setvar! var__ability_weapon alias__ability_weapon
+
+                if findlayer self lefthand as alias__ability_held
+                    if alias__ability_held = var__ability_weapon
+                        @setvar! var__ability_weapon_ok 1
+                    endif
+                endif
+
+                if findlayer self righthand as alias__ability_held
+                    if alias__ability_held = var__ability_weapon
+                        @setvar! var__ability_weapon_ok 1
+                    endif
+                endif
             endif
 
             if var__ability_weapon_ok = 1

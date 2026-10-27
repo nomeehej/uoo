@@ -23,8 +23,9 @@
 #      weapon, the weapon's reach for a bow.
 #
 #   config__ability_weapon_graphic
-#      Required equipped weapon graphic. 0 keeps the existing unrestricted behavior.
-#      A weapon in the backpack never satisfies this guard.
+#      Required held weapon graphic. 0 keeps the existing unrestricted behavior.
+#      findtype on self also finds the backpack, so a hand layer must hold the serial
+#      it returns. A spare of the same graphic in the backpack can hide a held one.
 # ----------------------------------------------------------------------------------------
 @setvar! config__ability_codex 1
 @setvar! config__ability_main 3
@@ -51,9 +52,13 @@ timer__ability interval__ability
 # @ state
 #
 #   var__ability_weapon_ok
-#      Scratch flag. 1 when no equipment restriction is set or that weapon is equipped.
+#      Scratch flag. 1 when no equipment restriction is set or that weapon is held.
+#
+#   var__ability_weapon
+#      Scratch serial of the required weapon graphic, compared with both hand layers.
 # ----------------------------------------------------------------------------------------
 @setvar! var__ability_weapon_ok 0
+@setvar! var__ability_weapon 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -81,8 +86,20 @@ timer__ability interval__ability
 
             if config__ability_weapon_graphic = 0
                 @setvar! var__ability_weapon_ok 1
-            elseif findtype config__ability_weapon_graphic self
-                @setvar! var__ability_weapon_ok 1
+            elseif findtype config__ability_weapon_graphic self as alias__ability_weapon
+                @setvar! var__ability_weapon alias__ability_weapon
+
+                if findlayer self lefthand as alias__ability_held
+                    if alias__ability_held = var__ability_weapon
+                        @setvar! var__ability_weapon_ok 1
+                    endif
+                endif
+
+                if findlayer self righthand as alias__ability_held
+                    if alias__ability_held = var__ability_weapon
+                        @setvar! var__ability_weapon_ok 1
+                    endif
+                endif
             endif
 
             if var__ability_weapon_ok = 1

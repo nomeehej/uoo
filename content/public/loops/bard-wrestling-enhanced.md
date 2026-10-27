@@ -84,7 +84,9 @@ Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 �
 
 - Brawl 요청 간격은 기존 `fight/weapon-ability`의 60초. Arms Lore 없는 배분 기준
 - 요청 직후 타이머 초기화는 실제 발동이나 게이지 충전의 증거가 아님. 서버 거절과 다음 명중까지의 대기로 사용 시점이 늦어질 수 있음
-- Scroll이 백팩에만 있거나 다른 무기를 들면 능력 요청 없음. 시전, 타깃 커서, 아이템 큐, 은신 중에도 보류
+- `findtype … self`로 찾은 Scroll serial이 손 레이어에 있을 때만 능력 요청. 백팩에만 있거나 다른 무기를 들면 요청 없음([Razor](../scripting/razor.md#03) 03절)
+- 백팩에 예비 Scroll이 있으면 든 Scroll을 못 알아보고 요청이 막힐 수 있음
+- 시전, 타깃 커서, 아이템 큐, 은신 중에도 보류
 - Haymaker와 Takedown은 공유 게이지의 다른 선택. 몹 HP를 추정해 마무리용으로 자동 전환하지 않음
 - Parry도 자세와 피니셔를 독립 관리. 요청 뒤 재확인과 30초 정기 재동기화 모두 두 선택에 적용
 - Parry 자세 라벨이 모호하면 `[ parry stance, off ]`, 피니셔가 모호하면 `[ parry finisher, off ]`. 해당 선택만 그 Play 동안 중단

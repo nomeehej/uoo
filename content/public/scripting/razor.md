@@ -139,6 +139,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 | `dead serial`로 다른 플레이어 사망 검사 | 조회마다 `dead - Cannot check death status of other players`. 진단의 `dead=0`은 생존 증거 아님. 인게임 확인됨 2026-10-04 | 상대 플레이어에게 `dead` 금지. 자기 사망의 `while not dead`와 구분. Q 대상 캐시는 사망으로 자동 비우기 불가 → 플레이어 사망 시 Stop 또는 새 대상 |
 | `pvp=0`이면 다른 플레이어 정보 전부 조회 가능하다고 판단 | 대상의 `dead`, `findlayer`, `getlabel` 각각 플레이어 조회 차단 경고. 같은 serial의 저장, 복사, `noto`는 성공. 인게임 확인됨 2026-10-04. 검사별 반환값은 [03.A절](#03.A) 결과 표 | `pvp` 제한과 명령별 대상 제한을 구분. FALSE나 0이어도 경고가 있으면 실제 상태로 보지 않음 |
 | `findtype` 한 번으로 여러 모빌 중 하나 고르기 | 부를 때마다 **같은 모빌** | `while findtype … as`로 돌며 검사, 아니면 `@ignore`. `endwhile` 뒤 `@clearignore` |
+| `findtype <graphic> self`를 장착 확인으로 사용 | 백팩 안 물건도 참. `buff/potions`는 이 검색이 참일 때만 마심 → bard-archer-enhanced의 포션 기록(인게임 확인됨 2026-10-23, 아래 `queued` 항목)이 근거. 손 레이어의 물건도 찾는지는 확인되지 않았다 | 찾은 serial과 `findlayer self lefthand`, `righthand` 결과 비교(`fight/weapon-ability`) |
 | 모빌을 이름으로 찾기 | 되긴 함. 이름 변경 후 Razor 캐시 갱신 여부는 확인되지 않았다 | 바디 번호로 찾기. 바디 번호는 인게임 `>info`. 내 소환수의 noto는 2(friend) |
 | 패스마다 `findtype`으로 상태 세기 | `findtype`이 가장 비쌈(한 번 20 \~ 40ms, 06절). 32번이면 패스마다 1초 안팎 | 천천히 변하는 상태는 타이머로 몇 초에 한 번. `elseif` 사슬은 통째로 한 틱이라 길어도 쌈 |
 | `findbuff 'Strength'`, `'Agility'`로 스탯 포션 판정 | Bless도 같은 이름 → 내 Bless든 아군 Bless든 걸려 있으면 포션 안 마심(05절) | 스탯을 기준선(기본 + 20)과 비교, 포션마다 재시도 간격([Combat](../mechanics/combat.md#02.D) 02.D절). Bless는 `Cunning`, Arch Protection은 `Protection`. `Magic Resist Potion`은 그 이름 그대로(인게임 확인됨 2026-10-09) |

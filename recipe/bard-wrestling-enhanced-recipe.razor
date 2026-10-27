@@ -286,11 +286,13 @@
 #   ability_range (default 2)
 #      How far, in tiles, the remembered enemy may be for the request. 2 for a melee
 #      weapon, the weapon's reach for a bow.
-#      > Only request in adjacent melee contact, with the scroll equipped.
+#      > Only request in adjacent melee contact.
 #
 #   ability_weapon_graphic (default 0)
-#      Required equipped weapon graphic. 0 keeps the existing unrestricted behavior.
-#      A weapon in the backpack never satisfies this guard.
+#      Required held weapon graphic. 0 keeps the existing unrestricted behavior.
+#      findtype on self also finds the backpack, so a hand layer must hold the serial
+#      it returns. A spare of the same graphic in the backpack can hide a held one.
+#      > The Martial Arts Scroll in a hand. One in the backpack does not count.
 # ----------------------------------------------------------------------------------------
 @setvar! config__ability_codex 3
 @setvar! config__ability_main 1

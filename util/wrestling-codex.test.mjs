@@ -75,7 +75,7 @@ class ModuleRun {
         this.items = new Map([
             [11891, {serial: 201, source: "backpack", label: "Monkey, Chi Thrust"}],
             [11889, {serial: 202, source: "backpack", label: "Testudo, Last Stand"}],
-            [22187, {serial: 203, source: "self", label: "Martial Arts Scroll"}],
+            [22187, {serial: 203, source: "self", layer: "lefthand", label: "Martial Arts Scroll"}],
         ]);
         const sections = new Map();
         let section = null;
@@ -104,7 +104,7 @@ class ModuleRun {
         if (/^["']/.test(token)) return unquote(token);
         if (/^-?\d+$/.test(token)) return Number(token);
         if (this.vars.has(token)) return this.vars.get(token);
-        if (["self", "backpack", "ground"].includes(token)) return token;
+        if (["self", "backpack", "ground", "lefthand", "righthand"].includes(token)) return token;
         throw new Error("Unknown value: " + token);
     }
 
@@ -140,11 +140,22 @@ class ModuleRun {
                     const object = word === "find"
                         ? this.mobs.get(this.value(args[0]))
                         : this.items.get(this.value(args[0]));
+                    // findtype on self also searches the backpack, as recovery/bandage relies on.
                     const found = object && (word === "find"
                         ? object.range <= this.value(args[4] ?? "18")
-                        : object.source === unquote(args[1]));
+                        : object.source === unquote(args[1]) || (args[1] === "self" && object.source === "backpack"));
                     if (found && alias) this.vars.set(alias, word === "find" ? this.value(args[0]) : object.serial);
                     return Boolean(found);
+                };
+            } else if (word === "findlayer") {
+                const layer = this.value(input[at + 1]);
+                at += 2;
+                let alias;
+                if (input[at] === "as") { at++; alias = input[at++]; }
+                get = () => {
+                    const held = [...this.items.values()].find((item) => item.source === "self" && item.layer === layer);
+                    if (held && alias) this.vars.set(alias, held.serial);
+                    return Boolean(held);
                 };
             } else if (word === "dead") {
                 const serial = input[at++];
@@ -340,16 +351,24 @@ test("Brawl is requested only with the configured weapon equipped and an enemy i
         config__ability_codex: 3, config__ability_main: 1,
         config__ability_range: 1, config__ability_weapon_graphic: 22187,
     });
-    run.items.get(22187).source = "backpack";
+    const scroll = run.items.get(22187);
+    scroll.source = "backpack";
     run.pass();
     assert.deepEqual(run.said(), []);
-    run.items.get(22187).source = "self";
+    run.items.set(5117, {serial: 204, source: "self", layer: "lefthand"});
+    run.pass();
+    assert.deepEqual(run.said(), [], "another held weapon with the scroll packed");
+    run.items.delete(5117);
+    scroll.source = "self";
     run.flags.casting = true;
     run.pass();
     assert.deepEqual(run.said(), []);
     run.flags.casting = false;
     run.pass().pass(59000).pass(1000);
     assert.deepEqual(run.said(), ["[WeaponAbility1", "[WeaponAbility1"]);
+    scroll.layer = "righthand";
+    run.pass(60000);
+    assert.deepEqual(run.said(), ["[WeaponAbility1", "[WeaponAbility1", "[WeaponAbility1"]);
 });
 
 test("default archery ability remains Repeater", () => {
