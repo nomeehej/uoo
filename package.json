@@ -17,7 +17,7 @@
         "typecheck": "tsc"
     },
     "devDependencies": {
-        "for-humanity": "0.18.0",
+        "for-humanity": "0.26.1",
         "parse5": "7.3.0",
         "typescript": "7.0.2"
     }
