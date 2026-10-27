@@ -204,7 +204,9 @@
 # ----------------------------------------------------------------------------------------
 # module/fight/parry-codex.razor
 # ----------------------------------------------------------------------------------------
+@setvar! interval__parry_check 2000
 @setvar! interval__parry_retry 3000
+@setvar! interval__parry_hold 8000
 @setvar! interval__parry_resync 30000
 
 
@@ -346,10 +348,20 @@ settimer "timer__wrestling_pack" 0
 # ----------------------------------------------------------------------------------------
 # module/fight/parry-codex.razor
 # ----------------------------------------------------------------------------------------
+if not timerexists "timer__parry_check"
+    createtimer "timer__parry_check"
+endif
+settimer "timer__parry_check" interval__parry_check
+
 if not timerexists "timer__parry_retry"
     createtimer "timer__parry_retry"
 endif
 settimer "timer__parry_retry" interval__parry_retry
+
+if not timerexists "timer__parry_hold"
+    createtimer "timer__parry_hold"
+endif
+settimer "timer__parry_hold" interval__parry_hold
 
 if not timerexists "timer__parry_resync"
     createtimer "timer__parry_resync"
@@ -547,6 +559,7 @@ endif
 @setvar! var__wrestling_want config__wrestling_stance_main
 @setvar! var__wrestling_active 0
 @setvar! var__wrestling_finisher_active 0
+@setvar! var__wrestling_finisher_sent 0
 @setvar! var__wrestling_disabled 0
 @setvar! var__wrestling_finisher_off 0
 @setvar! var__wrestling_hurt 0
@@ -556,6 +569,7 @@ endif
 @setvar! var__wrestling_can_switch 0
 @setvar! var__wrestling_confirm 0
 @setvar! var__wrestling_sent 0
+@setvar! var__wrestling_retried 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -564,9 +578,13 @@ endif
 @setvar! var__parry_want config__parry_stance_main
 @setvar! var__parry_active 0
 @setvar! var__parry_finisher_active 0
+@setvar! var__parry_finisher_sent 0
 @setvar! var__parry_disabled 0
 @setvar! var__parry_finisher_off 0
 @setvar! var__parry_confirm 0
+@setvar! var__parry_sent 0
+@setvar! var__parry_retried 0
+@setvar! var__parry_can_switch 0
 @setvar! var__parry_read 0
 
 
@@ -1195,6 +1213,7 @@ while not dead
     # ------------------------------------------------------------------------------------
     if diffhits >= config__crab_enter_diff
         if var__wrestling_hurt = 0
+            settimer "timer__wrestling_check" interval__wrestling_check
             settimer "timer__wrestling_retry" interval__wrestling_retry
         endif
         @setvar! var__wrestling_hurt 1
@@ -1239,164 +1258,195 @@ while not dead
         elseif timer "timer__wrestling_pack" >= interval__wrestling_pack_hold
             @setvar! var__wrestling_pack 0
         endif
-    endif
 
-    if timer "timer__wrestling_resync" >= interval__wrestling_resync
-        @setvar! var__wrestling_active 0
-        @setvar! var__wrestling_finisher_active 0
-        settimer "timer__wrestling_resync" 0
-    endif
+        if timer "timer__wrestling_resync" >= interval__wrestling_resync
+            @setvar! var__wrestling_active 0
+            @setvar! var__wrestling_finisher_active 0
+            settimer "timer__wrestling_resync" 0
+        endif
 
-    if var__wrestling_hurt = 1
-        @setvar! var__wrestling_want 2
-    elseif var__wrestling_pack = 1 and config__wrestling_stance_pack != 0
-        @setvar! var__wrestling_want config__wrestling_stance_pack
-    else
-        @setvar! var__wrestling_want config__wrestling_stance_main
-    endif
+        if var__wrestling_hurt = 1
+            @setvar! var__wrestling_want 2
+        elseif var__wrestling_pack = 1 and config__wrestling_stance_pack != 0
+            @setvar! var__wrestling_want config__wrestling_stance_pack
+        else
+            @setvar! var__wrestling_want config__wrestling_stance_main
+        endif
 
-    @setvar! var__wrestling_can_switch 0
-    if var__wrestling_hurt = 1 or var__wrestling_want = var__wrestling_sent or timer "timer__wrestling_hold" >= interval__wrestling_hold
-        @setvar! var__wrestling_can_switch 1
-    endif
+        @setvar! var__wrestling_can_switch 0
 
-    @setvar! var__wrestling_read 0
+        if timer "timer__wrestling_hold" >= interval__wrestling_hold
+            @setvar! var__wrestling_can_switch 1
+        elseif var__wrestling_want = var__wrestling_sent
+            if var__wrestling_retried = 0
+                @setvar! var__wrestling_can_switch 1
+            endif
+        elseif var__wrestling_hurt = 1
+            @setvar! var__wrestling_can_switch 1
+        endif
 
-    if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
-        if var__wrestling_can_switch = 1
+        @setvar! var__wrestling_read 0
+
+        if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
+            if var__wrestling_can_switch = 1
+                @setvar! var__wrestling_read 1
+            endif
+        endif
+
+        if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0 and config__wrestling_finisher_main != var__wrestling_finisher_active
             @setvar! var__wrestling_read 1
         endif
-    endif
 
-    if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0 and config__wrestling_finisher_main != var__wrestling_finisher_active
-        @setvar! var__wrestling_read 1
-    endif
+        if var__wrestling_confirm = 1
+            @setvar! var__wrestling_read 1
+        endif
 
-    if var__wrestling_confirm = 1
-        @setvar! var__wrestling_read 1
-    endif
+        if var__wrestling_read = 1 and timer "timer__wrestling_retry" >= interval__wrestling_retry
+            if not hidden and not queued and not casting and not targetexists
+                settimer "timer__wrestling_retry" 0
 
-    if var__wrestling_read = 1 and timer "timer__wrestling_retry" >= interval__wrestling_retry and not hidden and not queued and not casting and not targetexists
-        settimer "timer__wrestling_retry" 0
+                if findtype 11891 backpack as alias__wrestling_codex
+                    @unsetvar! label__wrestling_codex
+                    @setvar! label__wrestling_codex 0
+                    getlabel alias__wrestling_codex label__wrestling_codex
 
-        if findtype 11891 backpack as alias__wrestling_codex
-            @unsetvar! label__wrestling_codex
-            @setvar! label__wrestling_codex 0
-            getlabel alias__wrestling_codex label__wrestling_codex
-
-            if label__wrestling_codex = 0
-                # No response yet. Retry without disabling either selection.
-            else
-                @setvar! var__wrestling_confirm 0
-                if var__wrestling_disabled = 0
-                    clearlist 'list__wrestling_stances'
-
-                    if "Dragon" in label__wrestling_codex
-                        pushlist 'list__wrestling_stances' 1
-                        @setvar! var__wrestling_active 1
-                    endif
-                    if "Crab" in label__wrestling_codex
-                        pushlist 'list__wrestling_stances' 2
-                        @setvar! var__wrestling_active 2
-                    endif
-                    if "Spider" in label__wrestling_codex
-                        pushlist 'list__wrestling_stances' 3
-                        @setvar! var__wrestling_active 3
-                    endif
-                    if "Monkey" in label__wrestling_codex
-                        pushlist 'list__wrestling_stances' 4
-                        @setvar! var__wrestling_active 4
-                    endif
-                    if "Crane" in label__wrestling_codex
-                        pushlist 'list__wrestling_stances' 5
-                        @setvar! var__wrestling_active 5
-                    endif
-
-                    if list 'list__wrestling_stances' != 1
-                        @setvar! var__wrestling_disabled 1
-                        overhead "[ wrestling stance, off ]" 254
-                        if config__sysmsg = 1
-                            sysmsg "Wrestling codex label names no single stance: {{label__wrestling_codex}}" 88
-                        endif
-                    endif
-                endif
-
-                if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0
-                    if "Chi Thrust" in label__wrestling_codex and "Zen Strike" in label__wrestling_codex
-                        @setvar! var__wrestling_finisher_off 1
-                    elseif "Chi Thrust" in label__wrestling_codex
-                        @setvar! var__wrestling_finisher_active 1
-                    elseif "Zen Strike" in label__wrestling_codex
-                        @setvar! var__wrestling_finisher_active 2
+                    if label__wrestling_codex = 0
+                        # No response yet. Retry without disabling either selection.
                     else
-                        @setvar! var__wrestling_finisher_off 1
-                    endif
+                        @setvar! var__wrestling_confirm 0
 
-                    if var__wrestling_finisher_off = 1
-                        overhead "[ wrestling finisher, off ]" 254
-                        if config__sysmsg = 1
-                            sysmsg "Wrestling codex label names no single finisher: {{label__wrestling_codex}}" 88
-                        endif
-                    elseif config__wrestling_finisher_main != var__wrestling_finisher_active
-                        if config__wrestling_finisher_main = 1
-                            say "[WrestlingFinisher1"
-                        elseif config__wrestling_finisher_main = 2
-                            say "[WrestlingFinisher2"
-                        endif
-                        @setvar! var__wrestling_finisher_active config__wrestling_finisher_main
-                        @setvar! var__wrestling_confirm 1
-                        if config__sysmsg = 1
-                            sysmsg "Wrestling finisher request: slot {{config__wrestling_finisher_main}}." 88
-                        endif
-                        if config__chatty = 1
-                            overhead "[ wrestling finisher, on ]" 290
-                        endif
-                        wait wait__short
-                    endif
-                endif
+                        if var__wrestling_disabled = 0
+                            clearlist 'list__wrestling_stances'
 
-                if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
-                    if var__wrestling_can_switch = 1
-                        if var__wrestling_want = 1
-                            say "[WrestlingStance1"
-                        elseif var__wrestling_want = 2
-                            say "[WrestlingStance2"
-                        elseif var__wrestling_want = 3
-                            say "[WrestlingStance3"
-                        elseif var__wrestling_want = 4
-                            say "[WrestlingStance4"
-                        elseif var__wrestling_want = 5
-                            say "[WrestlingStance5"
+                            if "Dragon" in label__wrestling_codex
+                                pushlist 'list__wrestling_stances' 1
+                                @setvar! var__wrestling_active 1
+                            endif
+                            if "Crab" in label__wrestling_codex
+                                pushlist 'list__wrestling_stances' 2
+                                @setvar! var__wrestling_active 2
+                            endif
+                            if "Spider" in label__wrestling_codex
+                                pushlist 'list__wrestling_stances' 3
+                                @setvar! var__wrestling_active 3
+                            endif
+                            if "Monkey" in label__wrestling_codex
+                                pushlist 'list__wrestling_stances' 4
+                                @setvar! var__wrestling_active 4
+                            endif
+                            if "Crane" in label__wrestling_codex
+                                pushlist 'list__wrestling_stances' 5
+                                @setvar! var__wrestling_active 5
+                            endif
+
+                            if list 'list__wrestling_stances' != 1
+                                @setvar! var__wrestling_disabled 1
+                                overhead "[ wrestling stance, off ]" 254
+                                if config__sysmsg = 1
+                                    sysmsg "Wrestling codex label names no single stance: {{label__wrestling_codex}}" 88
+                                endif
+                            endif
                         endif
-                        @setvar! var__wrestling_active var__wrestling_want
-                        @setvar! var__wrestling_sent var__wrestling_want
-                        @setvar! var__wrestling_confirm 1
-                        settimer "timer__wrestling_hold" 0
-                        settimer "timer__wrestling_resync" 0
-                        if config__sysmsg = 1
-                            sysmsg "Wrestling stance request: slot {{var__wrestling_want}}." 88
+
+                        if var__wrestling_finisher_off = 0 and config__wrestling_finisher_main != 0
+                            if "Chi Thrust" in label__wrestling_codex and "Zen Strike" in label__wrestling_codex
+                                @setvar! var__wrestling_finisher_off 1
+                            elseif "Chi Thrust" in label__wrestling_codex
+                                @setvar! var__wrestling_finisher_active 1
+                            elseif "Zen Strike" in label__wrestling_codex
+                                @setvar! var__wrestling_finisher_active 2
+                            else
+                                @setvar! var__wrestling_finisher_off 1
+                            endif
+
+                            if var__wrestling_finisher_off = 1
+                                overhead "[ wrestling finisher, off ]" 254
+                                if config__sysmsg = 1
+                                    sysmsg "Wrestling codex label names no single finisher: {{label__wrestling_codex}}" 88
+                                endif
+                            elseif config__wrestling_finisher_main = var__wrestling_finisher_active
+                                @setvar! var__wrestling_finisher_sent 0
+                            elseif var__wrestling_finisher_sent = 1
+                                @setvar! var__wrestling_finisher_sent 0
+                                @setvar! var__wrestling_finisher_active config__wrestling_finisher_main
+                                if config__sysmsg = 1
+                                    sysmsg "Wrestling finisher request not shown, next try at the resync: {{label__wrestling_codex}}" 88
+                                endif
+                            else
+                                if config__wrestling_finisher_main = 1
+                                    say "[WrestlingFinisher1"
+                                elseif config__wrestling_finisher_main = 2
+                                    say "[WrestlingFinisher2"
+                                endif
+                                @setvar! var__wrestling_finisher_active config__wrestling_finisher_main
+                                @setvar! var__wrestling_finisher_sent 1
+                                @setvar! var__wrestling_confirm 1
+                                settimer "timer__wrestling_retry" 0
+                                if config__sysmsg = 1
+                                    sysmsg "Wrestling finisher request: slot {{config__wrestling_finisher_main}}." 88
+                                endif
+                                if config__chatty = 1
+                                    overhead "[ wrestling finisher, on ]" 290
+                                endif
+                                wait wait__short
+                            endif
+                        endif
+
+                        if var__wrestling_disabled = 0 and var__wrestling_want != var__wrestling_active
+                            if var__wrestling_can_switch = 1
+                                @setvar! var__wrestling_retried 0
+
+                                if var__wrestling_want = var__wrestling_sent
+                                    if timer "timer__wrestling_hold" < interval__wrestling_hold
+                                        @setvar! var__wrestling_retried 1
+                                    endif
+                                endif
+
+                                if var__wrestling_want = 1
+                                    say "[WrestlingStance1"
+                                elseif var__wrestling_want = 2
+                                    say "[WrestlingStance2"
+                                elseif var__wrestling_want = 3
+                                    say "[WrestlingStance3"
+                                elseif var__wrestling_want = 4
+                                    say "[WrestlingStance4"
+                                elseif var__wrestling_want = 5
+                                    say "[WrestlingStance5"
+                                endif
+                                @setvar! var__wrestling_active var__wrestling_want
+                                @setvar! var__wrestling_sent var__wrestling_want
+                                @setvar! var__wrestling_confirm 1
+                                settimer "timer__wrestling_hold" 0
+                                settimer "timer__wrestling_resync" 0
+                                settimer "timer__wrestling_retry" 0
+                                if config__sysmsg = 1
+                                    sysmsg "Wrestling stance request: slot {{var__wrestling_want}}." 88
+                                endif
+                            endif
                         endif
                     endif
+                elseif timer "timer__message" >= interval__message
+                    overhead "[ wrestling codex, out ]" 254
+                    settimer "timer__message" 0
                 endif
+            elseif var__wrestling_hurt = 1
+                settimer "timer__wrestling_check" interval__wrestling_check
             endif
-        elseif timer "timer__message" >= interval__message
-            overhead "[ wrestling codex, out ]" 254
-            settimer "timer__message" 0
         endif
     endif
 
     # ------------------------------------------------------------------------------------
     # PARRY CODEX                                           module/fight/parry-codex.razor
     # ------------------------------------------------------------------------------------
-    if timer "timer__parry_resync" >= interval__parry_resync
-        @setvar! var__parry_active 0
-        @setvar! var__parry_finisher_active 0
-        settimer "timer__parry_resync" 0
-    endif
+    if timer "timer__parry_check" >= interval__parry_check
+        settimer "timer__parry_check" 0
 
-    @setvar! var__parry_read 0
+        if timer "timer__parry_resync" >= interval__parry_resync
+            @setvar! var__parry_active 0
+            @setvar! var__parry_finisher_active 0
+            settimer "timer__parry_resync" 0
+        endif
 
-    if var__parry_disabled = 0
         @setvar! var__parry_want config__parry_stance_main
 
         if poisoned or findbuff "Bleed" or findbuff "Disease"
@@ -1405,139 +1455,176 @@ while not dead
             endif
         endif
 
-        if var__parry_want != var__parry_active
+        @setvar! var__parry_can_switch 0
+
+        if timer "timer__parry_hold" >= interval__parry_hold
+            @setvar! var__parry_can_switch 1
+        elseif var__parry_want = var__parry_sent
+            if var__parry_retried = 0
+                @setvar! var__parry_can_switch 1
+            endif
+        endif
+
+        @setvar! var__parry_read 0
+
+        if var__parry_disabled = 0 and var__parry_want != var__parry_active
+            if var__parry_can_switch = 1
+                @setvar! var__parry_read 1
+            endif
+        endif
+
+        if var__parry_finisher_off = 0 and config__parry_finisher_main != 0 and config__parry_finisher_main != var__parry_finisher_active
             @setvar! var__parry_read 1
         endif
-    endif
 
-    if var__parry_finisher_off = 0 and config__parry_finisher_main != 0 and config__parry_finisher_main != var__parry_finisher_active
-        @setvar! var__parry_read 1
-    endif
+        if var__parry_confirm = 1
+            @setvar! var__parry_read 1
+        endif
 
-    if var__parry_confirm = 1
-        @setvar! var__parry_read 1
-    endif
+        if var__parry_read = 1 and timer "timer__parry_retry" >= interval__parry_retry and not hidden and not queued and not casting and not targetexists
+            settimer "timer__parry_retry" 0
 
-    if var__parry_read = 1 and timer "timer__parry_retry" >= interval__parry_retry and not hidden and not queued and not casting and not targetexists
-        settimer "timer__parry_retry" 0
+            if findtype 11889 backpack as alias__parry_codex
+                @unsetvar! label__parry_codex
+                @setvar! label__parry_codex 0
+                getlabel alias__parry_codex label__parry_codex
 
-        if findtype 11889 backpack as alias__parry_codex
-            @unsetvar! label__parry_codex
-            @setvar! label__parry_codex 0
-            getlabel alias__parry_codex label__parry_codex
+                if label__parry_codex = 0
+                    # No response yet. Leave protection enabled and retry.
+                else
+                    @setvar! var__parry_confirm 0
 
-            if label__parry_codex = 0
-                # No response yet. Leave protection enabled and retry.
-            else
-                @setvar! var__parry_confirm 0
+                    if var__parry_disabled = 0
+                        clearlist 'list__parry_stances'
 
-                if var__parry_disabled = 0
-                    clearlist 'list__parry_stances'
-
-                    if "Shield Bash" in label__parry_codex
-                        pushlist 'list__parry_stances' 1
-                        @setvar! var__parry_active 1
-                    endif
-                    if "Warding" in label__parry_codex
-                        pushlist 'list__parry_stances' 2
-                        @setvar! var__parry_active 2
-                    endif
-                    if "Testudo" in label__parry_codex
-                        pushlist 'list__parry_stances' 3
-                        @setvar! var__parry_active 3
-                    endif
-                    if "Mirror" in label__parry_codex
-                        pushlist 'list__parry_stances' 4
-                        @setvar! var__parry_active 4
-                    endif
-                    if "Bulwark" in label__parry_codex
-                        pushlist 'list__parry_stances' 5
-                        @setvar! var__parry_active 5
-                    endif
-
-                    if list 'list__parry_stances' != 1
-                        @setvar! var__parry_disabled 1
-                        overhead "[ parry stance, off ]" 254
-                        if config__sysmsg = 1
-                            sysmsg "Parry codex label names no single stance: {{label__parry_codex}}" 88
+                        if "Shield Bash" in label__parry_codex
+                            pushlist 'list__parry_stances' 1
+                            @setvar! var__parry_active 1
                         endif
-                    endif
-                endif
+                        if "Warding" in label__parry_codex
+                            pushlist 'list__parry_stances' 2
+                            @setvar! var__parry_active 2
+                        endif
+                        if "Testudo" in label__parry_codex
+                            pushlist 'list__parry_stances' 3
+                            @setvar! var__parry_active 3
+                        endif
+                        if "Mirror" in label__parry_codex
+                            pushlist 'list__parry_stances' 4
+                            @setvar! var__parry_active 4
+                        endif
+                        if "Bulwark" in label__parry_codex
+                            pushlist 'list__parry_stances' 5
+                            @setvar! var__parry_active 5
+                        endif
 
-                if var__parry_finisher_off = 0 and config__parry_finisher_main != 0
-                    if "Last Stand" in label__parry_codex and "Barrier" in label__parry_codex
-                        @setvar! var__parry_finisher_off 1
-                    elseif "Last Stand" in label__parry_codex
-                        @setvar! var__parry_finisher_active 1
-                    elseif "Barrier" in label__parry_codex
-                        @setvar! var__parry_finisher_active 2
-                    else
-                        @setvar! var__parry_finisher_off 1
-                    endif
-
-                    if var__parry_finisher_off = 1
-                        overhead "[ parry finisher, off ]" 254
-                        if config__sysmsg = 1
-                            sysmsg "Parry codex label names no single finisher: {{label__parry_codex}}" 88
-                        endif
-                    elseif config__parry_finisher_main != var__parry_finisher_active
-                        if config__parry_finisher_main = 1
-                            say "[ShieldsFinisher1"
-                        elseif config__parry_finisher_main = 2
-                            say "[ShieldsFinisher2"
-                        endif
-                        @setvar! var__parry_finisher_active config__parry_finisher_main
-                        @setvar! var__parry_confirm 1
-                        if config__sysmsg = 1
-                            sysmsg "Parry finisher request: slot {{config__parry_finisher_main}}." 88
-                        endif
-                        if config__chatty = 1
-                            if config__parry_finisher_main = 1
-                                overhead "[ parry, last stand ]" 290
-                            else
-                                overhead "[ parry, barrier ]" 290
+                        if list 'list__parry_stances' != 1
+                            @setvar! var__parry_disabled 1
+                            overhead "[ parry stance, off ]" 254
+                            if config__sysmsg = 1
+                                sysmsg "Parry codex label names no single stance: {{label__parry_codex}}" 88
                             endif
                         endif
-                        wait wait__short
                     endif
-                endif
 
-                if var__parry_disabled = 0 and var__parry_want != var__parry_active
-                    if var__parry_want = 1
-                        say "[ShieldsStance1"
-                    elseif var__parry_want = 2
-                        say "[ShieldsStance2"
-                    elseif var__parry_want = 3
-                        say "[ShieldsStance3"
-                    elseif var__parry_want = 4
-                        say "[ShieldsStance4"
-                    elseif var__parry_want = 5
-                        say "[ShieldsStance5"
+                    if var__parry_finisher_off = 0 and config__parry_finisher_main != 0
+                        if "Last Stand" in label__parry_codex and "Barrier" in label__parry_codex
+                            @setvar! var__parry_finisher_off 1
+                        elseif "Last Stand" in label__parry_codex
+                            @setvar! var__parry_finisher_active 1
+                        elseif "Barrier" in label__parry_codex
+                            @setvar! var__parry_finisher_active 2
+                        else
+                            @setvar! var__parry_finisher_off 1
+                        endif
+
+                        if var__parry_finisher_off = 1
+                            overhead "[ parry finisher, off ]" 254
+                            if config__sysmsg = 1
+                                sysmsg "Parry codex label names no single finisher: {{label__parry_codex}}" 88
+                            endif
+                        elseif config__parry_finisher_main = var__parry_finisher_active
+                            @setvar! var__parry_finisher_sent 0
+                        elseif var__parry_finisher_sent = 1
+                            @setvar! var__parry_finisher_sent 0
+                            @setvar! var__parry_finisher_active config__parry_finisher_main
+                            if config__sysmsg = 1
+                                sysmsg "Parry finisher request not shown, next try at the resync: {{label__parry_codex}}" 88
+                            endif
+                        else
+                            if config__parry_finisher_main = 1
+                                say "[ShieldsFinisher1"
+                            elseif config__parry_finisher_main = 2
+                                say "[ShieldsFinisher2"
+                            endif
+                            @setvar! var__parry_finisher_active config__parry_finisher_main
+                            @setvar! var__parry_finisher_sent 1
+                            @setvar! var__parry_confirm 1
+                            settimer "timer__parry_retry" 0
+                            if config__sysmsg = 1
+                                sysmsg "Parry finisher request: slot {{config__parry_finisher_main}}." 88
+                            endif
+                            if config__chatty = 1
+                                if config__parry_finisher_main = 1
+                                    overhead "[ parry, last stand ]" 290
+                                else
+                                    overhead "[ parry, barrier ]" 290
+                                endif
+                            endif
+                            wait wait__short
+                        endif
                     endif
-                    @setvar! var__parry_active var__parry_want
-                    @setvar! var__parry_confirm 1
-                    settimer "timer__parry_resync" 0
-                    if config__sysmsg = 1
-                        sysmsg "Parry stance request: slot {{var__parry_want}}." 88
-                    endif
-                    if config__chatty = 1
-                        if var__parry_want = 3
-                            overhead "[ parry, testudo ]" 290
-                        elseif var__parry_want = 2
-                            overhead "[ parry, warding ]" 290
-                        elseif var__parry_want = 1
-                            overhead "[ parry, shield bash ]" 290
-                        elseif var__parry_want = 4
-                            overhead "[ parry, mirror ]" 290
-                        elseif var__parry_want = 5
-                            overhead "[ parry, bulwark ]" 290
+
+                    if var__parry_disabled = 0 and var__parry_want != var__parry_active
+                        if var__parry_can_switch = 1
+                            @setvar! var__parry_retried 0
+
+                            if var__parry_want = var__parry_sent
+                                if timer "timer__parry_hold" < interval__parry_hold
+                                    @setvar! var__parry_retried 1
+                                endif
+                            endif
+
+                            if var__parry_want = 1
+                                say "[ShieldsStance1"
+                            elseif var__parry_want = 2
+                                say "[ShieldsStance2"
+                            elseif var__parry_want = 3
+                                say "[ShieldsStance3"
+                            elseif var__parry_want = 4
+                                say "[ShieldsStance4"
+                            elseif var__parry_want = 5
+                                say "[ShieldsStance5"
+                            endif
+                            @setvar! var__parry_active var__parry_want
+                            @setvar! var__parry_sent var__parry_want
+                            @setvar! var__parry_confirm 1
+                            settimer "timer__parry_hold" 0
+                            settimer "timer__parry_resync" 0
+                            settimer "timer__parry_retry" 0
+                            if config__sysmsg = 1
+                                sysmsg "Parry stance request: slot {{var__parry_want}}." 88
+                            endif
+                            if config__chatty = 1
+                                if var__parry_want = 3
+                                    overhead "[ parry, testudo ]" 290
+                                elseif var__parry_want = 2
+                                    overhead "[ parry, warding ]" 290
+                                elseif var__parry_want = 1
+                                    overhead "[ parry, shield bash ]" 290
+                                elseif var__parry_want = 4
+                                    overhead "[ parry, mirror ]" 290
+                                elseif var__parry_want = 5
+                                    overhead "[ parry, bulwark ]" 290
+                                endif
+                            endif
                         endif
                     endif
                 endif
+            elseif timer "timer__message" >= interval__message
+                overhead "[ shield codex, out ]" 254
+                settimer "timer__message" 0
             endif
-        elseif timer "timer__message" >= interval__message
-            overhead "[ shield codex, out ]" 254
-            settimer "timer__message" 0
         endif
     endif
 

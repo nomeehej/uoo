@@ -61,6 +61,10 @@ class ModuleRun {
         const source = readModule(name);
         assert.ok(source.includes("# @ loop"), name + " module must exist");
         this.now = 0;
+        // CE GetLabel waits 500ms after the first label (razor.md part 6). 0 keeps the
+        // other tests on round numbers.
+        this.labelMs = 0;
+        this.statements = 0;
         this.vars = new Map(Object.entries({
             config__chatty: 0, config__sysmsg: 0, wait__short: 0,
             var__combat_target: 101, var__fighting: 1, config__acquire_range: 18,
@@ -199,6 +203,8 @@ class ModuleRun {
 
     execute(nodes) {
         for (const node of nodes) {
+            // One statement per node. An if and elseif chain counts once (razor.md part 6).
+            this.statements++;
             if (node.branches) {
                 const branch = node.branches.find(({condition}) => condition === null || this.condition(condition));
                 if (branch) this.execute(branch.nodes);
@@ -221,6 +227,8 @@ class ModuleRun {
                     this.lists.get(unquote(args[0])).push(this.value(args[1]));
                 } else if (command === "getlabel") {
                     const item = [...this.items.values()].find((item) => item.serial === this.value(args[0]));
+                    this.events.push({at: this.now, command, value: args[1]});
+                    this.now += this.labelMs;
                     if (item?.label !== undefined) this.vars.set(args[1], item.label);
                 } else if (command === "say" || command === "overhead" || command === "sysmsg") {
                     const value = unquote(args[0]);
@@ -288,7 +296,8 @@ test("emergency Crab overrides minimum hold and waits for continuous recovery", 
     run.diffhits = 30;
     run.pass(100).pass(4900);
     assert.deepEqual(run.said(), ["[WrestlingStance2"]);
-    run.pass(1100);
+    // Released at 5 seconds of recovery. Monkey follows on the next decision check.
+    run.pass(1100).pass(1000);
     assert.deepEqual(run.said(), ["[WrestlingStance2", "[WrestlingStance4"]);
 });
 
@@ -301,15 +310,13 @@ test("Spider needs the current target and a distinct live registered enemy withi
     assert.deepEqual(run.said(), []);
     run.mobs.get(102).range = 1;
     run.pass(2100);
-    assert.deepEqual(run.said(), []);
-    run.pass(1100);
+    assert.deepEqual(run.said(), [], "the first label read is less than the retry interval ago");
+    run.pass(2000);
     assert.deepEqual(run.said(), ["[WrestlingStance3"]);
     run.mobs.get(102).range = 8;
     run.pass(2100).pass(4000);
-    assert.deepEqual(run.said(), ["[WrestlingStance3"]);
-    run.pass(2100);
-    assert.deepEqual(run.said(), ["[WrestlingStance3"]);
-    run.pass(1100);
+    assert.deepEqual(run.said(), ["[WrestlingStance3"], "pack released inside the Spider hold");
+    run.pass(2100).pass(2000);
     assert.deepEqual(run.said(), ["[WrestlingStance3", "[WrestlingStance4"]);
 });
 
@@ -471,6 +478,8 @@ for (const dot of ["poisoned", "Bleed", "Disease"]) {
         assert.deepEqual(run.said(), ["[ShieldsStance2"]);
         run.mobs.get(101).range = 1;
         run.pass(3100);
+        assert.deepEqual(run.said(), ["[ShieldsStance2"], "Testudo waits for the Warding hold");
+        run.pass(5000);
         assert.deepEqual(run.said(), ["[ShieldsStance2", "[ShieldsStance3"]);
         run.flags[dot] = false;
         run.mobs.get(101).range = 3;
@@ -478,6 +487,99 @@ for (const dot of ["poisoned", "Bleed", "Disease"]) {
         assert.deepEqual(run.said(), ["[ShieldsStance2", "[ShieldsStance3"]);
     });
 }
+
+const saidAt = (run, prefix) => run.events.filter(({command, value}) => command === "say" && value.startsWith(prefix));
+
+test("idle passes between decision checks cost two wrestling statements and one parry statement", () => {
+    for (const [name, limit] of [["wrestling-codex", 2], ["parry-codex", 1]]) {
+        const run = new ModuleRun(name, {config__parry_stance_main: 3});
+        run.pass().pass(100);
+        const before = run.statements;
+        run.pass(100);
+        assert.equal(run.statements - before, limit, name);
+    }
+});
+
+test("every request is read back at least the retry interval later, with real label time", () => {
+    for (const [name, label, item] of [["wrestling-codex", "Dragon, Zen Strike", 11891], ["parry-codex", "Bulwark, Barrier", 11889]]) {
+        const run = new ModuleRun(name, {config__parry_stance_main: 3});
+        run.items.get(item).label = label;
+        run.labelMs = 500;
+        run.flags.rejectCommands = true;
+        for (let i = 0; i < 400; i++) run.pass(100);
+        const reads = run.events.filter(({command}) => command === "getlabel").map(({at}) => at);
+        for (const {at} of run.events.filter(({command}) => command === "say")) {
+            const next = reads.find((read) => read > at);
+            if (next !== undefined) assert.ok(next - at >= 3000, name + ": read " + (next - at) + "ms after a request");
+        }
+    }
+});
+
+test("a rejected stance goes out once more, then waits for the hold", () => {
+    for (const [name, label, item, prefix] of [
+        ["wrestling-codex", "Dragon, Chi Thrust", 11891, "[WrestlingStance"],
+        ["parry-codex", "Bulwark, Last Stand", 11889, "[ShieldsStance"],
+    ]) {
+        const run = new ModuleRun(name, {config__parry_stance_main: 3});
+        run.items.get(item).label = label;
+        run.flags.rejectCommands = true;
+        for (let i = 0; i < 600; i++) run.pass(100);
+        const times = saidAt(run, prefix).map(({at}) => at);
+        assert.ok(times.length >= 4 && times.length <= 11, name + ": " + times.length + " requests in 60 seconds");
+        for (let i = 2; i < times.length; i++) {
+            assert.ok(times[i] - times[i - 2] >= 8000, name + ": three requests inside one hold");
+        }
+    }
+});
+
+test("a rejected finisher waits for the resync instead of repeating", () => {
+    for (const [name, label, item, prefix] of [
+        ["wrestling-codex", "Monkey, Zen Strike", 11891, "[WrestlingFinisher"],
+        ["parry-codex", "Testudo, Barrier", 11889, "[ShieldsFinisher"],
+    ]) {
+        const run = new ModuleRun(name, {config__parry_stance_main: 3});
+        run.items.get(item).label = label;
+        run.flags.rejectCommands = true;
+        for (let i = 0; i < 290; i++) run.pass(100);
+        assert.equal(saidAt(run, prefix).length, 1, name + " before the resync");
+        for (let i = 0; i < 50; i++) run.pass(100);
+        assert.equal(saidAt(run, prefix).length, 2, name + " after the resync");
+    }
+});
+
+test("parry Warding cannot flap faster than its hold at the edge of melee", () => {
+    const run = new ModuleRun("parry-codex", {config__parry_stance_main: 3});
+    run.flags.poisoned = true;
+    for (let i = 0; i < 12; i++) {
+        run.mobs.get(101).range = i % 2 ? 1 : 3;
+        run.pass(3100);
+    }
+    const times = saidAt(run, "[ShieldsStance").map(({at}) => at);
+    assert.ok(times.length >= 2 && times.length <= 5, times.length + " stance requests in 37 seconds");
+    for (let i = 1; i < times.length; i++) assert.ok(times[i] - times[i - 1] >= 8000);
+});
+
+test("finisher slot 2 and a disabled pack stance follow their settings", () => {
+    const run = new ModuleRun("wrestling-codex", {config__wrestling_finisher_main: 2, config__wrestling_stance_pack: 0});
+    run.lists.set("list__provo_candidates", [102]);
+    run.mobs.set(102, {range: 1, dead: false});
+    run.pass().pass(4000).pass(10000);
+    assert.deepEqual(run.said(), ["[WrestlingFinisher2"]);
+    assert.ok(run.items.get(11891).label.includes("Monkey"));
+    assert.ok(run.items.get(11891).label.includes("Zen Strike"));
+});
+
+test("an emergency blocked by the item queue requests Crab on the next free pass", () => {
+    const run = new ModuleRun("wrestling-codex");
+    run.pass();
+    run.diffhits = 45;
+    run.flags.queued = true;
+    run.pass(100);
+    assert.deepEqual(run.said(), []);
+    run.flags.queued = false;
+    run.pass(100);
+    assert.deepEqual(run.said(), ["[WrestlingStance2"]);
+});
 
 test("unmanaged parry finishers need no finisher text or warning", () => {
     const run = new ModuleRun("parry-codex", {
