@@ -580,7 +580,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 - 공개 스크립트 [forensics](https://outlands.uorazorscripts.com/skills/forensics/c8e4e8eb-743d-4a7f-9043-4c17d2cabb6a)도 `"the remains"`를 플레이어 시체로 보고 건너뜀
 - 시체가 Last Target일 때 캐시는 `0x40000000 > serial`로 모빌만 `dead`와 `noto`에 전달
 - Parry Codex: 랭크가 오를 때까지 Bulwark, 근접 밖에서 독, 출혈, 질병이면 Warding
-- 할 일: Testudo 랭크가 오르면 `config__parry_stance_main`을 `config__parry_stance_testudo`로
+- 할 일: Testudo 랭크가 오르면 레시피의 `config__parry_stance_main`을 3(Testudo)으로
 - 스탠스, 피니셔, 어빌리티는 Arms Lore가 없어 무기 특수 확률 기본 10%인 점을 반영해 선택. 근거는 `fight/sword-codex`, `fight/weapon-ability` 모듈 주석
 - Sword Codex 기본값은 [sword-codex 모듈](https://github.com/nomeehej/uoo/blob/master/module/fight/sword-codex.razor)
 - `config__sysmsg`: 전투 대상 변화, 칼질 요청과 결과, codex 전환, 회복과 버프 시전, 도끼 장착, 골드와 가죽 정리를 Journal에 기록
