@@ -295,6 +295,9 @@ endif
 
                     if var__wrestling_finisher_off = 1
                         overhead "[ wrestling finisher, off ]" 254
+                        if config__sysmsg = 1
+                            sysmsg "Wrestling codex label names no single finisher: {{label__wrestling_codex}}" 88
+                        endif
                     elseif config__wrestling_finisher_main != var__wrestling_finisher_active
                         if config__wrestling_finisher_main = 1
                             say "[WrestlingFinisher1"
@@ -303,6 +306,9 @@ endif
                         endif
                         @setvar! var__wrestling_finisher_active config__wrestling_finisher_main
                         @setvar! var__wrestling_confirm 1
+                        if config__sysmsg = 1
+                            sysmsg "Wrestling finisher request: slot {{config__wrestling_finisher_main}}." 88
+                        endif
                         if config__chatty = 1
                             overhead "[ wrestling finisher, on ]" 290
                         endif
