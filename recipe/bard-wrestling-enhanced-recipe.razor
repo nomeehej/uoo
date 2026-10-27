@@ -126,7 +126,6 @@
 #      nothing is remembered. 0 disables that search. A chosen serial is retried until
 #      a hand confirms it or it leaves the backpack. Graphics: content/public/game/item-list.md.
 #      > Martial Arts Scroll 22187, confirmed in-game 2026-10-27.
-#      > Follow the visible pair when the player changes equipment.
 #
 #   rearm_follow_hands (default 0)
 #      What to remember when equipment changes.
@@ -134,6 +133,7 @@
 #        1  adopt both current hands at Play and when a new held item is seen. Forget an
 #           empty opposite hand in that case. If both hands are empty, keep the memory
 #           so a cast or disarm can still be repaired
+#      > Follow the visible pair when the player changes equipment.
 # ----------------------------------------------------------------------------------------
 @setvar! config__rearm_graphic 22187
 @setvar! config__rearm_follow_hands 1
