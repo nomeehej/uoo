@@ -55,7 +55,9 @@
     # skips the label read while it runs. The label stays authoritative when the bar is
     # missing. Greater Heal waits for warmode as config__warmode_is_manual says, but not
     # for the walk bar: a run keeps that bar going, and at the emergency line a cast a step
-    # may break beats none.
+    # may break beats none. The agent shows as casting a moment after its hotkey, so the
+    # poll first waits up to wait__cast_start for it. Polling at once left before the cast
+    # showed, and fight/rearm armed over it and broke it (reported 2026-10-30).
     # ------------------------------------------------------------------------------------
     if not poisoned and not paralyzed and not hidden and not queued and not targetexists and diffhits >= config__heal_hits
         @setvar! var__heal_potion_out 0
@@ -84,7 +86,15 @@
                 if config__sysmsg = 1
                     sysmsg "Agent: Greater Heal/Cure Self." 88
                 endif
-                wait wait__short
+                settimer "timer__cast_start" 0
+
+                while not casting and timer "timer__cast_start" < wait__cast_start
+                    wait wait__poll
+                endwhile
+
+                if not casting and config__sysmsg = 1
+                    sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
+                endif
 
                 for 60
                     if not casting

@@ -80,6 +80,11 @@
 #   wait__short
 #      The pause after an action.
 #
+#   wait__cast_start
+#      How long an agent hotkey is given to show as casting before the poll for the end
+#      of the cast. A poll that starts first sees no cast and lets the next block arm or
+#      act over it.
+#
 #   interval__message
 #      Spacing for repeated warnings. Without it an empty potion bag shouts every pass.
 #
@@ -89,6 +94,7 @@
 # ----------------------------------------------------------------------------------------
 @setvar! wait__poll 100
 @setvar! wait__short 200
+@setvar! wait__cast_start 1000
 @setvar! interval__message 3000
 @setvar! interval__housekeeping 5000
 
@@ -98,8 +104,12 @@
 #
 #   timer__message
 #      Ready on the first pass, so the first warning shows at once.
+#
+#   timer__cast_start
+#      Runs from the last agent hotkey, against wait__cast_start.
 # ----------------------------------------------------------------------------------------
 timer__message interval__message
+timer__cast_start 0
 
 
 # ----------------------------------------------------------------------------------------

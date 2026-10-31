@@ -353,7 +353,7 @@ order: 30
 |   | `warmode_is_manual`: 1이면 워모드가 플레이어의 조작 창. 우리 시전과 음식은 쉬고, 포션과 붕대는 나감. `recover_in_warmode`: 그때 회복 시전도 쉴지 | lumberjack-enhanced가 1. bard-necro-enhanced도 1, 회복은 계속(1) |
 |   | `use_bandages`, `heal_skill_min`: 붕대 사용 여부. 못 쓰면 `recovery/light-heal`이 대신 | dexxer-basic, skinning-enhanced는 Healing 10 초과일 때만 붕대. bard-necro-enhanced는 붕대 안 씀 |
 |   | `settle_first`: 1이면 패스 첫머리에서 아이템 큐와 시전 종료 대기 | bard-necro-enhanced가 1 |
-| `# @ wait`, `# @ timer` | `wait__poll`, `wait__short`, 경고 간격 `interval__message`와 `timer__message`, 레시피 그룹 `# @ every`의 `interval__housekeeping` |   |
+| `# @ wait`, `# @ timer` | `wait__poll`, `wait__short`, 경고 간격 `interval__message`와 `timer__message`, 레시피 그룹 `# @ every`의 `interval__housekeeping`. 회복 에이전트 시전이 `casting`으로 보이기까지의 대기 `wait__cast_start`(1초)와 `timer__cast_start` | 에이전트 핫키 직후 폴링이 시전보다 먼저 끝나 재장착이 시전을 끊은 보고, 2026-10-30 |
 | `# @ state` | 블록 사이 신호 넷(아래 표) | pvp는 `var__fighting` 1 |
 | `# @ setup`, `# @ loop`, `# @ end` | 구조적 PvP 정지(루프 앞, 패스 첫머리), 시작 4줄, `settle_first`, 패스 끝 `wait wait__poll` |   |
 

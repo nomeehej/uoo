@@ -172,6 +172,7 @@
 # ----------------------------------------------------------------------------------------
 @setvar! wait__poll 100
 @setvar! wait__short 200
+@setvar! wait__cast_start 1000
 @setvar! interval__message 3000
 @setvar! interval__housekeeping 5000
 
@@ -273,6 +274,11 @@ if not timerexists "timer__message"
     createtimer "timer__message"
 endif
 settimer "timer__message" interval__message
+
+if not timerexists "timer__cast_start"
+    createtimer "timer__cast_start"
+endif
+settimer "timer__cast_start" 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -816,7 +822,15 @@ while not dead
                             if config__sysmsg = 1
                                 sysmsg "Agent: Smart Heal/Cure Self for poison." 88
                             endif
-                            wait wait__short
+                            settimer "timer__cast_start" 0
+
+                            while not casting and timer "timer__cast_start" < wait__cast_start
+                                wait wait__poll
+                            endwhile
+
+                            if not casting and config__sysmsg = 1
+                                sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
+                            endif
 
                             for 60
                                 if not casting
@@ -865,7 +879,15 @@ while not dead
                     if config__sysmsg = 1
                         sysmsg "Agent: Greater Heal/Cure Self." 88
                     endif
-                    wait wait__short
+                    settimer "timer__cast_start" 0
+
+                    while not casting and timer "timer__cast_start" < wait__cast_start
+                        wait wait__poll
+                    endwhile
+
+                    if not casting and config__sysmsg = 1
+                        sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
+                    endif
 
                     for 60
                         if not casting
@@ -921,7 +943,15 @@ while not dead
                         if config__sysmsg = 1
                             sysmsg "Agent: Smart Heal/Cure Self, light Heal." 88
                         endif
-                        wait wait__short
+                        settimer "timer__cast_start" 0
+
+                        while not casting and timer "timer__cast_start" < wait__cast_start
+                            wait wait__poll
+                        endwhile
+
+                        if not casting and config__sysmsg = 1
+                            sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
+                        endif
 
                         for 60
                             if not casting

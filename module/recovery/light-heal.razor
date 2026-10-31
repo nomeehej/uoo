@@ -43,7 +43,8 @@
     # The bandage stand-in whenever no bandage can run: bandages off, no Healing, or none
     # left and none running. Beside the bandages only with config__use_light_heal 1. The
     # agent waits for the walk bar and for warmode as config__walk_guard and
-    # config__warmode_is_manual say.
+    # config__warmode_is_manual say. Its poll waits for the cast to show first, as in
+    # recovery/heal.
     # ------------------------------------------------------------------------------------
     if not poisoned and not paralyzed and not hidden and not queued and not casting and not targetexists and config__use_magery = 1 and var__regs_heal = 1 and diffhits >= config__light_hits and mana >= config__mana_heal
         @setvar! var__light_heal_due 0
@@ -61,7 +62,15 @@
                     if config__sysmsg = 1
                         sysmsg "Agent: Smart Heal/Cure Self, light Heal." 88
                     endif
-                    wait wait__short
+                    settimer "timer__cast_start" 0
+
+                    while not casting and timer "timer__cast_start" < wait__cast_start
+                        wait wait__poll
+                    endwhile
+
+                    if not casting and config__sysmsg = 1
+                        sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
+                    endif
 
                     for 60
                         if not casting

@@ -996,5 +996,6 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 | Warding | 독, Bleed, Disease 중 기억한 몹과 거리 변경 | 근접 Testudo, 2칸 밖 Warding. 상태 해제 뒤 Testudo. 전환 사이 8초 이상 | 확인되지 않았다 |
 | 장착과 능력 | Scroll을 든 채, 백팩에 넣은 채, 다른 무기로 바꾼 채 인접한 몹과 교전 | 든 상태에서만 Brawl 요청. 든 상태에서도 요청이 없으면 `findtype … self`가 손의 물건을 못 찾는 것 → [Razor](../scripting/razor.md#03) 03절 갱신 | 확인되지 않았다 |
 | 시전 뒤 재장착 | Greater Heal 등으로 손이 비는 상황 | 회복 후 Scroll 복귀. 요청과 실제 장착을 구분. 코덱스 off 알림이 뜨면 손이 빌 때 자세나 피니셔가 풀리는 것 → 라벨 기록 | 확인되지 않았다 |
+| 힐 중 재장착 | HP 손실 45 이상에서 Greater Heal. Journal의 `Agent: Greater Heal/Cure Self.`, `Rearm: equip requested`, 끊김 줄 순서 기록 | 힐이 들어간 뒤 `Rearm: equip requested`. 그 사이 `Your concentration is disturbed` 없음. `Agent: no cast seen within 1000 ms.`가 자주 뜨면 에이전트 시전이 더 늦게 보이는 것 → `wait__cast_start` 조정 | 수정 전 실패: 힐이 끊기고 Scroll 장착, 인게임 확인됨 2026-10-30. 원인(폴링이 시전보다 먼저 끝남)과 2026-10-30 수정은 확인되지 않았다 |
 | Brawl 충전 | 능력 요청 시각, 실제 명중과 발동, 다음 충전을 기록 | 60초 요청 간격의 지연 여부 확인. 요청 자체를 발동으로 판정하지 않음 | 확인되지 않았다 |
 | 재활용 복귀 | 새 루프 실행 후 recycle 완료 | `combat\bard-wrestling-enhanced`로 복귀 | 확인되지 않았다 |
