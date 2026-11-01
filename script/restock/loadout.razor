@@ -82,6 +82,8 @@
 @setvar! wait__poll 100
 @setvar! wait__short 200
 @setvar! wait__cast_start 1000
+@setvar! wait__cast_limit 6000
+@setvar! wait__cast_cursor 500
 @setvar! interval__message 3000
 @setvar! interval__housekeeping 5000
 
@@ -135,6 +137,7 @@ settimer "timer__cast_start" 0
 @setvar! var__hold_casts 0
 @setvar! var__hold_gathering 0
 @setvar! var__hold_symbols 0
+@setvar! var__settle_cast 0
 
 
 # ----------------------------------------------------------------------------------------

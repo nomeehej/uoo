@@ -27,7 +27,7 @@ Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서�
 | base | | `warmode_is_manual` 1, `recover_in_warmode` 1, `settle_first` 1(bard-necro). `heal_skill_min` 10(skinning) |
 | 패스 첫머리 | `bard/provo-picks` | `Z` 또는 `Shift+Space`로 등록하는 후보 입력, 바딩 대상과 독립. [Barding](../mechanics/barding.md#03.A) 03.A절 |
 | 다쳤거나 독, 마비 | `recovery/cure`, `heal`, `bandage`, `light-heal` | 잃은 HP 기준 `heal_hits` 35, `emergency_hits` 45. 회복 정책은 아래 |
-| 회복 다음 | `fight/rearm` | `rearm_graphic` 31186. 기억한 손이 비면 그 패스에 다시 듦, 요청 뒤 2초 지나 손 확인. 확인 항목은 [Open items](../questions/open-items.md#16) 16절 |
+| 회복 다음 | `fight/rearm` | `rearm_graphic` 31186. 기억한 손이 빈 지 2초 뒤 다시 듦, 요청 뒤 2초 지나 손 확인. 확인 항목은 [Open items](../questions/open-items.md#16) 16절 |
 | 공용 | `fight/target`, `magery/reagents` | `acquire_range` 18, `target_range` 10, `target_grace` 500(bard-necro) |
 | 5초마다 | `bard/instrument`, `recovery/refresh`, `buff/food`, `pack/gold-drop` | `refresh_stam` 60(skinning) |
 | 하우스키핑 다음 | `buff/potions` | 교전 중 5초마다 검사, 마신 다음 패스는 바로([Combat](../mechanics/combat.md#02.D) 02.D절). 기준선 STR 120, DEX 100은 기본값 |

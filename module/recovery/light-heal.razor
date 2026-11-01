@@ -43,8 +43,8 @@
     # The bandage stand-in whenever no bandage can run: bandages off, no Healing, or none
     # left and none running. Beside the bandages only with config__use_light_heal 1. The
     # agent waits for the walk bar and for warmode as config__walk_guard and
-    # config__warmode_is_manual say. Its poll waits for the cast to show first, as in
-    # recovery/heal.
+    # config__warmode_is_manual say. Its poll drains an old disturb line, waits for the
+    # cast to show, then for its cursor to be answered, as in recovery/heal.
     # ------------------------------------------------------------------------------------
     if not poisoned and not paralyzed and not hidden and not queued and not casting and not targetexists and config__use_magery = 1 and var__regs_heal = 1 and diffhits >= config__light_hits and mana >= config__mana_heal
         @setvar! var__light_heal_due 0
@@ -58,6 +58,10 @@
         if var__light_heal_due = 1
             if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
                 if config__walk_guard = 0 or cooldown "walk" = 0
+                    if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                        # consumed, nothing else to do
+                    endif
+
                     hotkey "> Smart Heal/Cure Self"
                     if config__sysmsg = 1
                         sysmsg "Agent: Smart Heal/Cure Self, light Heal." 88
@@ -72,17 +76,28 @@
                         sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                     endif
 
-                    for 60
+                    while timer "timer__cast_start" < wait__cast_limit
                         if not casting
                             break
                         endif
 
                         if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                            if config__sysmsg = 1
+                                sysmsg "Agent: cast disturbed." 88
+                            endif
                             break
                         endif
 
                         wait wait__poll
-                    endfor
+                    endwhile
+
+                    if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                        sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                    endif
+
+                    # The cursor follows the cast and the agent answers it. An item used before
+                    # that replaces the cursor and loses the spell (Magery part 2).
+                    wait wait__cast_cursor
 
                     if targetexists "beneficial" and diffhits = 0
                         hotkey "Cancel Current Target"

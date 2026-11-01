@@ -74,7 +74,8 @@
 #   settle_first (default 0)
 #      What a pass does first.
 #        0  reads the state at once. Potions still go out while a spell is casting
-#        1  waits for the item queue and any cast to finish
+#        1  waits for the item queue and any cast to finish, then wait__cast_cursor more
+#           after a cast, for its cursor to be answered
 #      > Anything already in flight finishes before the pass reads state.
 # ----------------------------------------------------------------------------------------
 @setvar! config__warmode_is_manual 1

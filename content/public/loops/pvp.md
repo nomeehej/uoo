@@ -107,7 +107,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 7. BANDAGE, LIGHT HEAL, REFRESH 순서. 진행 중인 붕대는 재시작 안 함. 가벼운 Heal: 붕대 불가 시 대신, `use_light_heal` 1이면 붕대와 함께
 8. STAT POTIONS: Strength와 Agility는 STR과 DEX가 기준선 아래면 5초에 한 번. Resist는 버프가 빠지면 즉시. 한 포션이 떨어져도 나머지는 계속
 9. SELF BUFFS: RA → Reflect → Protection 순서, 한 패스에 하나씩. 빠지면 긴급 기준 아래에서 즉시
-10. REARM: 시전, 커서, 행동 큐가 없을 때 비어 있는 손에 기억한 장비 복구
+10. REARM: 시전, 커서, 행동 큐가 없고 기억한 손이 빈 지 2초 지났을 때 그 손에 기억한 장비 복구
 
 - 시작 자기 TK: `teleki, me` 바가 이미 돌면 생략. 바를 스크립트에서 시작하거나 자기 TK 성공 신호로 쓰지 않음([PvP](../game/pvp.md#04.D) 04.D절)
 - 수동 시전이나 커서, 행동 큐, 은신, 마비, 자원 부족이면 시작 TK는 보류. 조건이 풀리면 시도하며, 요청 후에는 성공 여부와 무관하게 같은 Play에서 반복하지 않음
@@ -127,7 +127,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
   - Strength와 Agility는 스탯이 기준선 아래일 때 5초에 한 번, Resist는 버프가 빠졌을 때만
 - 시작 TK의 시약 조회는 요청 전 두 종류만. 요청하거나 활성 TK 바를 확인한 뒤에는 생략
 - REMEMBER HANDS는 패스 시작 때 손에 장비가 있으면 양손을 읽음. 자동 주문으로 새 무기가 내려가기 전에 선택을 기억하기 위한 비용
-- REARM은 `interval__equip_retry`(2초)마다 양손을 확인. 기억한 손이 비었는지는 패스마다 읽고, 그때는 주기를 기다리지 않고 확인
+- REARM은 `interval__equip_retry`(2초)마다 양손을 확인. 기억한 손이 비었는지는 패스마다 읽고, 그때는 주기를 기다리지 않고 확인. 장착은 손이 빈 지 `interval__rearm_settle`(2초) 뒤. 시전 종료와 커서 응답 사이의 틈에 장착하면 주문이 사라지기 때문([Magery](../mechanics/magery.md#02.A) 02.A절)
 - 재장착 요청 간격은 `timer__equip_sent`(2초). 손 전체 조회는 `timer__equip`으로 제한. Strength와 Agility 재시도는 `timer__str_potion`, `timer__agi_potion`(5초)
 - 저주를 받으면 포션 효과 중에도 스탯이 기준선 아래 → 다른 신호로는 거절될 마시기를 못 막음([Combat](../mechanics/combat.md#02.D) 02.D절)
 - 나머지 중복 요청은 행동 큐(`queued`), `bandaging`, `findbuff`, 포션 라벨, `heal pot` 바가 막음

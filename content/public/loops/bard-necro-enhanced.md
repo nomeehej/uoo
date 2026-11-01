@@ -65,7 +65,7 @@ flowchart TD
 
 | 블록 | 게이트 | 비고 |
 | --- | --- | --- |
-| 드레인 | `while queued or casting` | 이미 나간 동작이 끝난 뒤 상태를 읽음. 참조 스크립트 둘도 루프를 이렇게 시작. 이 루프는 `config__settle_first` 1 |
+| 드레인 | `while queued or casting` | 이미 나간 동작이 끝난 뒤 상태를 읽음. 참조 스크립트 둘도 루프를 이렇게 시작. 이 루프는 `config__settle_first` 1. 시전을 봤으면 커서 응답까지 `wait__cast_cursor`(0.5초) 더 |
 | 프로보 후보 입력 | `lastbeneficial` 변경 | `bard/provo-picks`. `V`의 가장 가까운 몹이나 `Shift+Space`로 등록. 교전과 바딩 쿨다운에 독립, 절차는 [Open items](../questions/open-items.md#17) 17절 |
 | 생존 | `paralyzed or poisoned or diffhits > 0` | 세 상태를 한 줄로 묻고, 안에서 마비, 큐어, 힐 순서. 마비가 맨 앞: 마비 중에는 아래가 아무것도 못 함. 큐어가 힐보다 앞: 큐어는 즉시 끝나고 힐은 독 틱에 일부 손실 |
 | 타겟 캐시 | `lastharmful`과 `noto`, 화면 거리 | 18칸(`config__acquire_range`) 안에서 받아 두고 10칸(`config__target_range`) 안에서 교전. 블록은 사본(`var__combat_target`)에 걺. 블록이 자기 용도로 찍은 몹은 `var__target_hold`로 빼 둠 |

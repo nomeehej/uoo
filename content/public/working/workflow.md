@@ -48,7 +48,7 @@ flowchart LR
 | [Item list](../game/item-list.md) | 아이템 이름, graphic id, hue |
 | [Barding](../mechanics/barding.md) | 바드 세 스킬과 송의 쿨, 효과, 코덱스, Defensive Barding, 프로보 후보 입력 |
 | [Necromancy](../mechanics/necromancy.md) | Vengeful Spirit 소환, 언데드, Unholy Symbol 경제 |
-| [Magery](../mechanics/magery.md) | Magery 프록과 시전 시간 |
+| [Magery](../mechanics/magery.md) | Magery 프록, 시전 시간, 프리캐스트 커서와 아이템 |
 | [Bard Necro](../templates/bard-necro.md) | Bard Necro의 캐릭터, 코덱스 배분, 소환수 선택, PvP 판단 |
 | [Bard Necro Enhanced](../loops/bard-necro-enhanced.md) | bard-necro-enhanced 루프의 설계, 자원, 마나 예산, 설계 결정, 소환수 블록 |
 | [Lumberjack PvP](../templates/lumberjack-pvp.md) | 벌목과 PvP 템플릿의 스킬, 스탯, 도끼 선택, 마나 예산, 교전 분기, 구현 요구사항, 공통 pvp 설정 |

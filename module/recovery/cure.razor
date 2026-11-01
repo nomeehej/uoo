@@ -24,8 +24,9 @@
     # at once. Poison next: potion first, it is instant and has no cooldown, and it goes
     # out during a cast. While any cure potion is carried the agent is not used, so mana
     # stays for Greater Heal. The agent waits for the walk bar and for warmode as
-    # config__walk_guard and config__warmode_is_manual say. Its poll waits for the cast to
-    # show first, as in recovery/heal.
+    # config__walk_guard and config__warmode_is_manual say. Its poll drains an old disturb
+    # line, waits for the cast to show, then for its cursor to be answered, as in
+    # recovery/heal.
     # ------------------------------------------------------------------------------------
     if paralyzed
         if findtype 3705 backpack 38
@@ -48,6 +49,10 @@
             if config__use_magery = 1 and var__regs_cure = 1 and mana >= config__mana_cure and not casting
                 if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
                     if config__walk_guard = 0 or cooldown "walk" = 0
+                        if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                            # consumed, nothing else to do
+                        endif
+
                         hotkey "> Smart Heal/Cure Self"
                         if config__sysmsg = 1
                             sysmsg "Agent: Smart Heal/Cure Self for poison." 88
@@ -62,17 +67,28 @@
                             sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                         endif
 
-                        for 60
+                        while timer "timer__cast_start" < wait__cast_limit
                             if not casting
                                 break
                             endif
 
                             if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                                if config__sysmsg = 1
+                                    sysmsg "Agent: cast disturbed." 88
+                                endif
                                 break
                             endif
 
                             wait wait__poll
-                        endfor
+                        endwhile
+
+                        if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                            sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                        endif
+
+                        # The cursor follows the cast and the agent answers it. An item used before
+                        # that replaces the cursor and loses the spell (Magery part 2).
+                        wait wait__cast_cursor
                     endif
                 endif
             endif

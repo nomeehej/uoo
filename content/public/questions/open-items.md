@@ -417,7 +417,8 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 | 긴급 HP, 수동 시전 | 손실 35 이상에서 수동 시전 | 포션은 나가고, GH는 시전이 끝난 다음 패스에. 스크립트가 수동 시전을 끊으면 실패 | 확인되지 않았다 |
 | 긴급 HP, 공격 커서 | 긴급 HP에서 완료한 공격 커서를 쥠 | 포션과 GH 모두 대기, 커서를 놓은 다음 패스에. 스크립트가 커서를 끊으면 실패 | 확인되지 않았다 |
 | 시전 중 포션 | 시전 중 포션을 마심 | 주문이 실제로 안 끊기는지 기록 | 확인되지 않았다 |
-| 커서 쥔 채 포션 | 커서를 쥔 채 포션을 마심 | 주문이 취소되는지 기록 | 확인되지 않았다 |
+| 커서 쥔 채 포션 | 커서를 쥔 채 포션을 마심 | 주문이 취소되는지 기록. 붕대는 취소 확인([Magery](../mechanics/magery.md#02.A) 02.A절) | 확인되지 않았다 |
+| 시전 끝 직후 포션 | 수동 시전이 끝나고 커서가 뜨기 전에 포션 조건에 걸림 | pvp는 `settle_first` 0이라 그 틈에 포션이 나갈 수 있음. 주문이 사라지면 포션 블록에도 `wait__cast_cursor` 대기 추가 | 확인되지 않았다 |
 | 자기 시전 폴링 | 시작 TK, 에이전트, RA, Reflect, Protection 시전 | 각 주문의 커서나 시전 종료, 끊김 줄을 처리하고 다음으로. 요청과 서버 성공 구분 | 확인되지 않았다 |
 | 만피 커서 | 에이전트가 만피에서 beneficial 커서를 남김 | 그 커서만 취소. 스크립트는 커서에 응답하지 않음 | 확인되지 않았다 |
 | 손 커서 | 손으로 harmful이나 neutral 커서를 엶 | 취소하거나 자기 타깃으로 쓰면 실패 | 확인되지 않았다 |
@@ -996,6 +997,6 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 | Warding | 독, Bleed, Disease 중 기억한 몹과 거리 변경 | 근접 Testudo, 2칸 밖 Warding. 상태 해제 뒤 Testudo. 전환 사이 8초 이상 | 확인되지 않았다 |
 | 장착과 능력 | Scroll을 든 채, 백팩에 넣은 채, 다른 무기로 바꾼 채 인접한 몹과 교전 | 든 상태에서만 Brawl 요청. 든 상태에서도 요청이 없으면 `findtype … self`가 손의 물건을 못 찾는 것 → [Razor](../scripting/razor.md#03) 03절 갱신 | 확인되지 않았다 |
 | 시전 뒤 재장착 | Greater Heal 등으로 손이 비는 상황 | 회복 후 Scroll 복귀. 요청과 실제 장착을 구분. 코덱스 off 알림이 뜨면 손이 빌 때 자세나 피니셔가 풀리는 것 → 라벨 기록 | 확인되지 않았다 |
-| 힐 중 재장착 | HP 손실 45 이상에서 Greater Heal. Journal의 `Agent: Greater Heal/Cure Self.`, `Rearm: equip requested`, 끊김 줄 순서 기록 | 힐이 들어간 뒤 `Rearm: equip requested`. 그 사이 `Your concentration is disturbed` 없음. `Agent: no cast seen within 1000 ms.`가 자주 뜨면 에이전트 시전이 더 늦게 보이는 것 → `wait__cast_start` 조정 | 수정 전 실패: 힐이 끊기고 Scroll 장착, 인게임 확인됨 2026-10-30. 원인(폴링이 시전보다 먼저 끝남)과 2026-10-30 수정은 확인되지 않았다 |
+| 힐 중 붕대와 재장착 | HP 손실 45 이상에서 Greater Heal. Journal의 `Agent: Greater Heal/Cure Self.`, `In Vas Mani`, 붕대, `Rearm:` 줄 순서와 HP 회복 기록 | 힐이 들어간 뒤 붕대. `Rearm: hand empty for under 2000 ms, equip held.` 한 줄 뒤 `Rearm: equip requested`. `Agent: cast disturbed.`는 끊김, `Agent: cast still shows after 6000 ms.`는 `casting`이 안 풀린 것, `Agent: no cast seen within 1000 ms.`가 잦으면 `wait__cast_start` 조정 | 2026-10-30 수정 뒤에도 실패: `In Vas Mani` 뒤 붕대가 커서를 덮어 힐 소멸, 끊김 줄 없음, 인게임 확인됨 2026-11-01([Magery](../mechanics/magery.md#02.A) 02.A절). 2026-11-01 수정(`casting` 뒤 0.5초 대기, 손이 빈 지 2초 뒤 장착)은 확인되지 않았다 |
 | Brawl 충전 | 능력 요청 시각, 실제 명중과 발동, 다음 충전을 기록 | 60초 요청 간격의 지연 여부 확인. 요청 자체를 발동으로 판정하지 않음 | 확인되지 않았다 |
 | 재활용 복귀 | 새 루프 실행 후 recycle 완료 | `combat\bard-wrestling-enhanced`로 복귀 | 확인되지 않았다 |

@@ -67,7 +67,7 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 오버헤드, 쿨다운 바 추가나 변경  | [Overheads](content/public/scripting/overheads.md)                                                                                                         |
 | 바딩 쿨, 효과, 코덱스 숫자       | [Barding](content/public/mechanics/barding.md)                                                                                                             |
 | 네크로 소환, 심볼 숫자           | [Necromancy](content/public/mechanics/necromancy.md)                                                                                                       |
-| 매저리 프록, 시전 시간           | [Magery](content/public/mechanics/magery.md)                                                                                                               |
+| 매저리 프록, 시전 시간, 프리캐스트 커서 | [Magery](content/public/mechanics/magery.md)                                                                                                               |
 | Bard Necro 캐릭터, 소환수 선택   | [Bard Necro](content/public/templates/bard-necro.md)                                                                                                       |
 | bard-necro-enhanced 루프 설계    | [Bard Necro Enhanced](content/public/loops/bard-necro-enhanced.md)                                                                                         |
 | PvP 규칙                         | [PvP](content/public/game/pvp.md)                                                                                                                          |

@@ -56,8 +56,12 @@
     # missing. Greater Heal waits for warmode as config__warmode_is_manual says, but not
     # for the walk bar: a run keeps that bar going, and at the emergency line a cast a step
     # may break beats none. The agent shows as casting a moment after its hotkey, so the
-    # poll first waits up to wait__cast_start for it. Polling at once left before the cast
-    # showed, and fight/rearm armed over it and broke it (reported 2026-10-30).
+    # poll first waits up to wait__cast_start for it, then until casting clears, then
+    # wait__cast_cursor more: the cursor follows the end of the cast and the agent answers
+    # it, and a bandage sent in between replaced the cursor and lost the heal with no
+    # disturb line (Magery part 2, in game 2026-11-01). A disturb line nobody read is
+    # drained before the hotkey. The poll leaves on casting before it can read its own,
+    # and the next poll would leave on the old line at once (Razor part 3).
     # ------------------------------------------------------------------------------------
     if not poisoned and not paralyzed and not hidden and not queued and not targetexists and diffhits >= config__heal_hits
         @setvar! var__heal_potion_out 0
@@ -82,6 +86,10 @@
 
         if var__heal_potion_out = 0 and diffhits >= config__emergency_hits and config__use_magery = 1 and var__regs_greater_heal = 1 and mana >= config__mana_greater_heal and not casting
             if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
+                if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                    # consumed, nothing else to do
+                endif
+
                 hotkey "> Greater Heal/Cure Self"
                 if config__sysmsg = 1
                     sysmsg "Agent: Greater Heal/Cure Self." 88
@@ -96,17 +104,28 @@
                     sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                 endif
 
-                for 60
+                while timer "timer__cast_start" < wait__cast_limit
                     if not casting
                         break
                     endif
 
                     if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                        if config__sysmsg = 1
+                            sysmsg "Agent: cast disturbed." 88
+                        endif
                         break
                     endif
 
                     wait wait__poll
-                endfor
+                endwhile
+
+                if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                    sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                endif
+
+                # The cursor follows the cast and the agent answers it. An item used before
+                # that replaces the cursor and loses the spell (Magery part 2).
+                wait wait__cast_cursor
 
                 # The agent leaves its beneficial cursor up when there is nothing left to heal.
                 if targetexists "beneficial" and diffhits = 0

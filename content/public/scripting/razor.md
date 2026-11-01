@@ -189,6 +189,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 | --- | --- | --- |
 | `for 25`, `wait 100`으로 커서 폴링 | 4서클 커서가 루프 종료 후 뜸(인게임 확인됨 2026-09-29). 남은 커서가 `not targetexists` 블록 전부 차단 | `for 60`. 한 바퀴가 `wait` 값보다 훨씬 짧게 도는 것으로 보임. 원인은 확인되지 않았다 |
 | 커서 없는 시전(힐 에이전트, Create Food, 자기 버프)을 `not casting`부터 보며 폴링 | 시전 끊김 순간 `casting` 해제 → 끊김 줄을 안 읽고 나감(인게임 확인됨 2026-09-29). 다음 커서 폴링이 그 줄을 제 것으로 읽고 첫 바퀴에 나가 커서가 남음 | 커서 폴링 시작 전에 끊김 줄을 한 번 읽어 비움(`magery/rotation` 첫머리, `buff/spells`의 Spell Siphon 화살 앞) |
+| 시전 폴링을 `not casting`에서 바로 끝냄 | `casting`은 시전이 끝나면 풀리고 커서는 그 뒤에 옴. 그 틈에 `not casting and not targetexists`인 붕대 블록이 나가 붕대 커서가 Greater Heal 커서를 덮음, 끊김 줄 없음(인게임 확인됨 2026-11-01, [Magery](../mechanics/magery.md#02.A) 02.A절). 재장착도 같은 틈에 나감 | 회복 에이전트 폴링과 `settle_first`는 `casting`이 풀린 뒤 `wait__cast_cursor`(0.5초) 더 기다림. `fight/rearm`은 기억한 손이 빈 지 `interval__rearm_settle`(2초) 뒤에 장착 |
 | 치유할 것이 없을 때 Smart Heal, Greater Heal 에이전트 | 풀피면 커서를 안 찍고 남김(인게임 확인됨 2026-09-29). 모든 블록 정지 | 에이전트 폴링 후 `targetexists and diffhits = 0`이면 `Cancel Current Target` |
 | 스크립트의 `target`과 `Target Self` | lasttarget이 백팩이나 나로 바뀜. 10칸 밖에서 고른 타겟을 노래가 덮어써서 교전 실패(인게임 확인됨 2026-09-29). 적대 커서에 찍으면 `lastharmful`도 바뀜 | 타겟은 화면 거리에서 받아 사본(`var__combat_target`)에 둠. 2026-10-20부터 루프는 `lastharmful`을 읽음. 블록이 자기 용도로 찍은 몹은 `var__target_hold`(`fight/target`). 손으로 누르는 E, Shift+V, 무기 핫키는 루프의 다음 공격 주문이나 다음 고르기 전까지 그 몹을 가리킬 수 있음 |
 | `Set Last Target (Harmful)`로 고른 대상을 `lasttarget`으로 읽기 | 일반 `lasttarget`은 그대로라 루프가 고른 대상을 못 따라감. `Target Closest Non-Friendly Monster`는 `lasttarget`, `lastharmful`, `lastbeneficial` 셋을 다 바꾸고, `Next Non-Friendly Monster Target`도 `lastharmful`을 바꿈(인게임 확인됨). 인게임 확인됨 2026-10-20(`debug/probe-last-targets`) | 루프는 `lastharmful`을 읽음(`fight/target`). Shift+V(Attack Last Target)와 All Kill 커서도 Harmful 대상을 따라감(인게임 확인됨 2026-10-20) |
@@ -311,6 +312,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 | `not dead X and noto X != "hostile" …` | `necro/summon-names` |
 | `useskill`, `waitfortarget`, `target backpack` 순서 | `archive/bard-mace.razor` BARD SONG BUFF |
 | `for 60`과 `break`로 커서 폴링 | `magery/rotation`. 참고했던 `auto-mage.razor:1160`은 저장소에 없음 |
+| `while timer "timer__cast_start" < wait__cast_limit`와 `break`로 시전 종료 폴링 | `recovery/heal`, `cure`, `light-heal`. `for`의 바퀴 길이가 불확실해(03절) 상한을 타이머로 |
 | `hotkey 'Vampiric Embrace'`와 `hotkey 'Target Self'` | `necro/vampiric-embrace`. 위키 기준 자기 타겟 시 주변 시체 자동 탐색(인게임 확인됨 2026-09-25) |
 | `hotkey 'Drink Heal'` 같은 포션 핫키 | `recovery/heal`. 이름은 Razor 핫키 목록의 Potions 항목 그대로 |
 | `hotkey "> Interrupt"` | `magery/rotation`, `magery/flamestrike`의 커서 폴링. 제 시전을 끊고 긴급 힐로. 같은 핫키가 휠 아래에도 있음([Hotkeys](../game/hotkeys.md)) |

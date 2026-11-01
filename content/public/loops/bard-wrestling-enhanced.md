@@ -78,7 +78,7 @@ Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 �
 
 | 항목 | 기본값 | 판단 |
 | --- | --- | --- |
-| 무기 재장착 | Martial Arts Scroll `22187`, `rearm_follow_hands` 1 | 직접 바꾼 장비 쌍을 기억, 빈손과 백팩 검색으로 복구 |
+| 무기 재장착 | Martial Arts Scroll `22187`, `rearm_follow_hands` 1 | 직접 바꾼 장비 쌍을 기억, 빈 지 2초 뒤 백팩에서 복구 |
 | Wrestling 피니셔 | Chi Thrust | 선택 유지. 발동 구간은 게임이 처리 |
 | 무기 능력 | Wrestling 슬롯 1, Brawl | 인접한 살아 있는 대상과 Scroll 장착 확인 |
 | Parry 기본 자세 | Testudo | 최대 랭크 기준 |

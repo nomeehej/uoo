@@ -208,6 +208,8 @@
 @setvar! wait__poll 100
 @setvar! wait__short 200
 @setvar! wait__cast_start 1000
+@setvar! wait__cast_limit 6000
+@setvar! wait__cast_cursor 500
 @setvar! interval__message 3000
 @setvar! interval__housekeeping 5000
 
@@ -545,6 +547,7 @@ settimer "timer__housekeeping" interval__housekeeping
 @setvar! var__hold_casts 0
 @setvar! var__hold_gathering 0
 @setvar! var__hold_symbols 0
+@setvar! var__settle_cast 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -887,9 +890,19 @@ while not dead
     endif
 
     if config__settle_first = 1
+        @setvar! var__settle_cast 0
+
         while queued or casting
+            if casting
+                @setvar! var__settle_cast 1
+            endif
+
             wait wait__short
         endwhile
+
+        if var__settle_cast = 1
+            wait wait__cast_cursor
+        endif
     endif
 
     # ------------------------------------------------------------------------------------
@@ -942,6 +955,10 @@ while not dead
                 if config__use_magery = 1 and var__regs_cure = 1 and mana >= config__mana_cure and not casting
                     if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
                         if config__walk_guard = 0 or cooldown "walk" = 0
+                            if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                                # consumed, nothing else to do
+                            endif
+
                             hotkey "> Smart Heal/Cure Self"
                             if config__sysmsg = 1
                                 sysmsg "Agent: Smart Heal/Cure Self for poison." 88
@@ -956,17 +973,26 @@ while not dead
                                 sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                             endif
 
-                            for 60
+                            while timer "timer__cast_start" < wait__cast_limit
                                 if not casting
                                     break
                                 endif
 
                                 if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                                    if config__sysmsg = 1
+                                        sysmsg "Agent: cast disturbed." 88
+                                    endif
                                     break
                                 endif
 
                                 wait wait__poll
-                            endfor
+                            endwhile
+
+                            if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                                sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                            endif
+
+                            wait wait__cast_cursor
                         endif
                     endif
                 endif
@@ -999,6 +1025,10 @@ while not dead
 
             if var__heal_potion_out = 0 and diffhits >= config__emergency_hits and config__use_magery = 1 and var__regs_greater_heal = 1 and mana >= config__mana_greater_heal and not casting
                 if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
+                    if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                        # consumed, nothing else to do
+                    endif
+
                     hotkey "> Greater Heal/Cure Self"
                     if config__sysmsg = 1
                         sysmsg "Agent: Greater Heal/Cure Self." 88
@@ -1013,17 +1043,26 @@ while not dead
                         sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                     endif
 
-                    for 60
+                    while timer "timer__cast_start" < wait__cast_limit
                         if not casting
                             break
                         endif
 
                         if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                            if config__sysmsg = 1
+                                sysmsg "Agent: cast disturbed." 88
+                            endif
                             break
                         endif
 
                         wait wait__poll
-                    endfor
+                    endwhile
+
+                    if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                        sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                    endif
+
+                    wait wait__cast_cursor
 
                     if targetexists "beneficial" and diffhits = 0
                         hotkey "Cancel Current Target"
@@ -1048,6 +1087,10 @@ while not dead
             if var__light_heal_due = 1
                 if config__warmode_is_manual = 0 or config__recover_in_warmode = 1 or not warmode
                     if config__walk_guard = 0 or cooldown "walk" = 0
+                        if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                            # consumed, nothing else to do
+                        endif
+
                         hotkey "> Smart Heal/Cure Self"
                         if config__sysmsg = 1
                             sysmsg "Agent: Smart Heal/Cure Self, light Heal." 88
@@ -1062,17 +1105,26 @@ while not dead
                             sysmsg "Agent: no cast seen within {{wait__cast_start}} ms." 88
                         endif
 
-                        for 60
+                        while timer "timer__cast_start" < wait__cast_limit
                             if not casting
                                 break
                             endif
 
                             if insysmsg "Your concentration is disturbed, thus ruining thy spell."
+                                if config__sysmsg = 1
+                                    sysmsg "Agent: cast disturbed." 88
+                                endif
                                 break
                             endif
 
                             wait wait__poll
-                        endfor
+                        endwhile
+
+                        if casting and timer "timer__cast_start" >= wait__cast_limit and config__sysmsg = 1
+                            sysmsg "Agent: cast still shows after {{wait__cast_limit}} ms." 88
+                        endif
+
+                        wait wait__cast_cursor
 
                         if targetexists "beneficial" and diffhits = 0
                             hotkey "Cancel Current Target"

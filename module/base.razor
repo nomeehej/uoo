@@ -56,7 +56,8 @@
 #   config__settle_first
 #      What a pass does first.
 #        0  reads the state at once. Potions still go out while a spell is casting
-#        1  waits for the item queue and any cast to finish
+#        1  waits for the item queue and any cast to finish, then wait__cast_cursor more
+#           after a cast, for its cursor to be answered
 # ----------------------------------------------------------------------------------------
 @setvar! config__chatty 1
 @setvar! config__sysmsg 1
@@ -85,6 +86,16 @@
 #      of the cast. A poll that starts first sees no cast and lets the next block arm or
 #      act over it.
 #
+#   wait__cast_limit
+#      The most a recovery agent poll holds while casting stays on, so a stuck flag cannot
+#      hold the loop.
+#
+#   wait__cast_cursor
+#      How long that poll, and a settle wait that saw a cast, keep the pass after casting
+#      clears. The cursor follows the end of the cast and is answered then. A bandage,
+#      potion or equip sent in between replaces the cursor and the spell is lost with no
+#      disturb line (Magery part 2, in game 2026-11-01).
+#
 #   interval__message
 #      Spacing for repeated warnings. Without it an empty potion bag shouts every pass.
 #
@@ -95,6 +106,8 @@
 @setvar! wait__poll 100
 @setvar! wait__short 200
 @setvar! wait__cast_start 1000
+@setvar! wait__cast_limit 6000
+@setvar! wait__cast_cursor 500
 @setvar! interval__message 3000
 @setvar! interval__housekeeping 5000
 
@@ -106,7 +119,7 @@
 #      Ready on the first pass, so the first warning shows at once.
 #
 #   timer__cast_start
-#      Runs from the last agent hotkey, against wait__cast_start.
+#      Runs from the last agent hotkey, against wait__cast_start and wait__cast_limit.
 # ----------------------------------------------------------------------------------------
 timer__message interval__message
 timer__cast_start 0
@@ -129,11 +142,16 @@ timer__cast_start 0
 #   var__hold_symbols
 #      1 while a missing summon waits for the Unholy Symbols that Wither and Vengeful
 #      Spirit take. The other necro abilities stand down. necro/resummon sets it.
+#
+#   var__settle_cast
+#      Scratch: 1 when the settle wait of this pass saw a cast, so the pass also waits for
+#      its cursor.
 # ----------------------------------------------------------------------------------------
 @setvar! var__fighting 0
 @setvar! var__hold_casts 0
 @setvar! var__hold_gathering 0
 @setvar! var__hold_symbols 0
+@setvar! var__settle_cast 0
 
 
 # ----------------------------------------------------------------------------------------
@@ -161,7 +179,8 @@ endif
     #
     # The pvp expression means structured-PvP restrictions, not a field PK encounter. With
     # config__settle_first 1 the pass then waits for the item queue and any cast to
-    # finish.
+    # finish, and wait__cast_cursor more after a cast: the cursor follows the end of the
+    # cast, and an item used before it is answered replaces it (Magery part 2).
     # ------------------------------------------------------------------------------------
     if pvp
         overhead "[ script, blocked ]" 254
@@ -169,9 +188,19 @@ endif
     endif
 
     if config__settle_first = 1
+        @setvar! var__settle_cast 0
+
         while queued or casting
+            if casting
+                @setvar! var__settle_cast 1
+            endif
+
             wait wait__short
         endwhile
+
+        if var__settle_cast = 1
+            wait wait__cast_cursor
+        endif
     endif
 
 
