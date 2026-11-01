@@ -676,7 +676,9 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 | 도구 없음 | 완드나 재활용 도구 없이 실행 | 경고 뒤 루프로 복귀 | 확인되지 않았다 |
 | 분해 모드, 단일 | Recycle Single Item 모드 | 검프의 `Recycle Single Item` 문구 확인 뒤 개별 아이템만 타깃. 실패면 `[ recycle, wrong ]`과 검프 원문 기록 | 확인되지 않았다 |
 | 분해 모드, 다른 모드 | 다른 분해 모드 | `[ recycle, wrong ]`, 아이템을 찍지 않고 후속 아이템 처리 없이 루프 복귀 | 확인되지 않았다 |
-| 속도 | recycle 실행 | 실제 단축 시간, Outlands의 라벨 응답 시간과 행동 큐 기록 | 확인되지 않았다 |
+| 속도 | recycle 실행, 아이템 수와 걸린 시간 기록 | 아이템당 시간. 2026-11-02 전(라벨 조회 2~3번, 완드 뒤 재조회)과 비교. Outlands의 `getlabel` 대기도 기록 | 확인되지 않았다 |
+| 두 단계 | 미감정품이 섞인 루팅 백 | 완드가 미감정품을 연달아 찍은 뒤에야 이동과 분해. 완드 사이에 라벨 재조회 없음 | 확인되지 않았다 |
+| 감정 안 됨 | 완드 소진 또는 감정이 안 들어간 물건 | 2단계가 그 물건을 건너뛰고 끝에 `[ unidentified, skip ]` 한 번. 다음 실행에서 재검사 | 확인되지 않았다 |
 | 방어구 재질 | 돌려 놓은 체인 장갑 | 라벨의 재질로 판정, 링메일이 아닌 체인 설정으로 보관 | 확인되지 않았다 |
 | exceptional | `config__save_exceptional 1`, exceptional 장비 | 보관, 파우치로 이동 | 확인되지 않았다 |
 | aspect | aspect 장비 | 항상 보관, 파우치로 이동 | 확인되지 않았다 |
@@ -692,7 +694,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 | 완드 여럿 | 완드 둘 이상 | 첫 완드를 소진, 예비 완드는 유지 | 확인되지 않았다 |
 | 완드 커서 실패 | 커서를 못 연 완드 | 그 실행에서 제외, 같은 아이템에 예비 완드 사용 | 확인되지 않았다 |
 | 완드 모두 실패 | 모든 완드가 커서를 못 염 | `[ id wand, out ]` 한 번. 미감정품은 남기고 이미 감정된 품목은 계속 처리 | 확인되지 않았다 |
-| 라벨 못 받음 | 품질 라벨을 못 받거나 갱신되지 않은 라벨만 받음 | `[ item, skip ]`. 그 물건만 건너뛰고 다음 아이템 처리 | 확인되지 않았다 |
+| 라벨 못 받음 | 라벨 응답 없음 | `[ item, skip ]`. 그 물건만 건너뛰고 다음 아이템 처리 | 확인되지 않았다 |
 | 자원 드롭 거절 | 거절 지역에서 자원 드롭 | 거절 문장 뒤 백팩 복구 요청, 실제 반환 | 확인되지 않았다 |
 | 실패 뒤 정리 | 처리 실패 | 아이템이 실제로 백팩에 반환, Outlands 클라이언트 큐 초기화 | 확인되지 않았다 |
 | 복귀, skinning | skinning-enhanced를 Play한 뒤 F3 | `hotkey 'Play Script: gather\skinning-enhanced'`의 실행과 복귀, 끝나고 그 루프의 loaded 문구 | 인게임 확인됨 2026-10-19 |
@@ -703,6 +705,7 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 #### 기록
 
 - 2026-10-21 검색 범위 축소, 보관 위치 통합, 고정 대기 제거. 처리 실패도 공통 정리 뒤 루프 복귀
+- 2026-11-02 감정과 분류를 두 단계로. 완드 뒤 라벨 재조회와 `wait__label` 제거, 라벨 조회는 아이템당 두 번. Container ID wand와 Item ID 스킬은 쓰지 않음(사용자 결정, 비용과 횟수)
 
 #### 메모
 
@@ -713,9 +716,9 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 - [공식 Recycling](https://wiki.uooutlands.com/Recycling), 2026-10-21 확인: "Recycle single item" is the recommended option, as it is limited to recycling individual items.
 - 다른 분해 모드는 백팩의 유용한 장비까지 대상이 될 수 있음
 - 검프의 대소문자 `Recycle Single Item` 선례는 [Bapeths Slower Item Recycler](https://outlands.uorazorscripts.com/script/752d1745-90d4-4078-a8cb-8ce2cccef3e0)
-- 감정 직후: 감정된 라벨을 받으면 같은 아이템 처리에서 바로 분류. 고정 대기 없음
-- 아이템 라벨 조회: 첫 조회로 감정 필요 여부 확인. 완드 사용 후 품질을 다시 조회. 조회 횟수와 완드 사용 횟수는 별개
-- 완드 감정 뒤 재조회는 갱신된 품질 라벨 수신용, 스킬 성공 여부 판정 아님
+- IDENTIFY: 라벨에 `unidentified`가 있는 물건만 완드. 더블클릭 간격은 행동 큐(`ObjectDelay`)가 정하고 다음 물건의 라벨 조회가 그 사이에 끝남. 완드 뒤 재조회 없음
+- SORT: 라벨 한 번으로 보관 또는 분해. 아직 `unidentified`면 건너뛰고 끝에 `[ unidentified, skip ]` 한 번. 감정 성공 여부는 이 라벨로만 판정
+- 느린 이유였던 것: 아이템마다 `getlabel` 2~3번(한 번에 0.5초 이상, [Razor](../scripting/razor.md#06) 06절)과 완드, 도구 더블클릭 2번
 - 보관 이동: 파우치 소속을 `find`로 확인하면 즉시 다음 아이템. 고정 대기 없음
 - 품목별 storage: 17개 제거. 보급 파우치 한 곳으로 통합
 - 아이템별 Journal: `config__sysmsg 0` 기본값. `1`이면 검사와 저장 로그
@@ -726,9 +729,8 @@ A 공격자, B 대상의 통제 시험. 매번 화면 주인 기록.
 - 품질 판정은 무기, 메이싱, 악기, 방패, 방어구의 5종. 검색 대상 220개, 보관 설정 49개의 기본값과 재질 판정 유지
 - 모든 그룹이 감정, 이동, 분해 코드를 공유. `config__skip_supply_pouch`와 품목별 storage, 백팩 보관 대체 경로 제거
 - 컨테이너: `var__loot_bag`, `var__supply_pouch`. 도구: `var__id_wand`, `var__id_wand_out`, `var__tool`
-- 처리 상태: `var__running`, `var__item_pending`, `var__id_sent`, `var__keep`, `var__kind`, `var__slayer`, `var__armor_type`
+- 처리 상태: `var__running`, `var__item_pending`, `var__unidentified_left`, `var__keep`, `var__kind`, `var__slayer`, `var__armor_type`
 - `timer__recycle` 하나를 단계마다 초기화. 이전 `timer__recycle_identify` 제거
-- `wait__label` 650ms: 완드 사용 후 갱신된 품질 라벨의 추가 조회 기한. 받으면 즉시 진행
 - `wait__poll` 50ms: 품질 라벨, 행동 큐, 보관 이동, 분해 결과의 재확인 간격
 - `wait__target` 500ms: 도구 커서 대기 상한
 - `wait__timeout` 5000ms: 행동 큐, 검프, 보관 이동, 분해 결과의 대기 상한

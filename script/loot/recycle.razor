@@ -1,5 +1,6 @@
 # Identify loot in the loot bag, recycle low grades, and move kept items to the supply pouch.
-# Needs: a loot bag, a supply pouch, a single item ID wand (20496), and a recycling tool.
+# Two passes: single item ID wands on every unidentified piece, then one label read each.
+# Needs: a loot bag, a supply pouch, single item ID wands (20496), and a recycling tool.
 # Based on "Item Recycle while Farming" by Jaseowns (outlands.uorazorscripts.com), 6/01/2026.
 # Containers use global__my_loot_bag and global__my_supply_pouch, or unique backpack matches.
 # Kept items go to the supply pouch at 130 200.
@@ -25,7 +26,7 @@ clearignore
 @setvar! config__drop_scrolls 1
 
 # Drink an arcane essence at the end.
-@setvar! config__drink_arcane_essence 0
+@setvar! config__drink_arcane_essence 1
 
 # Weapon accuracy kept.
 @setvar! config__save_supremely 1
@@ -101,8 +102,6 @@ clearignore
 @setvar! wait__target 500
 @setvar! wait__poll 50
 @setvar! wait__timeout 5000
-# Updated quality-label reply budget after a successful wand target.
-@setvar! wait__label 650
 
 # ========================================================================================
 # TIMER
@@ -123,7 +122,7 @@ settimer "timer__recycle" 0
 @setvar! var__tool 0
 @setvar! var__running 1
 @setvar! var__item_pending 0
-@setvar! var__id_sent 0
+@setvar! var__unidentified_left 0
 @setvar! var__keep 0
 @setvar! var__kind 0
 @setvar! var__slayer 0
@@ -205,15 +204,10 @@ if var__running = 1
 endif
 
 # ========================================================================================
-# ITEMS
+# TYPES
 # ========================================================================================
+# Graphic IDs identify item types, not individual item serials. Both passes walk this list.
 if var__running = 1
-    # The working dagger and plain spellbook stay in the loot bag.
-    while findtype 3834|3922 var__loot_bag 0 as alias__plain_item
-        @ignore alias__plain_item
-    endwhile
-
-    # Graphic IDs identify item types, not individual item serials.
     # Names and ID mappings: content/public/game/item-list.md, parts 2 and 29.
     removelist list__recycle_types
     createlist list__recycle_types
@@ -255,6 +249,96 @@ if var__running = 1
 
     # 11: Armor: quality uses label material, not graphic orientation.
     pushlist list__recycle_types "5051|5054|5055|5056|5059|5060|5061|5062|5063|5067|5068|5069|5070|5074|5075|5076|5077|5078|5082|5083|5084|5085|5089|5090|5099|5100|5101|5102|5103|5104|5105|5106|5129|5131|5132|5135|5136|5137|5138|5139|5140|5141|5142|5143|5144|5146|5198|5199|5200|5201|5202|5203|5204|5205|5206|5207|7168|7169|7170|7171|7172|7173|7174|7175|7176|7177|7178|7179|7180|7181|7609|7610|7947|31003|31004|31005|31006|31007|31008|31009|31010|31011|31012|31015|31174|31191"
+endif
+
+# ========================================================================================
+# IDENTIFY
+# ========================================================================================
+# First pass: every unidentified piece of equipment gets the wand, one after the other, with
+# no label re-read. The action queue paces the wand double-clicks (profile ObjectDelay), and
+# the next item's label read runs inside that pause. The quality is read once in SORT, where
+# an item still unidentified is left for the next run.
+if var__running = 1
+    # The working dagger and plain spellbook stay in the loot bag.
+    while findtype 3834|3922 var__loot_bag 0 as alias__plain_item
+        @ignore alias__plain_item
+    endwhile
+
+    foreach item_types in list__recycle_types
+        while var__running = 1 and var__id_wand_out = 0 and findtype item_types var__loot_bag as alias__item
+            # Reset the scoped reply and a numeric fallback, never reuse an old label.
+            @unsetvar! label__item
+            @setvar! label__item 0
+            getlabel alias__item label__item
+
+            if "unidentified" in label__item
+                @setvar! var__item_pending 1
+
+                while var__item_pending = 1
+                    if var__id_wand = 0 and findtype 20496 backpack as alias__spare_wand
+                        @setvar! var__id_wand alias__spare_wand
+                    endif
+
+                    if var__id_wand = 0
+                        @setvar! var__item_pending 0
+                        @setvar! var__id_wand_out 1
+                        overhead "[ id wand, out ]" 254
+                        sysmsg "Recycle: no usable ID wand. Unidentified loot left untouched." 88
+                    else
+                        # A busy action queue is not a spent wand.
+                        settimer "timer__recycle" 0
+
+                        while queued and timer "timer__recycle" < wait__timeout
+                            wait wait__poll
+                        endwhile
+
+                        if queued
+                            @setvar! var__running 0
+                            @setvar! var__item_pending 0
+                            overhead "[ recycle, blocked ]" 254
+                            sysmsg "Recycle: action queue timeout. Returning to the loop." 88
+                        else
+                            hotkey 'Cancel Current Target'
+                            dclick var__id_wand
+                            waitfortarget wait__target
+
+                            if targetexists
+                                @setvar! var__item_pending 0
+
+                                if find alias__item var__loot_bag
+                                    target alias__item
+                                else
+                                    hotkey 'Cancel Current Target'
+                                endif
+                            else
+                                # No cursor is a spent wand. The same item retries with a spare.
+                                hotkey 'Cancel Current Target'
+                                @ignore var__id_wand
+                                @setvar! var__id_wand 0
+                            endif
+                        endif
+                    endif
+                endwhile
+            endif
+
+            @ignore alias__item
+        endwhile
+    endfor
+
+    # The spent wands and the items ignored above come back for the second pass.
+    @clearignore
+endif
+
+# ========================================================================================
+# SORT
+# ========================================================================================
+# Second pass: one label read per item. Kept items move to the supply pouch, the rest are
+# recycled one at a time. An item still unidentified, after a spent wand or a wand use that
+# did not land, stays in the loot bag for the next run and is reported once at the end.
+if var__running = 1
+    while findtype 3834|3922 var__loot_bag 0 as alias__plain_item
+        @ignore alias__plain_item
+    endwhile
 
     # Quality rules: 0 weapons, 1 macing, 2 instruments, 3 shields, 4 armor.
     foreach item_types in list__recycle_types
@@ -271,90 +355,136 @@ if var__running = 1
         endif
 
         while var__running = 1 and findtype item_types var__loot_bag as alias__item
-            @setvar! var__item_pending 1
-            @setvar! var__id_sent 0
+            @unsetvar! label__item
+            @setvar! label__item 0
+            getlabel alias__item label__item
 
-            while var__item_pending = 1
-                # Reset the scoped reply and a numeric fallback, never reuse an old label.
-                @unsetvar! label__item
-                @setvar! label__item 0
-                getlabel alias__item label__item
+            if not find alias__item var__loot_bag
+                # Gone since the search. Nothing to do.
+            elseif label__item = 0
+                overhead "[ item, skip ]" 254
+                sysmsg "Recycle: no label. Item left untouched." 88
+            elseif "unidentified" in label__item
+                @setvar! var__unidentified_left 1
 
-                if not find alias__item var__loot_bag
-                    @setvar! var__item_pending 0
-                elseif label__item = 0
-                    @setvar! var__item_pending 0
-                    overhead "[ item, skip ]" 254
-                    sysmsg "Recycle: no label. Item left untouched." 88
-                elseif "unidentified" in label__item
-                    if var__id_sent = 0
-                        if var__id_wand_out = 1
-                            @setvar! var__item_pending 0
-                        else
-                            if var__id_wand = 0 and findtype 20496 backpack as alias__spare_wand
-                                @setvar! var__id_wand alias__spare_wand
-                            endif
+                if config__sysmsg = 1
+                    sysmsg "Recycle: still unidentified. Item left untouched." 88
+                endif
+            else
+                if config__sysmsg = 1
+                    sysmsg "Recycle check: {{label__item}}" 88
+                endif
 
-                            if var__id_wand = 0
-                                @setvar! var__item_pending 0
-                                @setvar! var__id_wand_out 1
-                                overhead "[ id wand, out ]" 254
-                                sysmsg "Recycle: no usable ID wand. Unidentified loot left untouched." 88
-                            else
-                                # A busy action queue is not a spent wand.
-                                settimer "timer__recycle" 0
+                @setvar! var__keep 0
+                if "aspect" in label__item
+                    @setvar! var__keep 1
+                elseif config__save_exceptional = 1 and "exceptional" in label__item
+                    @setvar! var__keep 1
+                elseif var__kind = 3
+                    if config__save_invulnerability = 1 and "invulnerability" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_fortification = 1 and "fortification" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_hardening = 1 and "hardening" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_guarding = 1 and "guarding" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_defense = 1 and "defense" in label__item
+                        @setvar! var__keep 1
+                    endif
+                elseif var__kind = 4
+                    @setvar! var__armor_type 0
+                    if "plate" in label__item
+                        @setvar! var__armor_type 6
+                    elseif "chain" in label__item
+                        @setvar! var__armor_type 5
+                    elseif "ring" in label__item
+                        @setvar! var__armor_type 4
+                    elseif "bone" in label__item
+                        @setvar! var__armor_type 3
+                    elseif "studded" in label__item
+                        @setvar! var__armor_type 2
+                    elseif "leather" in label__item
+                        @setvar! var__armor_type 1
+                    elseif "bascinet" in label__item or "close helm" in label__item or "norse helm" in label__item
+                        @setvar! var__armor_type 6
+                    elseif "orc helm" in label__item
+                        @setvar! var__armor_type 4
+                    endif
 
-                                while queued and timer "timer__recycle" < wait__timeout
-                                    wait wait__poll
-                                endwhile
-
-                                if queued
-                                    @setvar! var__running 0
-                                    @setvar! var__item_pending 0
-                                    overhead "[ recycle, blocked ]" 254
-                                    sysmsg "Recycle: action queue timeout. Returning to the loop." 88
-                                else
-                                    hotkey 'Cancel Current Target'
-                                    dclick var__id_wand
-                                    waitfortarget wait__target
-
-                                    if targetexists
-                                        if find alias__item var__loot_bag
-                                            target alias__item
-                                            settimer "timer__recycle" 0
-                                            @setvar! var__id_sent 1
-                                        else
-                                            hotkey 'Cancel Current Target'
-                                            @setvar! var__item_pending 0
-                                        endif
-                                    else
-                                        hotkey 'Cancel Current Target'
-                                        @ignore var__id_wand
-                                        @setvar! var__id_wand 0
-                                    endif
-                                endif
-                            endif
+                    if var__armor_type = 1
+                        if config__save_invulnerability_leather = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_leather = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_leather = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_leather = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_leather = 1 and "defense" in label__item
+                            @setvar! var__keep 1
                         endif
-                    elseif timer "timer__recycle" >= wait__label
-                        @setvar! var__item_pending 0
-                        overhead "[ item, skip ]" 254
-                        sysmsg "Recycle: updated quality label not received. Item left untouched." 88
+                    elseif var__armor_type = 2
+                        if config__save_invulnerability_studded_leather = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_studded_leather = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_studded_leather = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_studded_leather = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_studded_leather = 1 and "defense" in label__item
+                            @setvar! var__keep 1
+                        endif
+                    elseif var__armor_type = 3
+                        if config__save_invulnerability_bone_armor = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_bone_armor = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_bone_armor = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_bone_armor = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_bone_armor = 1 and "defense" in label__item
+                            @setvar! var__keep 1
+                        endif
+                    elseif var__armor_type = 4
+                        if config__save_invulnerability_ringmail = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_ringmail = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_ringmail = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_ringmail = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_ringmail = 1 and "defense" in label__item
+                            @setvar! var__keep 1
+                        endif
+                    elseif var__armor_type = 5
+                        if config__save_invulnerability_chainmail = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_chainmail = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_chainmail = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_chainmail = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_chainmail = 1 and "defense" in label__item
+                            @setvar! var__keep 1
+                        endif
+                    elseif var__armor_type = 6
+                        if config__save_invulnerability_platemail = 1 and "invulnerability" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_fortification_platemail = 1 and "fortification" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_hardening_platemail = 1 and "hardening" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_guarding_platemail = 1 and "guarding" in label__item
+                            @setvar! var__keep 1
+                        elseif config__save_defense_platemail = 1 and "defense" in label__item
+                            @setvar! var__keep 1
+                        endif
                     else
-                        wait wait__poll
-                    endif
-                else
-                    @setvar! var__item_pending 0
-
-                    if config__sysmsg = 1
-                        sysmsg "Recycle check: {{label__item}}" 88
-                    endif
-
-                    @setvar! var__keep 0
-                    if "aspect" in label__item
-                        @setvar! var__keep 1
-                    elseif config__save_exceptional = 1 and "exceptional" in label__item
-                        @setvar! var__keep 1
-                    elseif var__kind = 3
                         if config__save_invulnerability = 1 and "invulnerability" in label__item
                             @setvar! var__keep 1
                         elseif config__save_fortification = 1 and "fortification" in label__item
@@ -366,238 +496,138 @@ if var__running = 1
                         elseif config__save_defense = 1 and "defense" in label__item
                             @setvar! var__keep 1
                         endif
-                    elseif var__kind = 4
-                        @setvar! var__armor_type 0
-                        if "plate" in label__item
-                            @setvar! var__armor_type 6
-                        elseif "chain" in label__item
-                            @setvar! var__armor_type 5
-                        elseif "ring" in label__item
-                            @setvar! var__armor_type 4
-                        elseif "bone" in label__item
-                            @setvar! var__armor_type 3
-                        elseif "studded" in label__item
-                            @setvar! var__armor_type 2
-                        elseif "leather" in label__item
-                            @setvar! var__armor_type 1
-                        elseif "bascinet" in label__item or "close helm" in label__item or "norse helm" in label__item
-                            @setvar! var__armor_type 6
-                        elseif "orc helm" in label__item
-                            @setvar! var__armor_type 4
-                        endif
-
-                        if var__armor_type = 1
-                            if config__save_invulnerability_leather = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_leather = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_leather = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_leather = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_leather = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        elseif var__armor_type = 2
-                            if config__save_invulnerability_studded_leather = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_studded_leather = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_studded_leather = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_studded_leather = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_studded_leather = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        elseif var__armor_type = 3
-                            if config__save_invulnerability_bone_armor = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_bone_armor = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_bone_armor = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_bone_armor = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_bone_armor = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        elseif var__armor_type = 4
-                            if config__save_invulnerability_ringmail = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_ringmail = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_ringmail = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_ringmail = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_ringmail = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        elseif var__armor_type = 5
-                            if config__save_invulnerability_chainmail = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_chainmail = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_chainmail = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_chainmail = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_chainmail = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        elseif var__armor_type = 6
-                            if config__save_invulnerability_platemail = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification_platemail = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening_platemail = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding_platemail = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense_platemail = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        else
-                            if config__save_invulnerability = 1 and "invulnerability" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_fortification = 1 and "fortification" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_hardening = 1 and "hardening" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_guarding = 1 and "guarding" in label__item
-                                @setvar! var__keep 1
-                            elseif config__save_defense = 1 and "defense" in label__item
-                                @setvar! var__keep 1
-                            endif
-                        endif
-                    else
-                        @setvar! var__slayer 0
-                        if var__kind = 2
-                            if "enticement" in label__item
-                                @setvar! var__slayer 1
-                            endif
-                        elseif "slaying" in label__item
+                    endif
+                else
+                    @setvar! var__slayer 0
+                    if var__kind = 2
+                        if "enticement" in label__item
                             @setvar! var__slayer 1
                         endif
-
-                        if config__save_greater_slaying = 1 and var__slayer = 1 and "greater" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_lesser_slaying = 1 and var__slayer = 1 and "lesser" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_supremely = 1 and "supremely" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_exceedingly = 1 and "exceedingly" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_eminently = 1 and "eminently" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_surpassingly = 1 and "surpassingly" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_accurate = 1 and "accurate" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_vanquishing = 1 and "vanquishing" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_power = 1 and "power" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_force = 1 and "force" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_might = 1 and "might" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_ruin = 1 and var__kind != 1 and "ruin" in label__item
-                            @setvar! var__keep 1
-                        elseif config__save_regular_slaying = 1 and var__slayer = 1
-                            if "lesser" in label__item
-                                # A lesser one follows config__save_lesser_slaying above.
-                            else
-                                @setvar! var__keep 1
-                            endif
-                        endif
+                    elseif "slaying" in label__item
+                        @setvar! var__slayer 1
                     endif
 
-                    if var__keep = 1
-                        if find alias__item var__loot_bag
-                            if config__chatty = 1
-                                overhead "[ item, saving ]" 290
-                            endif
-                            if config__sysmsg = 1
-                                sysmsg "Recycle save: {{label__item}}" 88
-                            endif
-
-                            lift alias__item
-                            drop var__supply_pouch 130 200 0
-                            settimer "timer__recycle" 0
-
-                            while not find alias__item var__supply_pouch and timer "timer__recycle" < wait__timeout
-                                wait wait__poll
-                            endwhile
-
-                            if not find alias__item var__supply_pouch
-                                @setvar! var__running 0
-                                overhead "[ supplies, blocked ]" 254
-                                sysmsg "Recycle: move not confirmed. Remaining loot left for the next run." 88
-                            endif
-                        endif
-                    else
-                        if not gumpexists 949095101
-                            if not find var__tool backpack
-                                @setvar! var__tool 0
-                                if findtype 4032|3997|7864|4148|4136 backpack as alias__spare_tool
-                                    @setvar! var__tool alias__spare_tool
-                                endif
-                            endif
-
-                            if var__tool != 0
-                                dclick var__tool
-                                waitforgump 949095101 wait__timeout
-                            endif
-                        endif
-
-                        if gumpexists 949095101
-                            if ingump "Recycle Single Item" 949095101
-                                hotkey 'Cancel Current Target'
-                                gumpresponse 3 949095101
-                                waitfortarget wait__target
-
-                                if targetexists
-                                    if find alias__item var__loot_bag
-                                        target alias__item
-                                        settimer "timer__recycle" 0
-
-                                        while find alias__item var__loot_bag and timer "timer__recycle" < wait__timeout
-                                            wait wait__poll
-                                        endwhile
-
-                                        if find alias__item var__loot_bag
-                                            @setvar! var__running 0
-                                            overhead "[ recycle, blocked ]" 254
-                                            sysmsg "Recycle: item removal not confirmed. Remaining loot left for the next run." 88
-                                        endif
-                                    else
-                                        hotkey 'Cancel Current Target'
-                                    endif
-                                else
-                                    @setvar! var__running 0
-                                    hotkey 'Cancel Current Target'
-                                    overhead "[ recycle, blocked ]" 254
-                                    sysmsg "Recycle: no recycling cursor. Remaining loot left untouched." 88
-                                endif
-                            else
-                                @setvar! var__running 0
-                                overhead "[ recycle, wrong ]" 254
-                                sysmsg "Recycle: select Recycle Single Item in the tool menu." 88
-                            endif
+                    if config__save_greater_slaying = 1 and var__slayer = 1 and "greater" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_lesser_slaying = 1 and var__slayer = 1 and "lesser" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_supremely = 1 and "supremely" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_exceedingly = 1 and "exceedingly" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_eminently = 1 and "eminently" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_surpassingly = 1 and "surpassingly" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_accurate = 1 and "accurate" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_vanquishing = 1 and "vanquishing" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_power = 1 and "power" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_force = 1 and "force" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_might = 1 and "might" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_ruin = 1 and var__kind != 1 and "ruin" in label__item
+                        @setvar! var__keep 1
+                    elseif config__save_regular_slaying = 1 and var__slayer = 1
+                        if "lesser" in label__item
+                            # A lesser one follows config__save_lesser_slaying above.
                         else
-                            @setvar! var__running 0
-                            overhead "[ recycle, blocked ]" 254
-                            sysmsg "Recycle: no recycling menu. Remaining loot left untouched." 88
+                            @setvar! var__keep 1
                         endif
                     endif
                 endif
-            endwhile
+
+                if var__keep = 1
+                    if find alias__item var__loot_bag
+                        if config__chatty = 1
+                            overhead "[ item, saving ]" 290
+                        endif
+                        if config__sysmsg = 1
+                            sysmsg "Recycle save: {{label__item}}" 88
+                        endif
+
+                        lift alias__item
+                        drop var__supply_pouch 130 200 0
+                        settimer "timer__recycle" 0
+
+                        while not find alias__item var__supply_pouch and timer "timer__recycle" < wait__timeout
+                            wait wait__poll
+                        endwhile
+
+                        if not find alias__item var__supply_pouch
+                            @setvar! var__running 0
+                            overhead "[ supplies, blocked ]" 254
+                            sysmsg "Recycle: move not confirmed. Remaining loot left for the next run." 88
+                        endif
+                    endif
+                else
+                    if not gumpexists 949095101
+                        if not find var__tool backpack
+                            @setvar! var__tool 0
+                            if findtype 4032|3997|7864|4148|4136 backpack as alias__spare_tool
+                                @setvar! var__tool alias__spare_tool
+                            endif
+                        endif
+
+                        if var__tool != 0
+                            dclick var__tool
+                            waitforgump 949095101 wait__timeout
+                        endif
+                    endif
+
+                    if gumpexists 949095101
+                        if ingump "Recycle Single Item" 949095101
+                            hotkey 'Cancel Current Target'
+                            gumpresponse 3 949095101
+                            waitfortarget wait__target
+
+                            if targetexists
+                                if find alias__item var__loot_bag
+                                    target alias__item
+                                    settimer "timer__recycle" 0
+
+                                    while find alias__item var__loot_bag and timer "timer__recycle" < wait__timeout
+                                        wait wait__poll
+                                    endwhile
+
+                                    if find alias__item var__loot_bag
+                                        @setvar! var__running 0
+                                        overhead "[ recycle, blocked ]" 254
+                                        sysmsg "Recycle: item removal not confirmed. Remaining loot left for the next run." 88
+                                    endif
+                                else
+                                    hotkey 'Cancel Current Target'
+                                endif
+                            else
+                                @setvar! var__running 0
+                                hotkey 'Cancel Current Target'
+                                overhead "[ recycle, blocked ]" 254
+                                sysmsg "Recycle: no recycling cursor. Remaining loot left untouched." 88
+                            endif
+                        else
+                            @setvar! var__running 0
+                            overhead "[ recycle, wrong ]" 254
+                            sysmsg "Recycle: select Recycle Single Item in the tool menu." 88
+                        endif
+                    else
+                        @setvar! var__running 0
+                        overhead "[ recycle, blocked ]" 254
+                        sysmsg "Recycle: no recycling menu. Remaining loot left untouched." 88
+                    endif
+                endif
+            endif
 
             @ignore alias__item
         endwhile
     endfor
+
+    if var__unidentified_left = 1
+        overhead "[ unidentified, skip ]" 254
+        sysmsg "Recycle: unidentified loot left in the bag for the next run." 88
+    endif
 endif
 
 # ========================================================================================

@@ -430,6 +430,8 @@ flowchart TD
 
 Bard Necro 루프 적용 결과: [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.H) 01.H절. 패스마다 `findtype` 최대 32번이던 시약 플래그 읽기를 10초에 7번으로 줄임(처음에는 30초).
 
+recycle 적용 결과, 2026-11-02: 아이템마다 `getlabel` 2~3번과 완드 뒤 재조회를 감정 한 바퀴, 분류 한 바퀴의 두 단계로 바꿔 조회를 2번으로. 완드 더블클릭 사이의 행동 큐 간격에 다음 라벨 조회가 겹침([Open items](../questions/open-items.md#13) 13절).
+
 ## <a id="07"></a>07 PvP 제약
 
 구조화 PvP, 팩션 상태의 스크립트 제약.
