@@ -66,6 +66,7 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 게임에서 확인                    | [Workflow](content/public/working/workflow.md#04) 04절                                                                                                     |
 | `config/` 수정                   | [Workflow](content/public/working/workflow.md#04.C) 04.C절, [config/README.md](config/README.md)                                                           |
 | 오버헤드, 쿨다운 바 추가나 변경  | [Overheads](content/public/scripting/overheads.md)                                                                                                         |
+| 서버 문장별 프로필 알림 찾기 | [Profile Messages](content/public/scripting/profile-messages.md) |
 | 바딩 쿨, 효과, 코덱스 숫자       | [Barding](content/public/mechanics/barding.md)                                                                                                             |
 | 네크로 소환, 심볼 숫자           | [Necromancy](content/public/mechanics/necromancy.md)                                                                                                       |
 | 매저리 프록, 시전 시간, 프리캐스트 커서 | [Magery](content/public/mechanics/magery.md)                                                                                                               |
@@ -73,6 +74,7 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | bard-necro-enhanced 루프 설계    | [Bard Necro Enhanced](content/public/loops/bard-necro-enhanced.md)                                                                                         |
 | 바드 네크로 소환수 이름과 재소환 | [Bard Necro Summons](content/public/loops/bard-necro-summons.md) |
 | PvP 규칙                         | [PvP](content/public/game/pvp.md)                                                                                                                          |
+| PvP 주문전, Reflect, 마나와 이동 | [PvP Magery](content/public/game/pvp-magery.md) |
 | 방어구, 붕대, 포션, Parrying, Tracking | [Combat](content/public/mechanics/combat.md)                                                                                                             |
 | 근접 피해, 스윙, PvM 무기와 코덱스 | [Melee](content/public/mechanics/melee.md) |
 | 공통 pvp 루프 설계               | [PvP Loop](content/public/loops/pvp.md)                                                                                                                    |

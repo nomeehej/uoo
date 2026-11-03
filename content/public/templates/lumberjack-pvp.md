@@ -72,7 +72,7 @@ Lumberjacking 120, Swordsmanship 100, 나머지 여섯 스킬 80씩 = 700. 남�
 
 - Magery 80: 유틸리티와 Greater Heal용으로 유지. 자동 Explosion과 EB를 뺐다고 60으로 낮추기로 한 것 아님
 - Earth Elemental 스크롤의 성공률과 필요 마나는 별도 확인. **기본 최대 마나 45로는 50마나 소환 불가**
-- 버프로 실제 마나 50 초과 확보 여부 확인 필요. 소환 직후는 교전 준비 안 된 상태([PvP](../game/pvp.md#05.B) 05.B절, [PvP](../game/pvp.md#06) 06절)
+- 버프로 실제 마나 50 초과 확보 여부 확인 필요. 소환 직후는 교전 준비 안 된 상태([PvP Magery](../game/pvp-magery.md#06) 06절, [PvP](../game/pvp.md#06) 06절)
 - Magery 100은 7서클과 8서클만의 문제가 아님. 피해와 Greater Heal도 함께 강해짐
 - Magery 80 GH 기본 회복 32\~40. 60으로 줄이려면 회복량과 시전 신뢰도 재비교
 - Eval 없는 주문 ≠ 주력 메이지의 공격. Meditation 없는 마나로는 긴 주문 교환이 어려움
@@ -139,7 +139,7 @@ Katana나 Halberd는 같은 스킬이어도 Lumberjacking 보너스 없음([Mele
 
 ## <a id="04"></a>04 마나 예산과 시작 조건
 
-[PvP](../game/pvp.md#05.B) 05.B절 기본 마나의 합. 자연 회복, 실패, 추가 시전 제외.
+[PvP Magery](../game/pvp-magery.md#06) 06절 기본 마나의 합. 자연 회복, 실패, 추가 시전 제외.
 INT 45 = 기본 최대 마나. 실제 판단은 현재 마나, 재생, 남겨 둔 회복 몫 기준.
 
 | 행동 묶음 | 마나 | 판단 |
@@ -152,7 +152,7 @@ INT 45 = 기본 최대 마나. 실제 판단은 현재 마나, 재생, 남겨 �
 - 최소 여유: GH와 Teleport 몫을 따로 남김. 생존 보장이 아니라 회복과 이동 한 번씩의 예산
 - 해독, 견제, 실패에 마나가 더 들면 긴 콤보 포기. 자기 TK를 미리 걸었어도 다시 안 찬 마나는 이미 쓴 것
 - Rope: 기본 추격 수단으로 자동 사용 안 함. 마나 부족처럼 정말 필요할 때 수동 선택으로 남김.
-  단, 그 뒤 Teleport까지 공유 쿨에 묶이는 비용 표시 필요([PvP](../game/pvp.md#05.C) 05.C절)
+  단, 그 뒤 Teleport까지 공유 쿨에 묶이는 비용 표시 필요([PvP Magery](../game/pvp-magery.md#07) 07절)
 - 가죽, Meditation 0의 자연 재생은 초당 0.5. 위 30초 예시에서 45로 시작하면 약 23 잔여.
   단, 최대 마나에서 버린 재생, 시전 시점, 추가 해독, 실패는 빠짐 → 실제 잔량 보장 아님
 - TK 30초, TP 15초마다 계속 쓰면 둘만으로 초당 0.9마나 → 재생보다 빠름 → 쿨마다 자동 사용 안 함
@@ -194,7 +194,7 @@ INT 45 = 기본 최대 마나. 실제 판단은 현재 마나, 재생, 남겨 �
 | 6타일 밖 | 접근 우선. 실측 후 시작 임계값 수정 |
 
 - 6타일 = 시험할 **시전 시작 임계값**, 서버 최대 사거리 아님. 주문과 포션의 대상 지정 거리와 LOS는 별도 검증
-- MA 0.5초, Harm 0.75초 시전과 서클별 제한: [PvP](../game/pvp.md#05.A) 05.A절, [PvP](../game/pvp.md#05.B) 05.B절
+- MA와 Harm의 시전 시점은 [Magery](../mechanics/magery.md#02.D) 02.D절, 서클별 제한은 [PvP Magery](../game/pvp-magery.md#01) 01절
 
 ### <a id="05.B"></a>05.B 조건부 공격안: 공격 TK 직후 포션
 
@@ -251,7 +251,7 @@ TK에서 포션까지의 완전 자동 처리가 안전하게 풀렸다는 뜻 �
 | 상대 회복 정책 | 손실 35에 힐 포션, HP 85 이하에 GH, 다 쓴 RA 재시전. 공격 주문은 회복용 마나 11 유지, 부족하면 공격 대기. Meditation 능동 사용 없음 |
 
 - 상대 스킬: [공식 Pure Alchemy Mage 720](https://wiki.uooutlands.com/TemplatesPvPMage) 구성
-- 계산식 정본: [PvP](../game/pvp.md#05) 05절의 회복과 버프, [Combat](../mechanics/combat.md#04) 04절의 주문 보정
+- 계산식 정본: [PvP Magery](../game/pvp-magery.md#04) 04절의 버프와 [06절](../game/pvp-magery.md#06)의 회복 비용, [Combat](../mechanics/combat.md#04) 04절의 주문 보정
   - 무기 피해는 [Melee](../mechanics/melee.md#01) 01절, AR는 [03절](../mechanics/melee.md#03)
   - 명중률은 [PvP](../game/pvp.md#02) 02절
 - Tracking은 Eval 항에 더하는 예시 해석. 서버의 결합 순서는 실측 미확정
@@ -335,7 +335,7 @@ Tracking과 Eval 결합은 05.D절과 같은 예시 해석. 서버 반올림과 
   → Inscription 120 없이도 위 피해량 가능. 보정 정본은 [Combat](../mechanics/combat.md#04) 04절
 - Explosion 0초 방출, 회복 0.2초 뒤 즉시 EB 시전 → EB 피해 2.45초, Explosion 피해 2.5초 가능
 - 약 0.05초 차이에 포션 폭발까지 겹치면 HP가 한꺼번에 사라진 것처럼 보임.
-  실제 포션 퓨즈, 투척 지연, 핑 반영값 아님. 주문 시각 정본은 [PvP](../game/pvp.md#05.B) 05.B절
+  실제 포션 퓨즈, 투척 지연, 핑 반영값 아님. 주문 시각 정본은 [Magery](../mechanics/magery.md#02.D) 02.D절
 
 #### 이 템플릿의 대응 순서
 
@@ -360,7 +360,7 @@ Tracking과 Eval 결합은 05.D절과 같은 예시 해석. 서버 반올림과 
   최대 HP 120 중 100 잔여는 두 회복 요청의 시작값에 못 미침
 - v5: GH를 손실 35로 앞당김, 준비된 긴급 회복이 있으면 수동 주문을 끊음.
   단, 아직 피해가 없거나 중립 커서를 들고 있으면 다음 버스트를 예상한 자동 회복은 없음
-- 공식 포션 동작과 지금 정책: [PvP](../game/pvp.md#05.B) 05.B절, [PvP Loop](../loops/pvp.md)
+- 공식 포션 동작과 지금 정책: [Magery](../mechanics/magery.md#02.A) 02.A절, [PvP Loop](../loops/pvp.md)
 - HP 기준을 높이는 것만으로 거의 동시에 들어오는 피해를 모두 막을 수는 없음
 
 ::part[구현과 확인]
@@ -428,7 +428,7 @@ Tracking 주문 보조의 결합 순서를 단정하지 않으려고 첫 표에�
 - Alchemy 0의 Greater Explosion 포션 15\~25 포함 시, 포션과 Great Axe 한 대와 Norse Axe 한 대가 모두 맞은 합은 약 45.84\~103.22
 - 상대 회복, 추가 방어, Splashback, 빗나감, 접근 실패 제외. 확정 콤보 피해나 DPS로 쓰지 않음
 - 상대가 Inscription 100의 Reactive Armor를 유지하고 남은 방어량도 넉넉하면 위 근접 중간값에 0.75 추가 곱 → Great Axe 약 25.64, Norse Axe 약 13.77
-- 방어량이 도중에 바닥나는 타격까지 이 감소율이 그대로라고 가정하지 않음([PvP](../game/pvp.md#05) 05절)
+- 방어량이 도중에 바닥나는 타격까지 이 감소율이 그대로라고 가정하지 않음([PvP Magery](../game/pvp-magery.md#04) 04절)
 - 이 예시에서는 **더 맞힌** 근접 한 대가 Eval로 늘어나는 두 주문의 차이를 넘을 수 있음
 - 단, 명중과 접근은 보장 없음. Eval 100을 얻으려면 다른 스킬 100점 제외 필요
 - 두 빌드 모두 원래 때릴 한 대를 한쪽에만 더해 유리하다고 계산하지 않음

@@ -5,15 +5,15 @@ group: Mechanics
 order: 30
 ---
 
-Magery 프록, 시전 시간, 프리캐스트 커서의 서버 규칙.
-PvP의 주문 싸움은 [PvP](../game/pvp.md#05) 05절.
+Magery 프록과 Grimoire 전제, 시전 성공률, 시전과 적중 시점, 프리캐스트, PvM 시전 보호.
+PvP의 주문 싸움은 [PvP Magery](../game/pvp-magery.md).
 
 ## <a id="00"></a>00 한눈에
 
 | 절 | 내용 |
 | --- | --- |
-| [01](#01) | 프록을 알리는 게임 메시지, Energy Bolt 마나 회수 조건 |
-| [02](#02) | 서클별 시전 시간, 시약과 마나 검사 시점, 프리캐스트 커서와 아이템 |
+| [01](#01) | 프록 메시지, Energy Bolt 회수, Grimoire 전제 |
+| [02](#02) | 시전 시간, 프리캐스트, 성공률, PvM 시전 보호, 적중 지연 |
 | [03](#03) | 자주 틀렸던 생각 |
 | [04](#04) | 출처 |
 
@@ -44,6 +44,10 @@ PvP의 주문 싸움은 [PvP](../game/pvp.md#05) 05절.
 - 15마나는 **볼트 적중 뒤 5초 안에 대상이 죽을 때만.** 잡몹 마무리 시 실제 비용 5, 체력 큰 몹은 20 그대로
 - 이전 판의 "조건 없는 상시 효과"는 오류. [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.D) 01.D절 마나 예산도 이 조건으로 수정
 
+### <a id="01.A"></a>01.A Wizard's Grimoire의 전제
+
+> "Players must have at least 80 Magery skill and at least 80 Meditation or 80 Eval Int skill to benefit from the Wizard's Grimoire" -- Wizard's Grimoire
+
 ## <a id="02"></a>02 시전 시간
 
 | 서클 | 시전 | 서클 | 시전 |
@@ -70,6 +74,38 @@ PvP의 주문 싸움은 [PvP](../game/pvp.md#05) 05절.
 - 시전 중에는 포션은 안 끊기고 장착은 끊김(위키 같은 절). 붕대의 시전 중 효과는 확인되지 않았다
 - Razor의 `casting`은 시전이 끝나면 풀리고 커서는 그 뒤에 옴 → 그 틈에는 `not casting and not targetexists`가 참. 스크립트 대응은 [Razor](../scripting/razor.md#03) 03절
 
+### <a id="02.B"></a>02.B 시전 성공률과 스크롤
+
+기준: [Magery](https://wiki.uooutlands.com/Magery), [주문표](https://wiki.uooutlands.com/Template:SpellCircles). 시전 성공률과 시전 중 인터럽트는 별개.
+
+> "Casting a spell from a scroll increases a player's Effective Magery skill by 20 (effective Magery only affects casting chance)" — Magery
+
+- 100% 성공: 6서클까지 Magery 80, 7서클 90, 8서클 100. Magery 80으로 8서클 스크롤을 쓰면 성공 판정은 100
+- 스크롤의 성공 보정 ≠ 실제 Magery 100의 피해량이나 회복량. Greater Heal: Magery 80에서 32\~40, 100에서 40\~50
+
+### <a id="02.C"></a>02.C PvM 시전 보호
+
+> "Provides players with a (Effective Magic Resist Skill / 100%)) chance to avoid Spell Interruption from Creature/Environment Damage" -- Resisting Spells
+> "Players will have an (Effective Inscription Skill / 100%)) chance to avoid Spell Interruption from Creature/Environment Damage" -- Inscription
+
+- 크리처 공격에 시전이 안 끊길 확률이 Resist와 Inscription에 같은 꼴로 존재. 합산 여부는 확인되지 않았다. **Resist 100이면 이것만으로 100%**
+- 바드의 Defensive Barding은 PvM 보너스 없음 → printed Resist로만
+- 소환수 공격이 "Creature/Environment Damage"에 드는지는 [PvP](../game/pvp.md#06.A) 06.A절
+
+### <a id="02.D"></a>02.D 시전과 적중 지연
+
+> "damage delay of 0.5 seconds" — [Energy Bolt](https://wiki.uooutlands.com/Template:SpellCircles)
+
+| 주문 | 기본 시전 | 피해 지연 |
+| --- | --- | --- |
+| Magic Arrow | 0.5초 | 0.5초 |
+| Harm | 0.75초 | 0.05초 |
+| Explosion | 1.75초 | 2.5초 |
+| Energy Bolt | 1.75초 | 0.5초 |
+
+기준: [Magery 주문표](https://wiki.uooutlands.com/Magery), [SpellCircles](https://wiki.uooutlands.com/Template:SpellCircles).
+기본 시전과 주문 사이 회복은 02절. 실제 적중은 거리, 시야, 반사, 시전 실패와 취소도 함께 확인.
+
 ::part[기록]
 
 ## <a id="03"></a>03 자주 틀렸던 것
@@ -86,3 +122,5 @@ PvP의 주문 싸움은 [PvP](../game/pvp.md#05) 05절.
 - [Magery](https://wiki.uooutlands.com/Magery)
 - [Wizard's Grimoire](https://wiki.uooutlands.com/Wizard%27s_Grimoire)
 - [Combat Overview](https://wiki.uooutlands.com/Combat_Overview), Precasting
+- [Inscription](https://wiki.uooutlands.com/Inscription), [Resisting Spells](https://wiki.uooutlands.com/Resisting_Spells)
+- [SpellCircles](https://wiki.uooutlands.com/Template:SpellCircles)

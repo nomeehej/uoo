@@ -40,6 +40,8 @@ order: 10
 | 클라이언트 종료 뒤 설정이 되돌아옴 | [Workflow](workflow.md#04.C) 04.C절 |
 | 프리캐스트가 사라지거나 커서가 남음 | [Magery](../mechanics/magery.md#02.A) 02.A절, [PvP Loop](../loops/pvp.md#02) 02절 |
 | 쿨다운 바가 없거나 값이 이상함 | [Overheads](../scripting/overheads.md#06.B) 06.B절. 바딩의 구체적인 모델은 [Barding](../mechanics/barding.md#01.E) 01.E절 |
+| 서버 문장에 대응하는 머리 위 알림 찾기 | [Profile Messages](../scripting/profile-messages.md#01) 01절 |
+| Reflect 제거와 인터럽트가 헷갈림 | [PvP Magery](../game/pvp-magery.md#04.A) 04.A절 |
 | 고른 대상과 자동 프로보 대상이 섞임 | [Barding](../mechanics/barding.md#03.A) 03.A절, [Provocation Checks](../verification/provocation.md) |
 | Razor 오류나 alias 범위 문제 | [Razor](../scripting/razor.md#03) 03절의 확인된 함정 |
 | 무기 피해와 코덱스 효과를 비교 | [Melee](../mechanics/melee.md), 방어 스킬은 [Combat](../mechanics/combat.md) |

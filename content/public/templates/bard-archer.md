@@ -6,7 +6,8 @@ order: 30
 ---
 
 Bard Archer 템플릿의 판단과 숫자. 바딩, 회복, 버프는 루프, 사격은 손.
-아처리 규칙은 [Archery](../mechanics/archery.md), 바드 메커니즘(쿨, 송, Ensemble, Virtuoso)은 [Barding](../mechanics/barding.md), 방어구와 마나 재생, 붕대, AR은 [Combat](../mechanics/combat.md) 01절과 02절.
+아처리 규칙은 [Archery](../mechanics/archery.md), 바드 메커니즘(쿨, 송, Ensemble, Virtuoso)은 [Barding](../mechanics/barding.md).
+방어구와 마나 재생은 [Combat](../mechanics/combat.md#01) 01절, 붕대는 [Combat](../mechanics/combat.md#02.C) 02.C절, AR 계산은 [Melee](../mechanics/melee.md#03) 03절.
 루프의 블록 순서와 전환 규칙은 [Bard Archer Enhanced](../loops/bard-archer-enhanced.md).
 **숫자는 추측 금지.** 인용과 확인 표시: [Workflow](../working/workflow.md#01.C) 01.C절.
 
@@ -163,7 +164,7 @@ Archery 자리의 무기 스킬 80과 Resisting Spells 자리의 Parrying 80을 
 - `summoner`를 복사한 `bard`. nomeehej의 에이전트, 정리 목록, 컨테이너 변수를 그대로 가져옴
 - 다른 점: 아랫줄은 basic식(`Z` 가장 가까운 몹, `V` Attack Last Target, `X`, `C` 플레이어), F1 = `combat\bard-archer-enhanced`, Alt 소환 줄 없음
 - 같은 점: `1 2 3` Disco, Peace, Provo, `Shift+Z` 다음 몹, `Shift+Space` 프로보 후보, Q와 E, Ctrl 버프 줄, F4 pvp
-- 키 배치의 정본: [Hotkeys](../game/hotkeys.md) 01.E절, 03절
+- 키 배치의 정본: [Hotkeys](../game/hotkeys.md#01.E) 01.E절과 [03절](../game/hotkeys.md#03)
 
 ::part[기록]
 

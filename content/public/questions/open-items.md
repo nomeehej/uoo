@@ -81,7 +81,7 @@ order: 10
 | `in`의 대소문자 구분 | [Conventions](../scripting/conventions.md#05) 05절 | 근거는 `dump-label.razor:11` 주석뿐. 인게임에서 봤다면 [Razor](../scripting/razor.md#03) 03절 함정 표로 |
 | Vampiric Embrace 확인 날짜 | [Razor](../scripting/razor.md#04) 04절 | 2026-09-25는 커밋 날짜. 실제로 본 날짜인가 |
 | `auto-mage.razor:1160` 인용 | [Razor](../scripting/razor.md#04) 04절 | 저장소와 이력 어디에도 없는 파일. 위치 |
-| Overheads의 숫자 | [Overheads](../scripting/overheads.md#07) 07절과 [09절](../scripting/overheads.md#09) | 광역 바딩의 8타일과 5초, 2초. Resist 흡수 `25% x Resist/100`과 -75%(PvP의 Parrying 공식과 혼동 여부). siphon의 5분마다와 60분. reactive 25. drain의 레지 -10과 -20, 2분. Paralyze Combat 05초 |
+| Overheads의 숫자 | [Profile Messages](../scripting/profile-messages.md#01) 01절과 [Overheads](../scripting/overheads.md#09) 09절 | 광역 바딩의 8타일과 5초, 2초. Resist 흡수 `25% x Resist/100`과 -75%(PvP의 Parrying 공식과 혼동 여부). siphon의 5분마다와 60분. reactive 25. drain의 레지 -10과 -20, 2분. Paralyze Combat 05초 |
 | PvP의 주장 | [PvP](../game/pvp.md#02) 02절, 03절, 05절 | "Swordsmanship도 같은 형태다", 크리처 주문 패링 25%, Hamstring이 PvM 목록에 있다는 말의 출처 |
 | 명중률 상한과 화면의 기본 40% | [PvP](../game/pvp.md#02.D) 02.D절, [Bard Archer](../templates/bard-archer.md#01.A) 01.A절 | 100% 넘는 명중이 버려지는지. Archery 80 대 방어 100의 식은 43.3%인데 Player Stats Profile은 40% |
 | Outlands의 아이템 사용 간격 | [Razor](../scripting/razor.md#03) 03절의 `queued` | 프로필 `ObjectDelay` 600을 줄여도 `You must wait to perform another action.`이 안 나는 값. 다른 샤드(Lost Lands)는 750ms 권장 |

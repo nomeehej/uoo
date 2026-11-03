@@ -441,7 +441,7 @@ Bard Necro 기준 Herding 80 → Resisting Spells 80 비교:
 | PK 메이지 덤프(Eval 100) | Resist 0 | Resist 80 (주문 -10\~30%, 평균 -20%) |
 | --- | --- | --- |
 | Explosion 31\~40 + Energy Bolt 31\~40 | 62\~80 | 50\~64 |
-| 여기에 폭발 포션 21\~35 추가. Alchemy 80, 저항 불가([PvP](../game/pvp.md#05) 05절) | **83\~115** | **71\~99** |
+| 여기에 폭발 포션 21\~35 추가. Alchemy 80, 저항 불가([PvP Magery](../game/pvp-magery.md#05) 05절) | **83\~115** | **71\~99** |
 
 - 체력이 100 언저리면 Resist 0은 덤프 한 번에 사망, 80은 생존 → 힐 포션과 Greater Heal 가능
 - 대가는 PvE 전체 딜 약 9.5%. **PK를 만나면 싸우는 것이 기본인 캐릭터에게는 Resist 80**
@@ -455,7 +455,7 @@ Bard Necro 기준 Herding 80 → Resisting Spells 80 비교:
 ### <a id="04.D"></a>04.D 레슬링과 반격 수단
 
 - **바드 메이지의 레슬링은 도주할 때만 Defensive Barding이 채움.** 첫 공격 주문 순간 Heat of Battle → printed 값.
-  printed 0의 대가는 [PvP](../game/pvp.md#05) 05절
+  printed 0의 대가는 [PvP Magery](../game/pvp-magery.md#03) 03절
 - 위키의 Discordance, Peacemaking, Provocation 문서는 크리처 대상 효과만. 바드 스킬로 PK를 누르는 수단은 문서에 없음
 
 ### <a id="04.E"></a>04.E Tracking과 바드

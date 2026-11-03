@@ -264,7 +264,7 @@ Resist 80을 빼면 일반 주문 감소 외에 다음 PvM 효과도 없어짐.
 | 100 | 100 | 50타일 | +10 | +25% | +10% |
 
 - 바드의 Effective Barding 보너스, Hunting이 바드 스킬 쿨에 끼치는 영향: [Bard Necro](../templates/bard-necro.md#04.E) 04.E절
-- Tracking은 주문 데미지 보조 스킬이기도 함. 위키 예시는 Tracking 100을 +10%로 계산([PvP](../game/pvp.md#05) 05절)
+- Tracking은 주문 데미지 보조 스킬이기도 함. 위키 예시는 Tracking 100을 +10%로 계산([PvP Magery](../game/pvp-magery.md#02.A) 02.A절)
 - Hamstring 요구조건 두 번째 줄 목록에도 포함([PvP](../game/pvp.md#03) 03절)
 - Hunting 모드 코드: `escape/tracking` 모듈. lumberjack-enhanced와 tamer-mage-enhanced 루프가 사용
 - `config__tracking_color`: 1(기본값) murderer players, 2 회색 criminal, 3 주황 enemy, 4 셋 모두

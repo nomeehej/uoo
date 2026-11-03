@@ -2,7 +2,7 @@
 name: Hotkeys
 label: 핫키 배치
 group: Game reference
-order: 20
+order: 30
 ---
 
 모든 캐릭터 **같은 자리에 같은 역할**. 배치는 세 유형, Razor 프로필 하나 = 유형 하나.
@@ -109,7 +109,7 @@ order: 20
 - summoner Follow `X`, Guard `C`. `C`는 가장 자주 누르는 `V` 옆 → 오입력 잦음.
   Guard 오입력은 펫이 싸움 유지, Follow 오입력은 펫이 싸움 중단
 - 햄스트링과 디스암: 평소 켬. basic의 `Shift+Z`, `Shift+X`는 상황별 토글 자리(예정, 07절).
-  토글 시 프로필 오버헤드 `[ hams mode, on/off ]`, `[ disarm mode, on/off ]`([Overheads](../scripting/overheads.md#07) 07절)
+  토글 시 프로필 오버헤드 `[ hams mode, on/off ]`, `[ disarm mode, on/off ]`([Profile Messages](../scripting/profile-messages.md#01) 01절)
 - 무기 스왑(`hotkey/weapon-*`)은 스크립트 → 누르면 전투 루프 정지 → 이 줄에서 제외
 
 ### <a id="01.F"></a>01.F 마우스와 기타

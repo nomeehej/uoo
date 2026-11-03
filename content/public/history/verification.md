@@ -61,7 +61,7 @@ order: 20
   - 이미 파우치에 보관한 Boards를 건너뛰고 나머지를 move request로 기록
 - v15: 자원 없음 뒤 2초 재시도
 - 2026-10-10 v17: 모듈 조립으로 회복, 버프, 시약을 pvp와 같은 모듈로 교체([Module Migration](module-migration.md#01) 01절)
-- **v18** 2026-10-10: 모듈을 관심사별 폴더로 재분할하며 housekeeping 주기 삭제([Module Migration](../history/module-migration.md#01) 01절).
+- **v18** 2026-10-10: 모듈을 관심사별 폴더로 재분할하며 housekeeping 주기 삭제([Module Migration](module-migration.md#01) 01절).
   리콜 블록이 자기 5초 주기로 책, Hunting, 무게 점검, 음식(`buff/food`)과 목재 정리(`pack/lumber`)는 각자의 타이머를 패스마다 확인.
   리콜 결정, 책 없음, Hunting 없음은 리콜 블록이 패스마다 `var__hold_gathering` 하나로 통합, 채집과 목재 정리는 그 값만 읽음.
   `config__auto_recall`, `use_tracking`, `pack_lumber` 삭제. 블록을 끄려면 레시피에서 그 블록 제외.

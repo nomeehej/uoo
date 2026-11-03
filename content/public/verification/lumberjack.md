@@ -137,7 +137,7 @@ order: 20
 - Tracking 거리 오버헤드는 사용자 요청으로 지금 매핑 유지
 - 공식 문서상 Heat of Battle은 Recall도 제한. 규칙의 정본은 [PvP](../game/pvp.md#01) 01절
 - 확률 숫자를 실제 스킬 상승으로 읽지 않음
-- 채집 결과 매핑의 정본은 [Overheads](../scripting/overheads.md#07) 07절
+- 채집 결과 매핑의 정본은 [Profile Messages](../scripting/profile-messages.md#01) 01절
 
 ## <a id="02"></a>02 변경 경과
 

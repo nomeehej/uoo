@@ -41,8 +41,10 @@ flowchart LR
 | [Conventions](../scripting/conventions.md) | 폴더와 파일 이름, 스크립트 모양과 배너, 변수 접두, serial, 타이머 관용구, 편집기 하이라이팅 |
 | [Razor](../scripting/razor.md) | Outlands Razor 확장 문법, 확인된 함정, 되는 구문의 선례, 명령문 비용, PvP 명령 제약 |
 | [Modules](../scripting/modules.md) | 모듈 폴더, 레시피와 모듈 형식, 조립 규칙, base와 블록 사이 신호, 설정값 추적 |
-| [Overheads](../scripting/overheads.md) | 알림의 세 경로, `[ 대상, 상태 ]` 형식, 어휘, hue, 쿨다운 바, 프로필 오버헤드 표 |
-| [PvP](../game/pvp.md) | 템플릿과 무관한 PvP 규칙과 숫자. Heat of Battle, 명중률, Hamstring, TK, 주문 싸움, 소환수 |
+| [Overheads](../scripting/overheads.md) | 알림의 세 경로, `[ 대상, 상태 ]` 형식, 어휘, hue, 쿨다운 바, 프로필 문장 검색 규칙 |
+| [Profile Messages](../scripting/profile-messages.md) | 프로필별 차이, 서버 문장과 머리 위 알림의 대응표, 파일 순서 |
+| [PvP](../game/pvp.md) | Heat of Battle, 명중률, Hamstring, TK, 소환수의 PvP 규칙과 주문전 문서의 위치 |
+| [PvP Magery](../game/pvp-magery.md) | PvP 인터럽트, 주문 피해와 보조 스킬, Reflect, Alchemy, 마나 예산, Teleport와 Rope |
 | [Combat](../mechanics/combat.md) | 방어구와 마나 재생, 붕대, 스탯 포션, Parrying, Resisting Spells, Tracking |
 | [Melee](../mechanics/melee.md) | 근접 피해와 보조 피해, 스윙, AR 계산, PvM 무기와 코덱스, Hamstring |
 | [PvP Loop](../loops/pvp.md) | 공통 자기관리 루프 `combat/pvp`의 입력 규칙, 설정, 골격, 타이머, 무기 선택, 상태 |
@@ -50,7 +52,7 @@ flowchart LR
 | [Item list](../game/item-list.md) | 아이템 이름, graphic id, hue |
 | [Barding](../mechanics/barding.md) | 바드 세 스킬과 송의 쿨, 효과, 코덱스, Defensive Barding, 프로보 후보 입력 |
 | [Necromancy](../mechanics/necromancy.md) | Vengeful Spirit 소환, 언데드, Unholy Symbol 경제 |
-| [Magery](../mechanics/magery.md) | Magery 프록, 시전 시간, 프리캐스트 커서와 아이템 |
+| [Magery](../mechanics/magery.md) | 프록, Grimoire 전제, 시전 성공률, 시전과 적중 시점, 프리캐스트와 아이템, PvM 시전 보호 |
 | [Bard Necro](../templates/bard-necro.md) | Bard Necro의 캐릭터, 코덱스 배분, 소환수 선택, PvP 판단 |
 | [Bard Necro Enhanced](../loops/bard-necro-enhanced.md) | bard-necro-enhanced 루프의 실행 순서, 자원, 마나 예산, 설계 결정 |
 | [Bard Necro Summons](../loops/bard-necro-summons.md) | 소환수 식별과 바디 번호, 이름 변경, 재소환과 교체, 블록의 실패 증상 |

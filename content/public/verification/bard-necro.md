@@ -67,7 +67,7 @@ order: 70
 | 버섯 | 교전 중 마나 55 이하, 쿨다운 끝 | 먹음. Create Food는 이동 중에만 | 확인되지 않았다 |
 | 송의 슬롯 잠금 | [Barding](../mechanics/barding.md#01.E) 01.E절 근거 표의 순서를 Lyric 방어구를 벗고 한 번 실행. probe 스크립트는 git 이력. 실행 중 손 조작 금지 | 송이 바드 스킬 슬롯까지 잠그는지. 갈리는 것은 송 게이트의 모양 | 확인되지 않았다 |
 | 송 쿨 길이 | 같은 probe의 4단계(약 11초 뒤 시도) | 송 쿨의 정확한 길이. 갈리는 것은 `song` 바 길이 | 확인되지 않았다 |
-| Energy Bolt 회수와 환급 | 한 시전에 `[ mana, refund ]`와 `[ eb, refund ]`가 둘 다 뜨는지([Overheads](../scripting/overheads.md#07) 07절). 방법은 아직 후보 | 15마나 회수(5초 안에 마무리할 때만)와 환급 확률의 중첩 여부. 갈리는 것은 마나 예산이 초당 2.7인지 훨씬 낮은지([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.D) 01.D절) | 확인되지 않았다 |
+| Energy Bolt 회수와 환급 | 한 시전에 `[ mana, refund ]`와 `[ eb, refund ]`가 둘 다 뜨는지([Profile Messages](../scripting/profile-messages.md#01) 01절). 방법은 아직 후보 | 15마나 회수(5초 안에 마무리할 때만)와 환급 확률의 중첩 여부. 갈리는 것은 마나 예산이 초당 2.7인지 훨씬 낮은지([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.D) 01.D절) | 확인되지 않았다 |
 | Ensemble, Reverb, Virtuoso 범위 | 포인트 변경 전후 데미지 트래커의 소환수 딜 절대값 비교 | 셋이 정말 본체에만 적용되는지. 갈리는 것은 코덱스 배분([Barding](../mechanics/barding.md#01.B) 01.B절) | 확인되지 않았다 |
 | 바디 번호 | Skeletal Fiend, skeletal marksman, rotting flesh가 나오면 `>info` | 바디 번호. 갈리는 것은 `SUMMON NAMES`의 `findtype` 줄([Bard Necro Summons](../loops/bard-necro-summons.md#02) 02절) | 확인되지 않았다 |
 | Corpse Skin 질병 틱 | 프록 한 방 뒤와, 프록 네 방과 볼트 뒤의 Poison Strike 피해를 데미지 트래커로 비교. 방법은 아직 후보 | 질병 하나의 틱 수. 갈리는 것은 Poison Strike 시점([Necromancy](../mechanics/necromancy.md#02) 02절) | 확인되지 않았다 |

@@ -88,7 +88,7 @@ Hatchet은 [공식 무기 표](https://wiki.uooutlands.com/Template:SwordsWeapon
 - 단, 스크립트가 이동 성공 시각이나 서버 잔여 시간을 읽을 수 있는지는 별개
 - 이동 거절 안내는 두 프로필이 `[ harvest, wait ]`로 표시, 스크립트의 별도 조회 없음
 - 4초는 채집 명령 재시도 간격일 뿐, 서버 60초 제한을 줄이거나 대신하지 않음
-- 거절 안내 시점부터 60초를 새로 세는 타이머 없음. 매핑은 [Overheads](../scripting/overheads.md#07) 07절
+- 거절 안내 시점부터 60초를 새로 세는 타이머 없음. 매핑은 [Profile Messages](../scripting/profile-messages.md#01) 01절
 
 ## <a id="03"></a>03 기본값과 상태
 
@@ -156,7 +156,7 @@ Hatchet은 [공식 무기 표](https://wiki.uooutlands.com/Template:SwordsWeapon
 - red = Tracking의 Murderer Players, grey = Criminal Players, orange = Enemy Players
 - grey는 범죄자 필터 이름일 뿐, 회색 대상 전부를 따로 검색하는 기능 아님
 - 전체 선택 = 서버의 All Hostile Players 필터. grey와 orange 확인 문장의 서버 일치 여부는 인게임 확인 대상
-- 추적 화면 표시는 [Overheads](../scripting/overheads.md#07) 07절의 프로필 매핑
+- 추적 화면 표시는 [Profile Messages](../scripting/profile-messages.md#01) 01절의 프로필 매핑
 
 #### 상태와 타이머
 

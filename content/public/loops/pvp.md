@@ -36,7 +36,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 
 ## <a id="02"></a>02 입력 규칙
 
-[PvP](../game/pvp.md#05.B) 05.B절 Combat Overview 원문 기준.
+[Magery](../mechanics/magery.md#02.A) 02.A절 Combat Overview 원문 기준.
 
 - 포션과 파우치: 즉시 쓰는 아이템 → 시전 중에도 사용, `casting` 미확인
 - 프리캐스트 커서를 든 채 마시면 그 주문 취소 → 포션은 커서를 든 동안 대기

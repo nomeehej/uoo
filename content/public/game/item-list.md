@@ -2,7 +2,7 @@
 name: Item list
 label: 아이템 목록
 group: Game reference
-order: 30
+order: 40
 ---
 
 UO Outlands 아이템 이름과 graphic ID 목록. `findtype` 인자와 hue 조회용, 실행 스크립트 아님.
