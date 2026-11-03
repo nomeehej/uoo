@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       for-humanity:
-        specifier: 0.30.0
-        version: 0.30.0(rolldown@1.2.15)
+        specifier: 0.31.1
+        version: 0.31.1(rolldown@1.2.15)
       parse5:
         specifier: 7.3.0
         version: 7.3.0
@@ -483,8 +483,8 @@ packages:
       picomatch:
         optional: true
 
-  for-humanity@0.30.0:
-    resolution: {integrity: sha512-cSkMNtg1sW3aDyK0fxP3bWA//w6ub8lkX13Gqugr7TsuMCUvscH4AH52Xp6hQUXMPXCUz0waHfafB7gAr3/hRg==}
+  for-humanity@0.31.1:
+    resolution: {integrity: sha512-3rqyC8tK1MSJ6sgX1pP28vNZk6LALfM0aInmzvtLEa39StNm0oxG7u0/IseBoHqzYRf3z1/BTZSSLMJ/Zq7QJA==}
     engines: {node: '>=22.12.0'}
     hasBin: true
 
@@ -1421,7 +1421,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.7
 
-  for-humanity@0.30.0(rolldown@1.2.15):
+  for-humanity@0.31.1(rolldown@1.2.15):
     dependencies:
       '@clack/core': 1.5.1
       '@clack/prompts': 1.8.1
