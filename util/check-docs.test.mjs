@@ -139,3 +139,72 @@ test("does not check section text for external links or nonnumeric anchors", () 
 
     assert.equal(result.status, 0, result.stderr);
 });
+
+test("rejects numeric-only section labels that differ from their targets", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><h3 id="04.C">Config</h3><a href="#01">02</a><a href="#04.C"><strong>04.B</strong></a>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /link label names section "02" but targets "01"/);
+    assert.match(result.stderr, /link label names section "04\.B" but targets "04\.C"/);
+});
+
+test("passes matching numeric-only section labels", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><h3 id="04.C">Config</h3><a href="#01">01</a><a href="#04.C"><strong>04.C</strong></a>'});
+
+    assert.equal(result.status, 0, result.stderr);
+});
+
+test("rejects a mismatched section immediately after a link inside inline markup", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><p><a href="#01">First</a> <strong><em>02절</em></strong> 표</p>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /following text names section "02" but targets "01"/);
+});
+
+test("reads a matching following section across adjacent inline nodes", () => {
+    const result = runCheck({html: '<h3 id="04.C">Config</h3><p><a href="#04.C">Config</a> <strong>04.</strong><em>C절</em> 표</p>'});
+
+    assert.equal(result.status, 0, result.stderr);
+});
+
+test("does not read following section text from another link or a later block", () => {
+    const result = runCheck({html: `<h2 id="01">First</h2><h2 id="02">Second</h2>
+        <p><a href="#01">First</a> <a href="#02"><strong>02절</strong></a></p>
+        <p><a href="#01">First</a> <strong><a href="#02">02절</a></strong></p>
+        <a href="#01">First</a><p>02절 in another paragraph</p>`});
+
+    assert.equal(result.status, 0, result.stderr);
+});
+
+test("checks absolute and scheme-relative links on the canonical origin", () => {
+    const result = runCheck({html: `<link rel="canonical" href="https://example.github.io/uoo/">
+        <h2 id="real">Heading</h2><a href="https://example.github.io/uoo/#real">Heading</a><a href="//example.github.io/uoo/">Home</a>`});
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /2 local references/);
+});
+
+test("rejects missing pages and anchors in absolute internal URLs", () => {
+    const result = runCheck({html: `<link rel="canonical" href="https://example.github.io/uoo/">
+        <a href="https://example.github.io/uoo/missing/">Page</a><a href="//example.github.io/uoo/#missing">Anchor</a>`});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /https:\/\/example\.github\.io\/uoo\/missing\/ -- no such page or file/);
+    assert.match(result.stderr, /\/\/example\.github\.io\/uoo\/#missing -- no such anchor/);
+});
+
+test("rejects absolute internal links outside the deployment path", () => {
+    const result = runCheck({html: '<link rel="canonical" href="https://example.github.io/uoo/"><a href="https://example.github.io/">Wrong home</a>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /outside the site deployment path/);
+});
+
+test("leaves other origins and non-HTTP schemes unchecked", () => {
+    const result = runCheck({html: `<link rel="canonical" href="https://example.github.io/uoo/">
+        <a href="https://external.github.io/uoo/missing/">Other site</a><a href="//cdn.example.com/missing/">CDN</a>
+        <a href="mailto:user@example.com">Email</a><img src="data:image/png;base64,AA==">`});
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /0 local references/);
+});

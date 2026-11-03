@@ -63,11 +63,11 @@ order: 30
 | `pnpm docs:build` | `content/dist/`에 사이트 생성. frontmatter, 깨진 `.md` 링크, 부품 문법 검사 |
 | `pnpm docs:preview` | [localhost:4323/uoo/](http://localhost:4323/uoo/)에서 생성한 사이트 띄우기 |
 | `pnpm typecheck` | `for-humanity.config.ts`의 설정 타입 검사 |
-| `node util/check-docs.mjs` | 끊긴 링크와 앵커, 번호 제목, 링크 라벨과 바로 뒤 절 번호가 목적지 앵커와 일치하는지 검사 |
+| `node util/check-docs.mjs` | 끊긴 내부 링크와 앵커, 번호 제목, 숫자 링크 라벨과 바로 뒤 절 번호가 목적지 앵커와 일치하는지 검사. 인라인 강조 포함 |
 
 공개 사이트: [nomeehej.github.io/uoo](https://nomeehej.github.io/uoo/). 배포 경로는 `for-humanity.config.ts`의 `basePath`, 도메인은 `url`에서 지정.
 GitHub 저장소의 Pages 소스는 `GitHub Actions`. `master` push 또는 `Documentation` 수동 실행 시 `.github/workflows/docs.yml`이 빌드 후 `content/dist` 전체 배포.
-링크 검사는 빌드된 홈의 대표 주소에서 배포 경로 판별. 하위 경로 밖의 사이트 내부 링크는 오류.
+링크 검사는 빌드된 홈의 대표 주소에서 사이트 origin과 배포 경로 판별. 같은 origin의 절대 URL도 내부 링크로 검사, 배포 경로 밖이면 오류.
 
 ::part[쓰기]
 

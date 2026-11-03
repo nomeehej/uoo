@@ -39,6 +39,26 @@ const attributeOf = (element, name) => element.attrs.find((attribute) => attribu
  */
 const textOf = (node) => node.nodeName === "#text" ? node.value : (node.childNodes ?? []).map(textOf).join("");
 
+/**
+ * Prose immediately after a link, including emphasis, until another link or block begins.
+ */
+const followingTextOf = (element) => {
+    const siblings = element.parentNode.childNodes;
+    let text = "";
+
+    for (const node of siblings.slice(siblings.indexOf(element) + 1)) {
+        if (node.nodeName === "#text") {
+            text += node.value;
+        } else if (["strong", "em", "code", "span", "b", "i", "s", "small", "sub", "sup", "mark"].includes(node.tagName) && !elementsOf(node).some((child) => child.tagName === "a")) {
+            text += textOf(node);
+        } else {
+            break;
+        }
+    }
+
+    return text;
+};
+
 // ---------------------------------------------------------------------------- built site links
 
 if (!existsSync(site)) {
@@ -68,12 +88,17 @@ if (!existsSync(site)) {
         for (const element of page.elements) {
             const reference = attributeOf(element, "href") ?? attributeOf(element, "src");
 
-            // External links and other schemes (mailto:, data:) are not ours to check
-            if (reference === undefined || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(reference)) {
+            // Canonical metadata defines a page's address; it is not a navigational reference.
+            if (reference === undefined || (element.tagName === "link" && attributeOf(element, "rel") === "canonical")) {
                 continue;
             }
 
             const url = new URL(reference, new URL(relative(site, file).split("\\").join("/"), baseUrl));
+
+            // Absolute URLs on our origin are local too. Other sites, mailto: and data: stay external.
+            if (!["http:", "https:"].includes(url.protocol) || url.origin !== baseUrl.origin) {
+                continue;
+            }
 
             if (!url.pathname.startsWith(baseUrl.pathname)) {
                 problems.push(`${page.path}: ${reference} -- outside the site deployment path`);
@@ -102,11 +127,9 @@ if (!existsSync(site)) {
 
             if (element.tagName === "a" && destination?.ids.has(anchor) && /^\d{2}(?:\.[A-Z])?$/.test(anchor)) {
                 // A range may link to its first section, so only compare single-section labels.
-                const label = textOf(element).replace(/\d{2}(?:\.[A-Z])?\s*[~–-]\s*\d{2}(?:\.[A-Z])?절/g, "");
-                const labelNumber = /(?:^|[^\d.])(\d{2}(?:\.[A-Z])?)절/.exec(label)?.[1];
-                const siblings = element.parentNode.childNodes;
-                const following = siblings[siblings.indexOf(element) + 1];
-                const followingNumber = following?.nodeName === "#text" ? /^\s*(\d{2}(?:\.[A-Z])?)절/.exec(following.value)?.[1] : undefined;
+                const label = textOf(element).trim().replace(/\d{2}(?:\.[A-Z])?\s*[~–-]\s*\d{2}(?:\.[A-Z])?절/g, "");
+                const labelNumber = /^(\d{2}(?:\.[A-Z])?)$/.exec(label)?.[1] ?? /(?:^|[^\d.])(\d{2}(?:\.[A-Z])?)절/.exec(label)?.[1];
+                const followingNumber = /^\s*(\d{2}(?:\.[A-Z])?)절/.exec(followingTextOf(element))?.[1];
 
                 for (const [where, number] of [["link label", labelNumber], ["following text", followingNumber]]) {
                     if (number !== undefined && number !== anchor) {
