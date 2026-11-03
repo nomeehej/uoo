@@ -1,7 +1,8 @@
-// Check the docs for two things the for-humanity build does not catch:
+// Check the docs for three things the for-humanity build does not catch:
 //   1. a link in the built site to a page, file or anchor that does not exist
 //   2. a numbered heading in the Markdown sources without its anchor, or with an anchor whose
 //      number differs from the heading text (## <a id="04"></a>04 ..., ### <a id="04.C"></a>04.C ...)
+//   3. a section number in a link label or the text immediately after it that differs from its target
 //
 // Section anchors are section numbers, so renumbering a section breaks every link that points at
 // it. Run this after moving or renumbering sections, and after every docs build.
@@ -32,6 +33,11 @@ const elementsOf = (node) => {
 };
 
 const attributeOf = (element, name) => element.attrs.find((attribute) => attribute.name === name)?.value;
+
+/**
+ * Label text, including inline markup such as a strong section number inside a link.
+ */
+const textOf = (node) => node.nodeName === "#text" ? node.value : (node.childNodes ?? []).map(textOf).join("");
 
 // ---------------------------------------------------------------------------- built site links
 
@@ -92,6 +98,21 @@ if (!existsSync(site)) {
 
             if (destination !== undefined && anchor !== "" && !destination.ids.has(anchor)) {
                 problems.push(`${page.path}: ${reference} -- no such anchor`);
+            }
+
+            if (element.tagName === "a" && destination?.ids.has(anchor) && /^\d{2}(?:\.[A-Z])?$/.test(anchor)) {
+                // A range may link to its first section, so only compare single-section labels.
+                const label = textOf(element).replace(/\d{2}(?:\.[A-Z])?\s*[~–-]\s*\d{2}(?:\.[A-Z])?절/g, "");
+                const labelNumber = /(?:^|[^\d.])(\d{2}(?:\.[A-Z])?)절/.exec(label)?.[1];
+                const siblings = element.parentNode.childNodes;
+                const following = siblings[siblings.indexOf(element) + 1];
+                const followingNumber = following?.nodeName === "#text" ? /^\s*(\d{2}(?:\.[A-Z])?)절/.exec(following.value)?.[1] : undefined;
+
+                for (const [where, number] of [["link label", labelNumber], ["following text", followingNumber]]) {
+                    if (number !== undefined && number !== anchor) {
+                        problems.push(`${page.path}: ${reference} -- ${where} names section "${number}" but targets "${anchor}"`);
+                    }
+                }
             }
         }
     }

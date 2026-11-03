@@ -92,3 +92,50 @@ test("skips headings inside code blocks", () => {
 
     assert.equal(result.status, 0, result.stderr);
 });
+
+test("rejects a section number in the link label that differs from its target", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><a href="#01">02절의 무기</a>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /link label names section "02" but targets "01"/);
+});
+
+test("checks section numbers inside nested link markup", () => {
+    const result = runCheck({html: '<h3 id="04.C">Config</h3><a href="#04.C"><strong>04.B절</strong></a>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /link label names section "04\.B" but targets "04\.C"/);
+});
+
+test("rejects a section number after the link that differs from its target", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><p><a href="#01">Melee</a> 02절 표</p>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /following text names section "02" but targets "01"/);
+});
+
+test("checks the label and following text independently", () => {
+    const result = runCheck({html: '<h3 id="04.C">Config</h3><p><a href="#04.C">04.B절</a> 04.A절</p>'});
+
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /link label names section "04\.B" but targets "04\.C"/);
+    assert.match(result.stderr, /following text names section "04\.A" but targets "04\.C"/);
+});
+
+test("passes matching section labels and following text", () => {
+    const result = runCheck({html: '<h3 id="04.C">Config</h3><p><a href="#04.C"><strong>04.C절</strong></a> 04.C절</p>'});
+
+    assert.equal(result.status, 0, result.stderr);
+});
+
+test("does not treat a label's section range as one section number", () => {
+    const result = runCheck({html: '<h2 id="01">First</h2><a href="#01">01~03절</a>'});
+
+    assert.equal(result.status, 0, result.stderr);
+});
+
+test("does not check section text for external links or nonnumeric anchors", () => {
+    const result = runCheck({html: '<h2 id="real">Heading</h2><a href="#real">03절</a><a href="https://example.com/#01">02절</a>'});
+
+    assert.equal(result.status, 0, result.stderr);
+});

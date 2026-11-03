@@ -62,7 +62,7 @@ order: 30
 | `pnpm docs:build` | `content/dist/`에 사이트 생성. frontmatter, 깨진 `.md` 링크, 부품 문법 검사 |
 | `pnpm docs:preview` | [localhost:4323/uoo/](http://localhost:4323/uoo/)에서 생성한 사이트 띄우기 |
 | `pnpm typecheck` | `for-humanity.config.ts`의 설정 타입 검사 |
-| `node util/check-docs.mjs` | 끊긴 링크와 앵커, 번호 제목의 앵커 검사 |
+| `node util/check-docs.mjs` | 끊긴 링크와 앵커, 번호 제목, 링크 라벨과 바로 뒤 절 번호가 목적지 앵커와 일치하는지 검사 |
 
 공개 사이트: [nomeehej.github.io/uoo](https://nomeehej.github.io/uoo/). 배포 경로는 `for-humanity.config.ts`의 `basePath`, 도메인은 `url`에서 지정.
 GitHub 저장소의 Pages 소스는 `GitHub Actions`. `master` push 또는 `Documentation` 수동 실행 시 `.github/workflows/docs.yml`이 빌드 후 `content/dist` 전체 배포.
