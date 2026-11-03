@@ -57,9 +57,9 @@ cmd /c mklink /J "$ASSIST\Scripts" "C:\src\uoo\script"
 - **In-game → repo.** Razor writes profile XML when it closes, ClassicUO writes character files on
   logout, a script saved in Razor's editor changes on the spot. Run `git status`, commit what you
   want to keep.
-- **Repo → game.** Razor caches script text: after editing or pulling a script, click the Scripts
-  tab (or right-click → *Reload all scripts*). Profile XML is loaded at startup and overwritten on
-  exit, so edit or pull profiles **while the game is closed**.
+- **Repo → game.** Apply edited or pulled scripts with the [script cache procedure](../content/public/working/workflow.md#04.A),
+  which distinguishes Scripts-tab Play from hotkey execution. Profile XML is loaded at startup and
+  overwritten on exit, so edit or pull profiles **while the game is closed**.
 - **Characters.** Razor profiles are not per character; pick one per character in the Profile tab
   and Razor remembers it in `chars.lst`. ClassicUO settings are per character already.
 - **Several clients, second machine.** Clients share the one install and the same links; nothing

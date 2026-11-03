@@ -53,8 +53,10 @@ Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서�
 - 대상 옆 2칸 판정은 불가. 몹끼리 거리를 재는 식이 없음. 프로보 짝은 붙어 싸우므로 짝 중 하나를 쏘면 Incendiary가 다른 쪽에 감
 - 다쳤을 때(Fowling)가 가장 먼저. 피니셔는 다쳤을 때도 마릿수로
 - 전환은 코덱스 라벨로 지금 자세와 피니셔를 읽은 뒤에만. 명령이 켜고 끄는 토글이라 같은 것을 또 말하면 꺼짐
-- 라벨에 자세 이름이 없거나 둘 이상이면 자세 전환을, 피니셔 이름이 없거나 둘이면 피니셔 전환을 그 Play 동안 멈춤(`[ archery stance, off ]`, `[ archery finisher, off ]`).
-  라벨이 지금 것 하나만 보이는지는 확인되지 않았다
+- 자세 이름이 없거나 `Arcane`과 `Fowling`이 함께 보이면 자세 전환을 그 Play 동안 멈춤(`[ archery stance, off ]`).
+  다른 자세 이름 조합의 중복은 검사하지 않고 `Arcane`, `Fowling`, `Incendiary`, `Longshot`, `Maiming` 순서에서 먼저 맞는 것을 채택
+- 피니셔 이름이 없거나 `Ricochet`과 `Pincushion`이 함께 보이면 피니셔 전환 중단(`[ archery finisher, off ]`)
+- 라벨이 현재 자세 하나만 보여 주는지는 확인되지 않았다. 여러 이름이 보이면 원문과 요청된 슬롯을 기록, 현재 판독을 모든 중복 조합의 차단으로 해석하지 않음
 - 라벨은 2초 확인마다가 아니라 원하는 것과 기억한 것이 다를 때만, 3초에 한 번까지 읽음. 손으로 바꾼 것은 30초마다 기억을 지워 다시 읽음
 - 명령: `[ArcheryAmmunition1`\~`5`(위키 순서 Arcane, Fowling, Incendiary, Longshot, Maiming), `[ArcheryFinisher1`(Ricochet), `[ArcheryFinisher2`(Pincushion). [Commands](https://wiki.uooutlands.com/Commands)
 - 자세가 바뀌면 서버가 머리 위에 `Fowling ammunition` 같은 문장을 띄움 → 스크립트는 같은 알림을 다시 안 띄움([Overheads](../scripting/overheads.md#01.B) 01.B절)

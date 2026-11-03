@@ -395,7 +395,7 @@ order: 30
 2. 레시피에서 그 설정을 가진 블록 상자 밑에 `@setvar! config__이름 값` 한 줄, 바로 위 `#` 줄에 이유
    - 다른 상자 밑에 적어도 조립기가 주인 블록으로 옮김
 3. `pnpm build`(`node util/build-scripts.mjs`): 설정이 주인 블록 밑으로, 설명 재작성, 결과물 재생성
-   - `util/check.sh` 실행, 게임에서는 Reload all scripts 후 Play([Workflow](../working/workflow.md#04) 04절)
+   - `util/check.sh` 실행. 게임 반영은 [Workflow](../working/workflow.md#04.A) 04.A절의 실행 방식별 절차
 
 - 기본값으로 되돌리기: 레시피에서 그 줄과 이유 삭제
 - 모든 루프의 기본값 변경: 모듈의 `# @ config` 값 수정

@@ -28,8 +28,8 @@ order: 110
 | 시작 | 실행 | `[ crook, out ]` 없이 `[ tamer archer, on ]`, 코덱스 핫바 표시 | 확인되지 않았다 |
 | 코덱스 핫바 다시 Play | 코덱스 핫바가 이미 떠 있을 때 다시 Play | 핫바가 닫히는지 | 확인되지 않았다 |
 | 활 재장착 | 활을 들고 시전 | Journal `Rearm: two-handed layer remembered`, 시전 뒤 `Rearm: equip requested on the two-handed layer` | 확인되지 않았다 |
-| Full Draw 정지 | 교전 중 정지 | `[ full draw ]` 60초마다, 정지 3초 뒤 발사. 손해면 `ability_main` 3 | 확인되지 않았다 |
-| Full Draw 이동 | 움직이며 사격 | `[ full draw ]` 안 나감 | 확인되지 않았다 |
+| Full Draw 정지 | 교전 중 정지 | 요청 조건이 맞으면 60초 간격의 `Weapon ability request: codex 2, slot 2`와 `[ full draw ]`. 서버의 정지 3초 뒤 실제 발사와 피해 별도 확인. 손해면 `ability_main` 3 | 확인되지 않았다 |
+| Full Draw 이동 | 움직이며 사격 | 이동 중에도 능력 요청과 `[ full draw ]` 가능. 루프는 이동으로 요청을 차단하지 않음. 요청 시각과 실제 발사, 피해를 나눠 기록 | 확인되지 않았다 |
 | Protection | `Buff: Protection.` 뒤 | 아이콘, 2분 뒤 다시([01절](bard-archer.md#01) Protection 항목) | 확인되지 않았다 |
 
 #### 메모

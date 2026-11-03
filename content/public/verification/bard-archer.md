@@ -44,7 +44,7 @@ order: 90
 | Repeater 피해 | 데미지 트래커 | 일반 한 발과 비교. 무기 속도 보정 식이 위키에 없음 | 확인되지 않았다 |
 | Protection | `Buff: Protection.` | 아이콘 `Protection`. 커서가 뜨면 자기에게. 2분 뒤 다시, 마나 26 아래에서는 안 나감 | 확인되지 않았다 |
 | 재장착, Play | 석궁을 들고 F1 | Journal `Rearm: two-handed layer remembered` | 확인되지 않았다 |
-| 재장착, 시전 뒤 | RA, Reflect, Protection, Greater Heal | 석궁이 떨어진 다음 패스에 바로 `Rearm: equip requested on the two-handed layer`, 2초 뒤 손 확인(2026-10-22 변경). 사격이 이어지는지, V를 다시 눌러야 하는지 기록 | 확인되지 않았다 |
+| 재장착, 시전 뒤 | RA, Reflect, Protection, Greater Heal | 빈손 시계 2초, 시전과 커서, 행동 큐, 은신 가드가 풀린 뒤 `Rearm: equip requested on the two-handed layer`. 요청 뒤 2초 손 확인(2026-10-22 변경). 사격이 이어지는지, V를 다시 눌러야 하는지 기록 | 확인되지 않았다 |
 | 재장착, 빈손 | 양손이 비고 기억한 무기 없음 | graphic 31186 검색, `Rearm: graphic 31186 picked`. 없으면 `[ weapon, out ]` 3초마다 | 확인되지 않았다 |
 | 재장착, 1H | graphic 검색으로 1H 무기 | `drop self lefthand`로 보냄. 서버가 제 레이어에 올리는지, 거절해 2초마다 다시 집는지 | 확인되지 않았다 |
 | 재장착, 여분 | 같은 석궁 하나 더 | 처음 든 것 또는 처음 고른 serial로. 다른 것을 집으면 그 serial 기록 | 확인되지 않았다 |

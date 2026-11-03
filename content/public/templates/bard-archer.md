@@ -48,7 +48,7 @@ Bard Archer 템플릿의 판단과 숫자. 바딩, 회복, 버프는 루프, 사
 - 루프가 맡는 것: 바딩, 회복, 자기 버프, 코덱스 자세와 피니셔 전환, 무기 능력 요청([Bard Archer Enhanced](../loops/bard-archer-enhanced.md))
 - **warmode는 Tab으로 직접.** 켜면 손으로 바딩하는 구간 → 루프의 바딩, 노래, 버프, 음식 정지([Bard Archer Enhanced](../loops/bard-archer-enhanced.md#01) 01절). `Z`, `V`는 warmode를 안 바꿈
 - 바딩, 시전과 사격은 서로 안 막음. 인게임 확인됨 2026-10-21
-- 시전하면 무기가 백팩으로 떨어짐. 인게임 확인됨 2026-10-21 → 왼손이 비면 루프가 그 패스에 석궁을 다시 듦([Bard Archer Enhanced](../loops/bard-archer-enhanced.md#01) 01절)
+- 시전하면 무기가 백팩으로 떨어짐. 인게임 확인됨 2026-10-21. 현재 재장착의 빈손 대기와 입력 가드는 [Bard Archer Enhanced](../loops/bard-archer-enhanced.md#01) 01절
 
 1H 석궁과 Rampart Crossbow. 2026-10-23 Player Stats Profile(Show Stats vs Monsters), 같은 장비에 무기만 바꿈.
 
@@ -63,7 +63,7 @@ Bard Archer 템플릿의 판단과 숫자. 바딩, 회복, 버프는 루프, 사
 - **Rampart 유지.** 둘 다 방어 100에 명중 100% 초과 → 남는 명중은 피해가 아님. 모두 맞히면 2H가 3% 높음
 - 피니셔는 발동까지의 시간이 같고 피해는 2H가 1.45배([Archery](../mechanics/archery.md#03) 03절)
 - 명중 보너스는 %p 가산([PvP](../game/pvp.md#02.D) 02.D절). 2H가 100% 밑으로 내려가는 방어 스킬은 약 157, 1H가 앞서는 것은 약 183부터.
-  화면의 40%를 02.A절 식으로 늘린 추정, 디스코로 깎기 전
+  화면의 40%를 [PvP](../game/pvp.md#02) 02절 식으로 늘린 추정, 디스코로 깎기 전
 - 화면의 간격은 찍을 때 현재 스태미나 약 50 기준(Swing Speed 17%로 역산). 두 무기 비율은 같음
 
 ### <a id="01.B"></a>01.B 코덱스

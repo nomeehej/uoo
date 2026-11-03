@@ -47,11 +47,13 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 루프가 끊는 시전은 루프가 건 RA와 Reflect와 Protection뿐. 잃은 HP가 긴급 기준(`buff_max_loss`)에 닿으면 `> Interrupt` → 다음 패스에 회복
 - Razor 행동 큐가 찼거나 은신 중이면 행동 없음. 마비 파우치만 예외
 
-<figure class="fx" data-fx="steps" id="fx-pvp-input" aria-label="수동 커서를 보존한 뒤 시전과 커서 응답, 빈 손 확인을 거쳐 재장착을 요청하는 설계">
+아래 그림은 루프가 요청한 자기 주문의 처리 순서. 빈손 시계의 기준과 수동 시전의 응답 공백은 07절.
+
+<figure class="fx" data-fx="steps" id="fx-pvp-input" aria-label="이미 보이는 커서를 기다리고 루프의 자기 주문 처리와 빈손 시계, 현재 입력 가드를 확인해 재장착을 요청하는 모형">
 <div class="fx__stage">
 <div class="fx-row">
 <span class="fx-chip" data-hl="1">수동 커서</span><span class="fx-chip" data-hl="2">입력 해제</span><span class="fx-chip" data-hl="3">시전</span>
-<span class="fx-chip" data-hl="4-5">커서 응답</span><span class="fx-chip" data-hl="6-7">손 확인</span>
+<span class="fx-chip" data-hl="4-5">주문별 대기</span><span class="fx-chip" data-hl="6-7">손 확인</span>
 </div>
 <div class="fx-cols">
 <div class="fx-box">
@@ -61,8 +63,8 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 <div class="fx-box">
 <p class="fx-label">루프가 기다리는 것</p>
 <div class="fx-swap">
-<span data-on="1">자동 시전, 붕대, 장착 대기</span><span data-on="2">시전과 커서가 빈 창</span><span data-on="3">루프가 요청한 시전의 종료</span>
-<span data-on="4">시전 종료 뒤 커서 응답</span><span data-on="5">커서 처리 뒤 빈 손의 경과 시간</span><span data-on="6">기억한 장비의 장착 요청</span>
+<span data-on="1">자동 시전, 붕대, 장착 대기</span><span data-on="2">시전과 커서가 빈 창</span><span data-on="3">요청한 주문의 시전 상태 폴링</span>
+<span data-on="4">주문별 폴링과 후속 대기</span><span data-on="5">빈손 시계와 현재 입력 가드</span><span data-on="6">기억한 장비의 장착 요청</span>
 <span data-on="7-">실제 손의 serial과 Journal 대조</span>
 </div>
 </div>
@@ -71,13 +73,13 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 <ol class="fx__captions">
 <li>이미 쥔 수동 커서는 루프가 보존. 커서를 바꾸는 시전, 붕대, 장착은 대기. 마비 파우치 예외는 본문 입력 규칙</li>
 <li>사람이 입력을 마치고 시전과 커서가 비면 자동 시전 조건을 다시 확인</li>
-<li>루프가 요청한 주문의 시전 중에는 장비를 복구하지 않음</li>
-<li>시전 표시가 끝나도 커서 응답이 뒤따를 수 있음. 이 틈을 장착 가능한 완료 상태로 해석하지 않음</li>
-<li>커서가 끝난 뒤에도 빈 손의 경과 시간과 행동 큐, 은신 등 장착 가드를 확인</li>
+<li>루프가 요청한 주문의 시전 상태를 폴링. casting이 참인 동안 재장착은 대기</li>
+<li>주문마다 정의된 폴링과 후속 대기 수행. 실제 커서 응답 완료를 보장하지 않음. 수동 시전의 관찰 공백은 본문 07절의 미확인 범위</li>
+<li>빈손 시계, 현재 시전과 커서, 행동 큐, 은신 가드를 함께 확인. 빈손 시계는 커서 종료 시점부터 새로 세는 시간이 아님</li>
 <li>장착 조건이 모두 맞으면 빈 손에 기억한 serial의 장비를 요청</li>
 <li>장착 요청의 성공 여부는 손 레이어와 Rearm Journal로 확인. 이후 새 수동 장비가 관찰되면 그 구성을 기억</li>
 </ol>
-<figcaption>본문의 설계 순서를 표현한 모형. 재생 간격은 게임 시간과 무관. 자동 시전 중 새 수동 커서의 소유권은 인게임 확인 필요</figcaption>
+<figcaption>루프의 자기 시전과 재장착 조건을 표현한 모형. 재생 간격은 게임 시간과 무관. 수동 시전의 응답 공백과 새 수동 커서의 소유권은 인게임 확인 필요</figcaption>
 </figure>
 
 ## <a id="03"></a>03 설정
@@ -154,6 +156,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 ## <a id="05"></a>05 비용과 타이머
 
 - `findtype`이 가장 비싼 명령([Razor](../scripting/razor.md#06) 06절) → 시약은 패스마다 찾지 않고 REAGENTS 플래그를 읽음
+  - Magery가 켜져 있으면 10초마다 또는 시약 부족 안내 뒤 시약 8종 조회. 주문의 필요 여부나 현재 마나로 조회를 생략하지 않음
 - 포션은 필요한 블록 안에서만 찾음. 스탯 포션 셋은 교전 중 5초 검사에서만, 마신 다음 패스는 바로([Combat](../mechanics/combat.md#02.D) 02.D절)
   - Strength와 Agility는 스탯이 기준선 아래일 때 5초에 한 번, Resist는 버프가 빠졌을 때만
 - 시작 TK의 시약 조회는 요청 전 두 종류만. 요청하거나 활성 TK 바를 확인한 뒤에는 생략
@@ -186,6 +189,9 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 손과 백팩 어디에도 없는 장비는 잊음. 현재 든 방패와 한손 무기는 함께 기억
 - 기본 `rearm_graphic` 0: 처음부터 빈손이고 기억한 장비도 없으면 대체 무기를 찾지 않음
 - 장착 중인 손은 유지. 빈 손만 복구하며, 시전 중이거나 타겟 커서, 행동 큐, 은신이 있으면 기다림
+- 빈손 시계 `timer__rearm_missing`은 Play 때 준비값 2초로 시작, 기억한 손이 모두 차 있는 패스마다 0으로 초기화. 커서 처리가 끝난 시각부터 세는 별도 대기가 아님
+- 기본 `settle_first` 0에서는 2초 이상 손이 빈 수동 시전의 `casting`이 풀리고 커서가 아직 안 온 틈에 장착 요청 가능.
+  실제 입력 간섭 여부는 [PvP Checks](../verification/pvp.md#01) 01절. 이미 보이는 커서의 보호와 이 응답 공백을 구분
 - 스윙 바와 무기 슬롯은 사용하지 않음. 두 도끼 사이 선택과 공격 요청은 수동
 - 장착 요청은 성공이나 명중 증거가 아님. 손 장비와 Journal의 `Rearm:` 줄을 함께 확인
 

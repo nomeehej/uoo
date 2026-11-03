@@ -54,8 +54,8 @@ cmd /c mklink /J "$ASSIST\Scripts" "C:\src\uoo\script"
 
 - **게임 → 저장소.** Razor는 종료할 때 프로필 xml을 쓰고, ClassicUO는 로그아웃할 때 캐릭터 파일을
   쓰고, Razor 편집기에서 저장한 스크립트는 즉시 바뀝니다. `git status`로 보고 남길 것만 커밋하세요.
-- **저장소 → 게임.** Razor는 스크립트 본문을 캐시합니다. 스크립트를 고쳤거나 pull 했으면 Scripts 탭을
-  클릭하세요 (또는 우클릭 → *Reload all scripts*). 프로필 xml은 시작할 때 읽고 종료할 때
+- **저장소 → 게임.** 스크립트를 고쳤거나 pull 했으면 [실행 방식에 맞는 캐시 반영 절차](../content/public/working/workflow.md#04.A)를
+  따르세요. Scripts 탭 Play와 핫키 실행의 반영 방법이 다릅니다. 프로필 xml은 시작할 때 읽고 종료할 때
   덮어쓰니 **게임을 끈 상태에서** 고치거나 pull 하세요.
 - **캐릭터.** Razor 프로필은 캐릭터 단위가 아닙니다. Profile 탭에서 캐릭터마다 골라 두면
   `chars.lst`에 기억됩니다. ClassicUO 설정은 원래 캐릭터별입니다.
