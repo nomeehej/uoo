@@ -6,7 +6,7 @@ order: 50
 ---
 
 Bard Archer에서 Archery를 Wrestling, Resisting Spells를 Parrying으로 바꾸는 사냥 구성.
-자동화 설계는 [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md), 무기 비교 근거는 [Combat](../mechanics/combat.md#02.G) 02.G절.
+자동화 설계는 [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md), 무기 비교 근거는 [Melee](../mechanics/melee.md#05) 05절.
 
 ## <a id="00"></a>00 한눈에
 
@@ -16,7 +16,7 @@ Bard Archer에서 Archery를 Wrestling, Resisting Spells를 Parrying으로 바�
 | [02](#02) | 무기, 코덱스와 회복 |
 | [03](#03) | 적용과 확인 범위 |
 
-인게임 확인 항목은 [Open items](../questions/open-items.md#19) 19절.
+인게임 확인 항목은 [Bard Wrestling Checks](../verification/bard-wrestling.md#01) 01절.
 
 ## <a id="01"></a>01 스킬 계획
 
@@ -30,8 +30,8 @@ Bard Archer에서 Archery를 Wrestling, Resisting Spells를 Parrying으로 바�
 | Musicianship | 기존 Self Taught 대체 |
 
 - 합 720. 스탯과 Bard, Healer 코덱스의 기존 배분은 [Bard Archer](bard-archer.md#01) 01절
-- Wrestling과 Anatomy의 Hamstring 자격, 몬스터 이동 제한은 [Combat](../mechanics/combat.md#02.H) 02.H절
-- 마나 반환과 시전 중 근접 방어는 [Combat](../mechanics/combat.md#02.G) 02.G절
+- Wrestling과 Anatomy의 Hamstring 자격, 몬스터 이동 제한은 [Melee](../mechanics/melee.md#06) 06절
+- 마나 반환과 시전 중 근접 방어는 [Melee](../mechanics/melee.md#05) 05절
 - Defensive Barding의 적용 조건은 [Barding](../mechanics/barding.md). 실전 PvP는 도주 우선, 자동 반격 없음
 
 ## <a id="02"></a>02 무기와 코덱스

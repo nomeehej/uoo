@@ -173,7 +173,7 @@ Ctrl = Cmd, Alt = Option(01절) → macOS가 먼저 가져가는 키 있음.
 
 | 상황 | 키 | 메모 |
 | --- | --- | --- |
-| 소환 | `Alt+1` → `Alt+2` → `Alt+2`, 솔플은 `Alt+1` → `Alt+3` → `Alt+2` | Vengeful Spirit 켠 뒤 듀오는 Lich 둘, 솔플은 Rag Witch와 Lich([Bard Necro](../templates/bard-necro.md#03.A) 03.A절). bard-necro-enhanced가 돌면 루프가 대신 소환([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절) |
+| 소환 | `Alt+1` → `Alt+2` → `Alt+2`, 솔플은 `Alt+1` → `Alt+3` → `Alt+2` | Vengeful Spirit 켠 뒤 듀오는 Lich 둘, 솔플은 Rag Witch와 Lich([Bard Necro](../templates/bard-necro.md#03.A) 03.A절). bard-necro-enhanced가 돌면 루프가 대신 소환([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절) |
 | PvE 공격 | `Z` → `V` | 가장 가까운 몹 공격. summoner는 펫이, basic과 bard는 내가(01.E절) |
 | PvE 주문 | `V`(summoner)로 라타 → `1 E` `2 E` → `4 E` `5 E` | `1`, `2`는 시그니처 칸(03절) |
 | 몹 여럿(summoner, bard) | `Z` → `V`, 그다음 `Shift+Space`로 한 마리씩 | 후보마다 `[ provo, set ]` 확인. 후보 등록과 바딩 대상 선택은 분리, 절차는 [Barding](../mechanics/barding.md#03.A) 03.A절 |

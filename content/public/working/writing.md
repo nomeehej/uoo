@@ -6,7 +6,7 @@ order: 20
 ---
 
 설계 문서 작성 기준. 문서는 [for-humanity](https://for-humanity.fyi) Markdown, `pnpm docs:dev`로 읽음.
-문서별 정본은 [Workflow](workflow.md#00.A) 00.A절의 표. for-humanity 기능(frontmatter, Note, Details, 표, 흐름도)의 정본은 for-humanity [Writing](https://for-humanity.fyi/writing/).
+문서별 정본은 [Workflow](workflow.md#00.A) 00.A절의 표. for-humanity 기능(frontmatter, Note, Details, 표, 흐름도와 FX)의 정본은 for-humanity [Writing](https://for-humanity.fyi/writing/).
 
 ## <a id="00"></a>00 한눈에
 
@@ -20,7 +20,7 @@ order: 20
 | [06](#06) | Markdown 표기 |
 | [07](#07) | 언어와 번역본 |
 | [08](#08) | 한 사실은 한 곳에 |
-| [09](#09) | 흐름도 |
+| [09](#09) | 흐름도와 FX |
 | [10](#10) | 끝낼 때 확인 |
 
 이 문서에 걸린 질문은 [Open items](../questions/open-items.md).
@@ -39,7 +39,9 @@ order: 20
 | `mechanics/` | Mechanics | 스킬 계열별 서버 규칙. 바딩, 네크로, 매저리 |
 | `templates/` | Templates | 템플릿별 캐릭터 판단. 스킬, 코덱스 배분, 소환수 선택, PvP |
 | `loops/` | Loops | 루프 하나의 설계. 블록 순서, 설정 이유, 블록 설계 |
-| `questions/` | Open questions | 아직 확인 못 한 것 |
+| `verification/` | Verification | 스크립트별 인게임 검사, 하는 것과 통과 기준, 확인 상태 |
+| `questions/` | Open questions | 답이 필요한 질문과 보류한 일, 검사 문서 색인 |
+| `history/` | History | 날짜별 변경 경과와 과거 이관 기록 |
 
 | 경로 | 역할 |
 | --- | --- |
@@ -190,14 +192,27 @@ order: {묶음 안 순서}
 - 문서별 정본: [Workflow](workflow.md#00.A) 00.A절 표 한 곳. 새 문서나 정본 이동 시 그 표 수정
 - 규칙도 같음. 언제나 지킬 규칙과 커밋 규칙은 AGENTS.md에만, 나머지는 이 문서들에만. AGENTS.md는 한 줄 요약과 링크만
 - 템플릿 문서: **그 템플릿의 판단만.** 다른 템플릿에도 쓰이는 내용(서버 규칙, 문법)은 공통 문서로 옮기고 링크
+- 분리는 읽는 목적 기준. 현재 규칙, 실행 절차, 검사, 변경 경과의 목적이 다르면 해당 문서로 이동. 같은 목적의 조회 목록은 길이만으로 나누지 않음
+- 인게임 검사는 `verification/`에 하는 것, 통과 기준, 확인 상태 보관. 질문은 `questions/`, 과거 경과는 `history/`에 보관
+- 문서를 옮기면 링크와 정본 표도 갱신. 스크립트 주석이나 외부 링크가 쓰는 옛 절 번호는 원래 문서에 이동 안내 앵커 유지
+- 핵심 규칙과 실패 조건은 본문에 펼침. 긴 인용과 보충 자료에만 Details 사용
 
-## <a id="09"></a>09 흐름도
+## <a id="09"></a>09 흐름도와 FX
 
 - ` ```mermaid ` 코드 블록. 공식 Mermaid 12를 브라우저에서 렌더링, 사이트의 밝은 테마와 어두운 테마 적용
 - 절차와 조건은 `flowchart`, 참여자 간 요청은 `sequenceDiagram`. 유형별 문법은 [for-humanity Diagrams](https://for-humanity.fyi/diagrams/) 참고
 - 문법 오류는 빌드 성공만으로 검출되지 않음. `docs:dev` 또는 `docs:preview`에서 SVG 표시와 오류 안내 확인
 - JavaScript가 꺼졌거나 렌더링이 실패하면 원문 표시
 - 긴 라벨은 `<br>`, 복잡한 흐름은 여러 장으로 분리. 모바일에서 넘치면 `LR` 대신 `TD` 또는 그림 분할
+
+#### FX
+
+- 순서와 상태 변화, 같은 조건의 전후 비교는 단계형 FX. 정적 구조와 전체 실행 흐름은 Mermaid
+- `<figure class="fx" data-fx="steps">`와 공통 배치, 색상 클래스 사용. 문법과 접근성의 정본은 [for-humanity Figures](https://for-humanity.fyi/figures/)
+- 그림마다 `aria-label`, 단계별 설명, 본문 결론 필요. 마지막 장면은 JavaScript 없이도 읽히는 열린 범위(`4-` 등) 사용
+- 게임 시간을 재현하지 않는 그림은 캡션에 명시. 재생 간격을 서버 쿨이나 시전 시간으로 해석하지 않게 표시
+- 서버 규칙, 프로필의 쿨다운 바, 스크립트의 요청을 구별. 인게임 미확인 동작은 설명용 모형의 확인 범위에도 표시
+- FX는 해당 사실의 정본 문서에 배치. 다른 문서는 그림을 복사하지 않고 정본으로 링크
 
 ::part[확인]
 
@@ -206,4 +221,4 @@ order: {묶음 안 순서}
 - 한 줄 200자 이내(`.editorconfig`의 `max_line_length`). 넘으면 코드 밖 빈칸, 되도록 문장 끝에서 줄바꿈. 표의 줄과 코드 블록 안은 예외
 - 05절 기준 재확인. 가운뎃점은 `git grep -n '·' -- content`
 - `pnpm check`: 설정 타입 검사(`pnpm typecheck`), 사이트 생성(`pnpm docs:build`), 링크와 앵커와 번호 제목 검사(`node util/check-docs.mjs`)
-- `pnpm docs:dev`로 확인. 밝은 테마와 어두운 테마, 폭 1024와 390에서 가로 밀림, 흐름도
+- `pnpm docs:dev`로 확인. 밝은 테마와 어두운 테마, 폭 1024와 390에서 가로 밀림, 흐름도, FX의 앞뒤 단계와 키보드 조작. JavaScript를 껐을 때 본문과 마지막 장면 확인

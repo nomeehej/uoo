@@ -20,7 +20,7 @@ Bard Necro 템플릿의 캐릭터, 코덱스 배분, 소환수 선택, PvP 판�
 - Vengeful Spirit 소환, 언데드, Unholy Symbol: [Necromancy](../mechanics/necromancy.md)
 - Magery 프록과 시전 시간: [Magery](../mechanics/magery.md)
 - `bard-necro-enhanced` 루프 설계, 소환수 이름과 재소환 블록: [Bard Necro Enhanced](../loops/bard-necro-enhanced.md)
-- 인게임 확인 결과와 남은 측정: [Open items](../questions/open-items.md#14) 14절
+- 인게임 확인 결과와 남은 측정: [Bard Necro Checks](../verification/bard-necro.md#01) 01절
 - 템플릿과 무관한 PvP 규칙과 숫자: [PvP](../game/pvp.md). 04절은 이 캐릭터의 판단만
 - Razor 구문, 함정, 명령문 비용: [Razor](../scripting/razor.md)
 - 쿨다운 바와 오버헤드의 이름과 색 규칙: [Overheads](../scripting/overheads.md)
@@ -37,7 +37,7 @@ Bard Necro 템플릿의 캐릭터, 코덱스 배분, 소환수 선택, PvP 판�
 | [06](#06) | 출처 |
 
 자주 찾는 곳: 소환 조합 [03.A절](#03.A), PK [04절](#04).
-재소환 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절, 루프 수정 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.A) 01.A절.
+재소환 [Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절, 루프 수정 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.A) 01.A절.
 
 이 문서에 걸린 질문은 [Open items](../questions/open-items.md).
 
@@ -68,7 +68,7 @@ Bard Necro 템플릿의 캐릭터, 코덱스 배분, 소환수 선택, PvP 판�
 - 테이머와 둘이 다니는 경우가 많음. **본체는 후열**
 - 주 사냥터 몹 난이도 **300\~500**
 - PK는 도주보다 반격이 기본 → Herding 대신 Resisting Spells 80(04.B절)
-- 소환수는 종류를 알아볼 이름(`leech`, `mumi`, `vampa`, `wichy` 등)으로 자동 개명([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.B) 02.B절)
+- 소환수는 종류를 알아볼 이름(`leech`, `mumi`, `vampa`, `wichy` 등)으로 자동 개명([Bard Necro Summons](../loops/bard-necro-summons.md#02) 02절)
 
 ### <a id="01.B"></a>01.B 측정 결과
 
@@ -188,6 +188,8 @@ Magery 100, Eval 80(`0.75 + 0.75 x 0.8 = 1.35`), 위키 PvM 공식으로 계산.
 - 브레이크가 뜨면 그 대상에는 Peace도 Provo도 불가([Barding](../mechanics/barding.md#02.E) 02.E절). 난이도 400이면 **40초 동안 `Ensemble`과 `Virtuoso`가 통째로 꺼짐**
 - `Refrain`이 막는 것이 이 40초
 
+Revolution Song도 Provocation을 찍어 선택 가능. 효과는 [Barding](../mechanics/barding.md#02.G) 02.G절, 위 20점 안에서 다른 업그레이드와 경쟁.
+
 ### <a id="02.C"></a>02.C Summoner's Tome 배분
 
 - **소환 주문 하나당 20포인트.** 그 주문으로 소환해 경험치를 쌓아 해금("Players can earn experience and unlock up to 20 Upgrade Points per Summon Spell")
@@ -200,8 +202,8 @@ Magery 100, Eval 80(`0.75 + 0.75 x 0.8 = 1.35`), 위키 PvM 공식으로 계산.
 
 > Dismissive: "Player receives (8 / 24 / 40) Mana when follower is dispelled or killed (must be within 18 tiles)" -- 위키 Summoner's Tome
 
-- Spirit Pact T3 → 소환 시전 6초에서 2.5초 감소. 루프의 시작 마감은 감소 없는 6초 기준([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절)
-- Dismissive는 교체용으로 불필요. 판단은 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절
+- Spirit Pact T3 → 소환 시전 6초에서 2.5초 감소. 루프의 시작 마감은 감소 없는 6초 기준([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절)
+- Dismissive는 교체용으로 불필요. 판단은 [Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절
 
 #### Fire Tome과 Lich, 가장 먼저
 
@@ -300,7 +302,7 @@ flowchart LR
 ```
 
 PK를 만나도 조합 유지, 사냥하던 그대로 싸움(04.C절).
-**지금 쓰는 조합은 `Rag Witch + Mummy`**: 2026-10-18 사용자 결정, `necro/resummon`의 레시피 값([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절). 조합별 이유:
+**지금 쓰는 조합은 `Rag Witch + Mummy`**: 2026-10-18 사용자 결정, `necro/resummon`의 레시피 값([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절). 조합별 이유:
 
 | 상황 | 조합 |
 | --- | --- |
@@ -447,7 +449,7 @@ Bard Necro 기준 Herding 80 → Resisting Spells 80 비교:
 ### <a id="04.C"></a>04.C PK 앞의 소환수
 
 - **PK 앞에서도 사냥하던 소환수 그대로.** 그 자리에서 재소환 불가로 판단, PvP의 소환수 간 차이도 사냥 조합을 바꿀 정도가 아님
-- PK에는 F4의 `pvp` 루프 → 재소환 없음. 사냥 루프를 그대로 두면 `RESUMMON`이 맞으면서 VS와 6초 시전을 시도([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절)
+- PK에는 F4의 `pvp` 루프 → 재소환 없음. 사냥 루프를 그대로 두면 `RESUMMON`이 맞으면서 VS와 6초 시전을 시도([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절)
 - PvP에서 소환수가 잃는 것과 더 버티는 소환수: [PvP](../game/pvp.md#06.A) 06.A절, [PvP](../game/pvp.md#06.B) 06.B절
 
 ### <a id="04.D"></a>04.D 레슬링과 반격 수단
@@ -478,7 +480,7 @@ Tracking 규칙은 [Combat](../mechanics/combat.md#05) 05절, Hunting 판정의 
   Q는 사용자가 손으로 Last Target을 고르는 데만
 - 직접 serial을 쓰던 이전 버전에서 alt TK와, Explosion 뒤 EB 잇기 동작 확인(인게임 확인됨 2026-10-04).
   결과는 [Razor](../scripting/razor.md#03) 03절의 진단 근거
-- 지금의 공통 자기관리 본문은 아직 인게임에서 확인되지 않았다. 반영과 확인은 [Open items](../questions/open-items.md#10) 10절
+- 지금의 공통 자기관리 본문은 아직 인게임에서 확인되지 않았다. 반영과 확인은 [PvP Checks](../verification/pvp.md#01) 01절
 
 ::part[기록]
 

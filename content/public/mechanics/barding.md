@@ -91,6 +91,7 @@ target backpack
 ### <a id="01.D"></a>01.D cooldown은 서버 값이 아님
 
 `cooldown "..."`은 서버 값이 아닌 `cooldowns.xml`의 내 트리거. 일반 규칙은 [Overheads](../scripting/overheads.md#06.B) 06.B절.
+루프는 바드 쿨을 자체 타이머로 복사하지 않고 프로필 바를 읽음. Lyric 리셋 대응은 01.G절.
 
 - 예전 `music` 항목에 송 트리거(10초)가 섞임 → 뒤따르는 5초 스킬 트리거와 서로 덮어씀
 - 증상: "Music이 0인데 송이 안 나간다", "서버가 허용하는 스킬을 10초 참는다"
@@ -122,6 +123,34 @@ Music = 0   AND   <그 스킬의 슬롯> = 0
 - 송은 Music을 안 세움 → **송 뒤의 스킬은 통과**
 - 스킬은 슬롯을 세움 → **Peace 스킬 뒤의 Peace 송은 막힘**
 - 송은 슬롯을 안 세움 → **Peace 송 뒤의 Peace 스킬은 통과**
+
+<figure class="fx" data-fx="steps" id="fx-barding-order" aria-label="송부터 쓰는 순서와 스킬부터 쓰는 순서에서 Music, Song, 스킬 슬롯이 다르게 잠기는 모습">
+<div class="fx__stage fx-cols">
+<div class="fx-box">
+<p class="fx-label">송부터 사용</p>
+<div class="fx-lane"><span>Music</span><span class="fx-swap"><span class="fx-chip" data-on="-3" data-hl="3">준비</span><span class="fx-chip" data-on="4-">대기</span></span></div>
+<div class="fx-lane"><span>Song</span><span class="fx-swap"><span class="fx-chip" data-on="1">준비</span><span class="fx-chip" data-on="2-" data-hl="2">대기</span></span></div>
+<div class="fx-lane"><span>스킬 슬롯</span><span class="fx-swap"><span class="fx-chip" data-on="-3" data-hl="3">준비</span><span class="fx-chip" data-on="4-">대기</span></span></div>
+<p class="fx-swap"><span data-on="1">두 행동 모두 준비</span><span data-on="2">송은 Song만 사용</span><span data-on="3">뒤따르는 스킬 사용 가능</span><span data-on="4-">스킬이 Music과 슬롯 사용</span></p>
+</div>
+<div class="fx-box">
+<p class="fx-label">스킬부터 사용</p>
+<div class="fx-lane"><span>Music</span><span class="fx-swap"><span class="fx-chip" data-on="1 4-">준비</span><span class="fx-chip" data-on="2-3" data-hl="2-3">대기</span></span></div>
+<div class="fx-lane"><span>Song</span><span class="fx-swap"><span class="fx-chip" data-on="-5">준비</span><span class="fx-chip" data-on="6-" data-hl="6">대기</span></span></div>
+<div class="fx-lane"><span>스킬 슬롯</span><span class="fx-swap"><span class="fx-chip" data-on="1 6-">준비</span><span class="fx-chip" data-on="2-5" data-hl="4-5">대기</span></span></div>
+<p class="fx-swap"><span data-on="1">두 행동 모두 준비</span><span data-on="2-3">송도 Music을 기다림</span><span data-on="4-5">같은 슬롯의 송은 계속 대기</span><span data-on="6-">모든 관문이 비어 송 사용</span></p>
+</div>
+</div>
+<ol class="fx__captions">
+<li>Song, Music, 스킬 슬롯이 모두 빈 상태에서 시작. 두 열은 서로 다른 사용 순서</li>
+<li>왼쪽은 송을 먼저 사용해 Song만 대기. 오른쪽은 스킬을 먼저 사용해 Music과 스킬 슬롯이 대기</li>
+<li>왼쪽의 스킬은 Music과 슬롯이 비어 통과. 오른쪽의 송은 Song이 비어 있어도 Music 때문에 대기</li>
+<li>왼쪽은 스킬 사용 뒤 Music과 슬롯도 대기. 오른쪽은 Music이 끝나도 같은 슬롯의 송은 아직 대기</li>
+<li>오른쪽에서 다른 슬롯의 송은 그 슬롯과 Song이 비었으면 사용 가능. 같은 슬롯의 송은 계속 대기</li>
+<li>오른쪽 슬롯까지 끝나면 송 사용 가능. 각 행동이 읽는 관문과 실제로 세우는 관문을 구별</li>
+</ol>
+<figcaption>아래 쿨 모델의 순서 비교. 재생 간격은 게임 시간과 무관. 서버 쿨과 프로필 바의 길이 차이는 01.I절</figcaption>
+</figure>
 
 #### 근거, 모두 인게임 측정
 
@@ -195,7 +224,7 @@ findbuff "song of peacemaking"
 |   | 0s | `Your barding skill cooldowns` |
 
 - 바 길이는 위키 값(01.A절)과 조금 다름. 송과 Peace, Provo 성공은 10초가 아닌 11초
-- 송 쿨의 정확한 길이는 아직 미측정([Open items](../questions/open-items.md#14) 14절 남은 측정 2)
+- 송 쿨의 정확한 길이는 아직 미측정([Bard Necro Checks](../verification/bard-necro.md#01) 01절 남은 측정 2)
 - 항목 순서: **바가 자주 뜨는 순서.** `skill`, `music`, `disco`, `peace/provo`, `song` 다음, 이 루프가 읽는 바를 `magic arrow`, `harm`,
   `fireball`, `lightning`, `mush`, `heal pot` 순서
 
@@ -390,7 +419,7 @@ findbuff "song of peacemaking"
 
 ### <a id="03.A"></a>03.A 프로보 후보 입력, PROVO PICKS와 PROVOKE 블록
 
-2026-10-21 두 바드 루프에 구현(`bard/provo-picks`, `bard/provo`). 인게임 확인은 [Open items](../questions/open-items.md#17) 17절.
+2026-10-21 두 바드 루프에 구현(`bard/provo-picks`, `bard/provo`). 인게임 확인은 [Provocation Checks](../verification/provocation.md#01) 01절.
 
 #### 입력과 저장
 

@@ -2,11 +2,11 @@
 name: Bard Archer Enhanced
 label: bard-archer-enhanced 루프
 group: Loops
-order: 20
+order: 30
 ---
 
 Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서와 전환 규칙. 템플릿의 판단은 [Bard Archer](../templates/bard-archer.md), 아처리 규칙은 [Archery](../mechanics/archery.md).
-인게임 확인은 [Open items](../questions/open-items.md#16) 16절.
+인게임 확인은 [Bard Archer Checks](../verification/bard-archer.md#01) 01절.
 
 정본은 레시피 [recipe/bard-archer-enhanced-recipe.razor](https://github.com/nomeehej/uoo/blob/master/recipe/bard-archer-enhanced-recipe.razor). 블록 동작은 각 모듈 파일 머리 주석.
 
@@ -27,7 +27,7 @@ Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서�
 | base | | `warmode_is_manual` 1, `recover_in_warmode` 1, `settle_first` 1(bard-necro). `heal_skill_min` 10(skinning) |
 | 패스 첫머리 | `bard/provo-picks` | `Z` 또는 `Shift+Space`로 등록하는 후보 입력, 바딩 대상과 독립. [Barding](../mechanics/barding.md#03.A) 03.A절 |
 | 다쳤거나 독, 마비 | `recovery/cure`, `heal`, `bandage`, `light-heal` | 잃은 HP 기준 `heal_hits` 35, `emergency_hits` 45. 회복 정책은 아래 |
-| 회복 다음 | `fight/rearm` | `rearm_graphic` 31186. 기억한 손이 빈 지 2초 뒤 다시 듦, 요청 뒤 2초 지나 손 확인. 확인 항목은 [Open items](../questions/open-items.md#16) 16절 |
+| 회복 다음 | `fight/rearm` | `rearm_graphic` 31186. 기억한 손이 빈 지 2초 뒤 다시 듦, 요청 뒤 2초 지나 손 확인. 확인 항목은 [Bard Archer Checks](../verification/bard-archer.md#01) 01절 |
 | 공용 | `fight/target`, `magery/reagents` | `acquire_range` 18, `target_range` 10, `target_grace` 500(bard-necro) |
 | 5초마다 | `bard/instrument`, `recovery/refresh`, `buff/food`, `pack/gold-drop` | `refresh_stam` 60(skinning) |
 | 하우스키핑 다음 | `buff/potions` | 교전 중 5초마다 검사, 마신 다음 패스는 바로([Combat](../mechanics/combat.md#02.D) 02.D절). 기준선 STR 120, DEX 100은 기본값 |
@@ -38,7 +38,7 @@ Bard Archer 템플릿의 사냥 루프 `bard-archer-enhanced`의 블록 순서�
 
 - 교전 = 고른 적이 10칸 안. 바딩 사거리. 사격 사거리 8칸은 손으로 맞춤
 - **바딩 우선순위: Provo, Disco, Peace.** Provo로 짝을 붙인 뒤 현재 대상에 Discordance, Peacemaking. bard-necro와 같은 순서. 코덱스 전환은 Provo와 Disco 사이
-- 프로보 후보 입력과 짝 선택은 [Barding](../mechanics/barding.md#03.A) 03.A절, 인게임 확인은 [Open items](../questions/open-items.md#17) 17절
+- 프로보 후보 입력과 짝 선택은 [Barding](../mechanics/barding.md#03.A) 03.A절, 인게임 확인은 [Provocation Checks](../verification/provocation.md#01) 01절
 - 스킬별 쿨과 공유 쿨: [Barding](../mechanics/barding.md#01.E) 01.E절
 - **평소 회복은 붕대.** 잃은 HP 35 이상이면 힐 포션, 그 패스에 포션을 안 마셨고 손실 45 이상이면 Greater Heal. 붕대 종료를 기다리지 않음
 - 일반 Heal은 붕대 대체용으로 유지. 이 템플릿의 기본 설정에서는 붕대가 없고 감는 중도 아닐 때만 사용, 붕대 중첩 시전 없음

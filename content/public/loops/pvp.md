@@ -2,17 +2,24 @@
 name: PvP Loop
 label: 공통 pvp 루프
 group: Loops
-order: 40
+order: 60
 ---
 
 PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 규칙은 [PvP](../game/pvp.md).
-템플릿별 설정은 [Bard Necro](../templates/bard-necro.md#04.F) 04.F절과 [Lumberjack PvP](../templates/lumberjack-pvp.md#08) 08절, 인게임 확인은 [Open items](../questions/open-items.md#10) 10절.
+템플릿별 설정은 [Bard Necro](../templates/bard-necro.md#04.F) 04.F절과 [Lumberjack PvP](../templates/lumberjack-pvp.md#08) 08절, 인게임 확인은 [PvP Checks](../verification/pvp.md#01) 01절.
 
 ## <a id="00"></a>00 한눈에
 
 | 절 | 내용 |
 | --- | --- |
-| [01](#01) | 수동 공격과 자동 자기관리의 경계, 버전 기록, 입력 규칙, 설정, 루프 골격, 비용과 타이머, 싸움 전 붕대 미리 쓰기, 기억한 무기 재장착, 상태 |
+| [01](#01) | 수동 공격과 자동 자기관리의 경계 |
+| [02](#02) | 입력 규칙 |
+| [03](#03) | 설정 |
+| [04](#04) | 루프 골격 |
+| [05](#05) | 비용과 타이머 |
+| [06](#06) | 싸움 전 붕대 미리 쓰기 |
+| [07](#07) | 기억한 무기 재장착 |
+| [08](#08) | 상태 |
 
 이 문서에 걸린 질문은 [Open items](../questions/open-items.md).
 
@@ -25,18 +32,9 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 자동: 시작 때 자기 TK 한 번, 파우치, 포션, 붕대, 회복 에이전트, Reactive Armor와 Reflect와 Protection, 스탯 포션, 기억한 손 장비 복구. 수동 시전이나 커서는 끊지 않음
 - 현재 본문은 인게임에서 확인되지 않았다
 
-현재 v10. 판별 변경:
+현재 v10. 이전 판의 변경 이유는 [Verification History](../history/verification.md#03) 03절.
 
-- 2026-10-08 v6: bard-necro-enhanced, lumberjack-enhanced와 같은 모양으로 재작성
-  - v5는 위에서 고른 번호를 변수에 담고 아래 실행부가 다시 읽음 → 그 사이 상태 변화 가능
-  - v6의 블록은 각자 현재 상태를 읽고 즉시 행동, 다음 블록에 결정을 넘기지 않음
-  - 삭제: v5의 긴급 수동 주문 중단, 6초 시전 대기와 `[ cast, check ]` 정지, 준비 동작의 5초 주기, 주문의 이동 가드, 재시도 타이머 8개
-- 2026-10-09 v7: Strength와 Agility 포션을 버프 대신 STR과 DEX 값으로 판정, 포션마다 5초 재시도 간격([Combat](../mechanics/combat.md#02.D) 02.D절)
-- 2026-10-10 v8: 가벼운 Heal을 붕대 옵션과 별도로 `use_light_heal`로. 붕대를 못 쓰면 옵션과 무관하게 대신 사용
-- 2026-10-10 v9: `recipe/pvp-recipe.razor`로 조립. 동작은 v8과 같음([Modules](../scripting/modules.md#08) 08절). 수정은 모듈과 레시피에서
-- 2026-10-27 v10: 첫 빈 시전 창에서 자기 TK 한 번, RA와 Reflect와 Protection 유지. 그래픽과 스윙 슬롯 선택 대신 `fight/rearm`으로 손에 들었던 장비 복구
-
-#### 입력 규칙
+## <a id="02"></a>02 입력 규칙
 
 [PvP](../game/pvp.md#05.B) 05.B절 Combat Overview 원문 기준.
 
@@ -49,7 +47,40 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 루프가 끊는 시전은 루프가 건 RA와 Reflect와 Protection뿐. 잃은 HP가 긴급 기준(`buff_max_loss`)에 닿으면 `> Interrupt` → 다음 패스에 회복
 - Razor 행동 큐가 찼거나 은신 중이면 행동 없음. 마비 파우치만 예외
 
-#### 설정
+<figure class="fx" data-fx="steps" id="fx-pvp-input" aria-label="수동 커서를 보존한 뒤 시전과 커서 응답, 빈 손 확인을 거쳐 재장착을 요청하는 설계">
+<div class="fx__stage">
+<div class="fx-row">
+<span class="fx-chip" data-hl="1">수동 커서</span><span class="fx-chip" data-hl="2">입력 해제</span><span class="fx-chip" data-hl="3">시전</span>
+<span class="fx-chip" data-hl="4-5">커서 응답</span><span class="fx-chip" data-hl="6-7">손 확인</span>
+</div>
+<div class="fx-cols">
+<div class="fx-box">
+<p class="fx-label">사람의 입력</p>
+<div class="fx-swap"><span data-on="1">이미 들고 있던 커서 유지</span><span data-on="2-">사람이 커서를 놓은 뒤 진행</span></div>
+</div>
+<div class="fx-box">
+<p class="fx-label">루프가 기다리는 것</p>
+<div class="fx-swap">
+<span data-on="1">자동 시전, 붕대, 장착 대기</span><span data-on="2">시전과 커서가 빈 창</span><span data-on="3">루프가 요청한 시전의 종료</span>
+<span data-on="4">시전 종료 뒤 커서 응답</span><span data-on="5">커서 처리 뒤 빈 손의 경과 시간</span><span data-on="6">기억한 장비의 장착 요청</span>
+<span data-on="7-">실제 손의 serial과 Journal 대조</span>
+</div>
+</div>
+</div>
+</div>
+<ol class="fx__captions">
+<li>이미 쥔 수동 커서는 루프가 보존. 커서를 바꾸는 시전, 붕대, 장착은 대기. 마비 파우치 예외는 본문 입력 규칙</li>
+<li>사람이 입력을 마치고 시전과 커서가 비면 자동 시전 조건을 다시 확인</li>
+<li>루프가 요청한 주문의 시전 중에는 장비를 복구하지 않음</li>
+<li>시전 표시가 끝나도 커서 응답이 뒤따를 수 있음. 이 틈을 장착 가능한 완료 상태로 해석하지 않음</li>
+<li>커서가 끝난 뒤에도 빈 손의 경과 시간과 행동 큐, 은신 등 장착 가드를 확인</li>
+<li>장착 조건이 모두 맞으면 빈 손에 기억한 serial의 장비를 요청</li>
+<li>장착 요청의 성공 여부는 손 레이어와 Rearm Journal로 확인. 이후 새 수동 장비가 관찰되면 그 구성을 기억</li>
+</ol>
+<figcaption>본문의 설계 순서를 표현한 모형. 재생 간격은 게임 시간과 무관. 자동 시전 중 새 수동 커서의 소유권은 인게임 확인 필요</figcaption>
+</figure>
+
+## <a id="03"></a>03 설정
 
 - 아래 이름은 `config__` 접두 생략. 템플릿별 프리셋 없음
 - 값 변경: `recipe/pvp-recipe.razor`에서 그 설정을 가진 블록의 `# @ use` 줄 아래에 새 값 → 재조립([Modules](../scripting/modules.md#07.A) 07.A절)
@@ -94,9 +125,9 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - `str_potion`, `dex_potion`: 공유 루프 → 실행 캐릭터의 기본 스탯에 맞춤. 기본값은 STR 100, DEX 80 기준([Combat](../mechanics/combat.md#02.D) 02.D절)
 - `heal_hits`, `emergency_hits`, `light_hits`: 모두 최대 HP에서 잃은 양. 최대 HP 120이면 기본 기준은 현재 HP 85 이하
 - 최소 마나는 공격이나 이동용 예비 마나를 자동으로 남기지 않음. 예비 20을 남기려면 Greater Heal 최소값 11 → 31처럼 각 값 조정
-- `buff/spells` 모듈의 `use_spell_siphon`: 이 루프에서 기본값 0 유지(아래 "싸움 전 붕대 미리 쓰기")
+- `buff/spells` 모듈의 `use_spell_siphon`: 이 루프에서 기본값 0 유지(06절)
 
-#### 루프 골격
+## <a id="04"></a>04 루프 골격
 
 1. 명령이 막혀 있으면 정지. 시작 준비와 각 패스의 REMEMBER HANDS에서 현재 양손을 기록. 새 무기를 자동 주문보다 먼저 기억
 2. OPENING TELEKINESIS: 첫 빈 시전 창에서 자기 TK 한 번. 전체 시약 조회보다 먼저 Bloodmoss와 Mandrake Root만 확인([Magery](https://wiki.uooutlands.com/Magery), 2026-10-26 확인)
@@ -120,7 +151,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 긴급 기준에 닿아도 수동 입력은 끊지 않음. 시전 종료나 커서 해제 뒤 다음 패스에 회복
 - 중립 아이템 커서도 같은 커서로 보고 대기
 
-#### 비용과 타이머
+## <a id="05"></a>05 비용과 타이머
 
 - `findtype`이 가장 비싼 명령([Razor](../scripting/razor.md#06) 06절) → 시약은 패스마다 찾지 않고 REAGENTS 플래그를 읽음
 - 포션은 필요한 블록 안에서만 찾음. 스탯 포션 셋은 교전 중 5초 검사에서만, 마신 다음 패스는 바로([Combat](../mechanics/combat.md#02.D) 02.D절)
@@ -134,7 +165,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 에이전트는 제 시전이 끝날 때까지 폴링 → 끝난 뒤에도 잃은 HP가 남으면 즉시 재시전
 - 그 밖의 타이머: 반복 경고 방지 `timer__message`(3초), 시약 주기 `timer__reagents`(10초). 모두 Play마다 준비 상태로 시작
 
-#### 싸움 전 붕대 미리 쓰기
+## <a id="06"></a>06 싸움 전 붕대 미리 쓰기
 
 - 붕대가 끝나 HP가 가득 차면 현재 루프는 다음 붕대를 시작하지 않음
 - 사용자가 나에게 Magic Arrow를 한 번 쏴서 피해를 만든 뒤 커서를 놓으면 다음 붕대 조건 성립
@@ -146,7 +177,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
   [버섯은 PvP 플래그 중 섭취 불가](https://uooutlands.com/news/patch-march-5-wizards-grimoire-new-player-rental-credit-deeds-society-job-updates/)
 - Resist 포션은 던전 몹과 펫 상대용 옵션. 적 플레이어 주문 감소로 계산하지 않음
 
-#### 기억한 무기 재장착
+## <a id="07"></a>07 기억한 무기 재장착
 
 - 시작 준비와 `fight/remember-hands`가 주문 전에 양손 레이어를 읽어 serial을 기억. `fight/rearm`은 복구를 담당. 같은 그래픽의 여분으로 교체하지 않음
 - 손이 비면 기억한 serial을 백팩에서 찾아 `lift`와 `drop self <손>`으로 요청. `dress`나 무기 공격 핫키는 사용하지 않음
@@ -158,7 +189,7 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 - 스윙 바와 무기 슬롯은 사용하지 않음. 두 도끼 사이 선택과 공격 요청은 수동
 - 장착 요청은 성공이나 명중 증거가 아님. 손 장비와 Journal의 `Rearm:` 줄을 함께 확인
 
-#### 상태
+## <a id="08"></a>08 상태
 
 | 상태 | 뜻 |
 | --- | --- |
@@ -173,4 +204,4 @@ PvP 시작 시 켜는 공통 자기관리 루프 `combat/pvp`의 설계. 서버 
 
 - 정적 검사는 Outlands 서버나 실제 커서 처리를 입증하지 않음
 - 구조화 PvP나 팩션에서 명령이 막히면 `[ script, blocked ]` 후 정지
-- 반영 방법과 인게임 확인: [Open items](../questions/open-items.md#10) 10절
+- 반영 방법과 인게임 확인: [PvP Checks](../verification/pvp.md#01) 01절

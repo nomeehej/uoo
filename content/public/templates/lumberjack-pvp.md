@@ -6,9 +6,9 @@ order: 20
 ---
 
 Lumberjacking을 유지하며 도끼, 붕대, 마법으로 필드에서 반격하는 캐릭터. 스킬, 장비 선택과 교전 설계.
-서버 규칙 정본은 [PvP](../game/pvp.md), 미확인 메커니즘과 실험 절차는 [Open items](../questions/open-items.md#08) 08절.
+서버 규칙 정본은 [PvP](../game/pvp.md), 미확인 메커니즘과 실험 절차는 [PvP Experiments](../verification/pvp-experiments.md#01) 01절.
 벌목 루프의 설계는 [Lumberjack Enhanced](../loops/lumberjack-enhanced.md), 공통 pvp 루프는 [PvP Loop](../loops/pvp.md).
-2026-10-22 벌목 루프 설계를 Lumberjack Enhanced로, 상황별 인게임 확인을 [Open items](../questions/open-items.md#09) 09절로 분리.
+2026-10-22 벌목 루프 설계를 Lumberjack Enhanced로, 상황별 인게임 확인을 [Lumberjack Checks](../verification/lumberjack.md#01) 01절로 분리.
 
 ## <a id="00"></a>00 한눈에
 
@@ -50,7 +50,7 @@ Lumberjacking을 유지하며 도끼, 붕대, 마법으로 필드에서 반격�
 
 - Hamstring: Swordsmanship으로 공격, Anatomy와 Tracking으로 보조 조건. **Swordsmanship과 Tracking만으로는 부족.** 조건 원문은 [PvP](../game/pvp.md#03) 03절
 - 도끼 근접 보조 상한: Lumberjacking 120의 +12%, Tracking 80의 +8%로 채움
-- Tracking 주문 보조도 +8%, 단 Eval 대체 아님. Tactics와 Anatomy도 이 상한 밖([Combat](../mechanics/combat.md#02.A) 02.A절)
+- Tracking 주문 보조도 +8%, 단 Eval 대체 아님. Tactics와 Anatomy도 이 상한 밖([Melee](../mechanics/melee.md#01.A) 01.A절)
 - 무기를 들면 Swordsmanship으로 싸움. 시전하려고 손을 비우면 Wrestling 없음이 약점
 - 상대 무기 스킬 100 대 내 맨손 Wrestling 0 → 상대 기본 명중률 100% → 근거리 긴 시전 운영은 피함([PvP](../game/pvp.md#02.E) 02.E절)
 
@@ -66,7 +66,7 @@ Lumberjacking 120, Swordsmanship 100, 나머지 여섯 스킬 80씩 = 700. 남�
 | Tracking | 탐지 거리와 성공률 상승, 주문 보조 +8% → +10% | 조기 발견이 가장 중요할 때. 도끼 보조 피해는 이미 상한 |
 | Anatomy | 근접 기본 피해 +16% → +20%, 붕대 평균 46.4 → 48 | 회복량만 보면 Healing보다 작음 |
 
-계산 근거: [Combat](../mechanics/combat.md#02.A) 02.A절과 [Combat](../mechanics/combat.md#02.C) 02.C절, 방어는 [Combat](../mechanics/combat.md#04) 04절, 탐지는 [Combat](../mechanics/combat.md#05) 05절.
+계산 근거: [Melee](../mechanics/melee.md#01.A) 01.A절과 [Combat](../mechanics/combat.md#02.C) 02.C절, 방어는 [Combat](../mechanics/combat.md#04) 04절, 탐지는 [Combat](../mechanics/combat.md#05) 05절.
 
 ### <a id="01.B"></a>01.B Magery 80, 그리고 Eval과 Meditation을 뺀 비용
 
@@ -114,7 +114,7 @@ Greater Strength 복용 시 최대 HP 120으로 계산. Bless는 포션과 안 �
 ## <a id="03"></a>03 도끼와 스윙
 
 목적에 맞는 도끼는 [Swordsmanship 무기표](https://wiki.uooutlands.com/Swordsmanship)에서 선택.
-Katana나 Halberd는 같은 스킬이어도 Lumberjacking 보너스 없음([Combat](../mechanics/combat.md#02.A) 02.A절).
+Katana나 Halberd는 같은 스킬이어도 Lumberjacking 보너스 없음([Melee](../mechanics/melee.md#01.A) 01.A절).
 
 | 무기 | 역할 | Speed | 기본 피해 |
 | --- | --- | --- | --- |
@@ -131,7 +131,7 @@ Katana나 Halberd는 같은 스킬이어도 Lumberjacking 보너스 없음([Comb
 | 80 | 3.33초 | 2.19초 | 1.74초 |
 | 100, 지금 안의 최대 스태미나 | 3초 | 1.97초 | 1.5625초 |
 
-- [Combat](../mechanics/combat.md#02.B) 02.B절 공식. 피해로 스태미나가 떨어지면 포션 뒤 최대 DEX만으로 공속 예측 불가
+- [Melee](../mechanics/melee.md#02) 02절 공식. 피해로 스태미나가 떨어지면 포션 뒤 최대 DEX만으로 공속 예측 불가
 - 예: 스태미나 100, Great Axe t=0, Norse Axe t=1.5625 → 다음 Great Axe는 t=4.5625부터. 원래 간격 t=3의 공짜 한 대 아님
 - 큰 무기 쿨 중이라고 무조건 작은 무기를 들지 않음. 곧 올 큰 한 방의 기회와 지금 빠른 스윙으로 회복 시전을 견제하는 편을 비교. 명중 자체는 보장 없음
 
@@ -251,7 +251,9 @@ TK에서 포션까지의 완전 자동 처리가 안전하게 풀렸다는 뜻 �
 | 상대 회복 정책 | 손실 35에 힐 포션, HP 85 이하에 GH, 다 쓴 RA 재시전. 공격 주문은 회복용 마나 11 유지, 부족하면 공격 대기. Meditation 능동 사용 없음 |
 
 - 상대 스킬: [공식 Pure Alchemy Mage 720](https://wiki.uooutlands.com/TemplatesPvPMage) 구성
-- 계산식 정본: [PvP](../game/pvp.md#05) 05절의 회복과 버프, [Combat](../mechanics/combat.md#04) 04절의 주문 보정, [02절의 무기, 명중, AR](../mechanics/combat.md#02)
+- 계산식 정본: [PvP](../game/pvp.md#05) 05절의 회복과 버프, [Combat](../mechanics/combat.md#04) 04절의 주문 보정
+  - 무기 피해는 [Melee](../mechanics/melee.md#01) 01절, AR는 [03절](../mechanics/melee.md#03)
+  - 명중률은 [PvP](../game/pvp.md#02) 02절
 - Tracking은 Eval 항에 더하는 예시 해석. 서버의 결합 순서는 실측 미확정
 
 #### 실험 결과
@@ -378,7 +380,7 @@ Tracking과 Eval 결합은 05.D절과 같은 예시 해석. 서버 반올림과 
 | Teleport와 Rope | 공유 쿨 표시. Rope 자동 추격 없음, 긴 이동 잠금은 알고 선택 |
 
 - 서버가 허용하는 정보와 명령만 사용([Razor](../scripting/razor.md#07) 07절)
-- TK 대상 판정, 상대 Reflect 메시지, 버프 중첩, 프리캐스트 충돌의 실험 목록: [Open items](../questions/open-items.md#08) 08절
+- TK 대상 판정, 상대 Reflect 메시지, 버프 중첩, 프리캐스트 충돌의 실험 목록: [PvP Experiments](../verification/pvp-experiments.md#01) 01절
 
 ### <a id="06.A"></a>06.A 점화한 포션의 실패 처리
 
@@ -393,7 +395,7 @@ Tracking과 Eval 결합은 05.D절과 같은 예시 해석. 서버 반올림과 
   커서 소유권, 남은 퓨즈, 지면 투척 결과가 불분명하면 경고하고 회피
 
 `targetrelloc`의 존재 ≠ 안전한 투척 지점의 자동 선택.
-실제 동작과 허용 범위는 [Razor](../scripting/razor.md#02.A) 02.A절과 [Open items](../questions/open-items.md#08.C) 08.C절의 확인 대상.
+실제 동작과 허용 범위는 [Razor](../scripting/razor.md#02.A) 02.A절과 [PvP Experiments](../verification/pvp-experiments.md#01.C) 01.C절의 확인 대상.
 
 ::part[기록]
 
@@ -416,7 +418,7 @@ Tracking 주문 보조의 결합 순서를 단정하지 않으려고 첫 표에�
 - Magery 100, Eval 100 메이지와 비교하면 1.875배. 둘 다 다른 보정 제외
 
 근접 예시: 일반 무기, Tactics 100, Anatomy 80, 도끼 보조 상한 20%, 상대 AR 50. Parry, Reactive Armor, 추가 장비 보정 없음.
-`피해 = 무기 기본 피해 × (1 + 0.16 + 0.20) × (1 − 방어구 감소율)`. AR 감소식은 [Combat](../mechanics/combat.md#02.E) 02.E절.
+`피해 = 무기 기본 피해 × (1 + 0.16 + 0.20) × (1 − 방어구 감소율)`. AR 감소식은 [Melee](../mechanics/melee.md#03) 03절.
 
 | 무기 | 명중했을 때 계산 범위 | 기본 피해와 감소율 중간값의 예시 | 명중률 50%를 곱한 스윙당 예시 |
 | --- | --- | --- | --- |
@@ -465,6 +467,6 @@ Tracking 주문 보조의 결합 순서를 단정하지 않으려고 첫 표에�
 - Stop, Reload all scripts, `pvp` Play 순서로 `PvP sustain v10 loaded` 확인
 - Q로 alt를 골라도 자동 공격이나 상대 TK 없음. 시작 자기 TK와 피해, 독에 대한 회복은 공통 루프 설계대로
 - 지금 본문(v10)은 아직 인게임에서 확인되지 않았다
-- 수동 프리캐스트, 회복, 무기 교체, 옵션, 정지 조건별 예상 알림과 실패 판정: [Open items](../questions/open-items.md#10) 10절
+- 수동 프리캐스트, 회복, 무기 교체, 옵션, 정지 조건별 예상 알림과 실패 판정: [PvP Checks](../verification/pvp.md#01) 01절
 - 외부 수정 뒤 기존 핫키로 실행하면 [Workflow](../working/workflow.md#04.A) 04.A절대로 재시작해 옛 캐시 정리
 - 게임 종료 뒤 `git status --short`로 덮어쓰기 확인

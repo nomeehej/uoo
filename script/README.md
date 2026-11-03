@@ -88,13 +88,13 @@ and Warding while poisoned, bleeding or diseased away from melee. Carving result
 `pack/leather` moves carried leather into the loadout loot bag every 2 minutes between fights.
 It ignores only bag stacks and never clears the list, so carved corpses stay skipped.
 Meet a PK with `combat/pvp` (F4).
-Design notes and in-game checks are in [content/public/questions/open-items.md](../content/public/questions/open-items.md#11) part 11.
+Design notes and in-game checks are in [Skinning Checks](../content/public/verification/skinning.md#01) section 01.
 
 ## Returning to the loop
 
 `loot/recycle` runs every hotkey named in the list `list__resume_script` when it finishes or cannot start because a
 required container or tool is missing. An unconfirmed item move, unconfirmed recycling or a stuck action queue stops without resuming:
-see the [in-game checks](../content/public/questions/open-items.md#13). The farming loops fill the list at Play with their own Razor hotkey name, the one the profile
+see the [in-game checks](../content/public/verification/recycle.md#01). The farming loops fill the list at Play with their own Razor hotkey name, the one the profile
 stores (`Play Script: gather\skinning-enhanced`): `bard-necro-enhanced`, `bard-archer-enhanced`, `tamer-mage-enhanced`, `tamer-archer-enhanced`, `dexxer-basic`,
 `skinning-enhanced` and `lumberjack-enhanced`. The archived `bard-mace` and `bard-throwing` register their `Play Script: archive\…` name.
 It is a list because a variable reads a word back as 4294967295 (content/public/scripting/razor.md part 3).
@@ -153,7 +153,7 @@ assigns them, with line numbers. Bash and awk only.
 
 [combat/pvp.razor](combat/pvp.razor)는 PvP 시작 시 켜는 공용 자기관리 루프.
 시작 동작, 수동과 자동의 경계, 레시피 설정, 무기 복구 조건은 [PvP Loop](../content/public/loops/pvp.md)가 정본.
-반영과 인게임 확인은 [Open items 10절](../content/public/questions/open-items.md#10).
+반영과 인게임 확인은 [PvP Checks](../content/public/verification/pvp.md#01) 01절.
 
 ## Debug scripts
 

@@ -70,8 +70,10 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 매저리 프록, 시전 시간, 프리캐스트 커서 | [Magery](content/public/mechanics/magery.md)                                                                                                               |
 | Bard Necro 캐릭터, 소환수 선택   | [Bard Necro](content/public/templates/bard-necro.md)                                                                                                       |
 | bard-necro-enhanced 루프 설계    | [Bard Necro Enhanced](content/public/loops/bard-necro-enhanced.md)                                                                                         |
+| 바드 네크로 소환수 이름과 재소환 | [Bard Necro Summons](content/public/loops/bard-necro-summons.md) |
 | PvP 규칙                         | [PvP](content/public/game/pvp.md)                                                                                                                          |
-| 방어구, 근접, 붕대, 포션, Tracking | [Combat](content/public/mechanics/combat.md)                                                                                                             |
+| 방어구, 붕대, 포션, Parrying, Tracking | [Combat](content/public/mechanics/combat.md)                                                                                                             |
+| 근접 피해, 스윙, PvM 무기와 코덱스 | [Melee](content/public/mechanics/melee.md) |
 | 공통 pvp 루프 설계               | [PvP Loop](content/public/loops/pvp.md)                                                                                                                    |
 | 벌목과 PvP 템플릿, 교전          | [Lumberjack PvP](content/public/templates/lumberjack-pvp.md)                                                                                               |
 | lumberjack-enhanced 루프 설계    | [Lumberjack Enhanced](content/public/loops/lumberjack-enhanced.md)                                                                                         |
@@ -83,5 +85,7 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 키 배치                          | [Hotkeys](content/public/game/hotkeys.md)                                                                                                                  |
 | `findtype` 인자(graphic id, hue) | [Item list](content/public/game/item-list.md)                                                                                                              |
 | 문서 수정이나 새 문서            | [Writing](content/public/working/writing.md)                                                                                                               |
+| 인게임 검사 문서 고르기 | [Open items](content/public/questions/open-items.md#08) 08절. 스크립트별 검사 문서는 Workflow의 정본 표 |
+| 과거 모듈 이관과 검사 변경 기록 | [Module Migration](content/public/history/module-migration.md), [Verification History](content/public/history/verification.md) |
 | 사용자에게 물을 것               | [Open items](content/public/questions/open-items.md)                                                                                                       |
 | 문서별 정본                      | [Workflow](content/public/working/workflow.md#00.A) 00.A절                                                                                                                        |

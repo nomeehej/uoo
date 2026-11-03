@@ -24,7 +24,7 @@ Bard Archer 템플릿의 판단과 숫자. 바딩, 회복, 버프는 루프, 사
 | [03](#03) | bard 프로필 |
 | [04](#04) | 출처 |
 
-이 문서에 걸린 질문과 인게임 확인은 [Open items](../questions/open-items.md#16) 16절.
+이 문서에 걸린 질문과 인게임 확인은 [Bard Archer Checks](../verification/bard-archer.md#01) 01절.
 
 ::part[캐릭터]
 
@@ -101,7 +101,7 @@ Healer's Codex 20점: Immunize 5, Triage 5, Self Treatment 5, Specialist 5.
 
 ### <a id="01.C"></a>01.C 갑옷과 마나
 
-재생 식과 갑옷별 간격은 [Combat](../mechanics/combat.md#01) 01절, AR 표는 [Combat](../mechanics/combat.md#02.E) 02.E절. 아래는 음식 버프 +25%를 넣은 값.
+재생 식과 갑옷별 간격은 [Combat](../mechanics/combat.md#01) 01절, AR 표는 [Melee](../mechanics/melee.md#03) 03절. 아래는 음식 버프 +25%를 넣은 값.
 
 - Meditation 0, INT 45 → 최대 마나 45
 - 유지 버프: Reactive Armor 4, Magic Reflection 14, Protection 6. RA와 Reflect는 쓰여 없어질 때까지, Protection은 2분
@@ -133,11 +133,11 @@ Archery 자리의 무기 스킬 80과 Resisting Spells 자리의 Parrying 80을 
 
 - **Wrestling과 Fencing 중 추천 검토안: Wrestling 80과 Parrying 80. 무기는 Fistblade, Cestus, Martial Manual 중 선택**
 - 같은 몹을 오래 치며 콤보를 유지하고, Hamstring과 시전 중 방어, 마나 반환을 회복에 활용하는 선택
-- Hamstring 자격과 몬스터 이동 봉쇄의 범위는 [Combat](../mechanics/combat.md#02.H) 02.H절. 직접 피해 증가로 계산하지 않음
+- Hamstring 자격과 몬스터 이동 봉쇄의 범위는 [Melee](../mechanics/melee.md#06) 06절. 직접 피해 증가로 계산하지 않음
 - 전환 템플릿은 [Bard Wrestling](bard-wrestling.md), 구현한 자동 선택은 [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md#02) 02절
 - Fencing Blackguard도 이 처치 시간에서는 유력. 후퇴 중에도 기존 질병은 계속 해결되므로 공격 공백이 길면 다시 비교
 - 선택 기준은 공격 유지와 생존, 회복을 합친 사냥 운용. 둘 중 인게임 DPS 1위는 확인되지 않았다
-- 최대 효과와 미공개 계산, 자세 변경의 초기화는 [Combat](../mechanics/combat.md#02.G) 02.G절
+- 최대 효과와 미공개 계산, 자세 변경의 초기화는 [Melee](../mechanics/melee.md#05) 05절
 
 ## <a id="02"></a>02 부활
 

@@ -29,7 +29,7 @@ order: 40
 - 사거리: 석궁과 Great Bow 8칸, 활 10칸([Archery](https://wiki.uooutlands.com/Archery))
 - 손: Rampart Crossbow, Heavy Crossbow, 활 넷은 2H. Crossbow, Balestra, Pistol Crossbow는 1H([Archery](https://wiki.uooutlands.com/Archery) 무기표).
   Razor의 `lefthand`가 2H 레이어. `fight/rearm`은 들고 있던 레이어를 기억해 손을 가름. graphic 31186, Item Data 인게임 확인 2026-10-21([Item list](../game/item-list.md) Archery)
-- 간격 식: [Combat](combat.md#02.B) 02.B절. 스태미나 100에서 3.75초. 맞아서 스태미나가 줄면 느려짐
+- 간격 식: [Melee](melee.md#02) 02절. 스태미나 100에서 3.75초. 맞아서 스태미나가 줄면 느려짐
 
 > "Increases Swing Speed by (5% \* (Anatomy Skill / 100))" -- Archery
 > "Ranged weapons (excluding Ocean Weapons) have a flat .5 second stationary delay requiring players, regardless of their Dexterity, to stay in place before firing." -- Armor & Weapons

@@ -461,7 +461,7 @@ Razor 프로필 `summoner.xml`, `default.xml`의 `<overheadmessages>`. 정본은
 | clearing it of traps | `[ trap, {10} ] (290)` |   |
 | thrown at that player within 30 | `[ teleki, target ] (244)` | 자기 TK, 받은 TK와 혼동 가능. 공격 대상에게 들어갔다는 증거 아님([PvP](../game/pvp.md#04.D) 04.D절) |
 | has applied telekinesis to you | `[ teleki, me ] (234)` | 원문 "nomeehej has applied telekinesis to you.". 건 사람 이름은 저널에 |
-| An explosion potion has stuck to you | `[ bomb, me ] (234)` | 5초 바 `bomb, me`와 짝. 실제 점화부터 재는 퓨즈와 다름([Open items](../questions/open-items.md#08.C) 08.C절) |
+| An explosion potion has stuck to you | `[ bomb, me ] (234)` | 5초 바 `bomb, me`와 짝. 실제 점화부터 재는 퓨즈와 다름([PvP Experiments](../verification/pvp-experiments.md#01.C) 01.C절) |
 | Your explosion potion sticks to your target | `[ bomb, target ] (244)` |   |
 | free hand to drink | `[ hands, full ] (254)` |   |
 | You drink a healing potion | `[ heal pot, on ] (290)` | 스크립트의 같은 줄은 삭제 |

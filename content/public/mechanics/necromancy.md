@@ -6,7 +6,7 @@ order: 20
 ---
 
 Vengeful Spirit 소환, 언데드, Unholy Symbol의 서버 규칙.
-어떤 소환수를 고르는지는 [Bard Necro](../templates/bard-necro.md#03) 03절, 소환 블록은 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02) 02절.
+어떤 소환수를 고르는지는 [Bard Necro](../templates/bard-necro.md#03) 03절, 소환 블록은 [Bard Necro Summons](../loops/bard-necro-summons.md#01) 01절.
 
 ## <a id="00"></a>00 한눈에
 
@@ -46,7 +46,7 @@ Vengeful Spirit 소환, 언데드, Unholy Symbol의 서버 규칙.
 - Vengeful Spirit: 심볼 1개, 30초. 둘을 뽑으려면 30초 안에 VS, 소환, 소환
 - Vengeful Spirit은 누르면 즉시 켜짐. 버프 아이콘 `Vengeful Spirit`, 응답 `Unholy symbols remaining: 9/10`. 인게임 확인됨 2026-10-18
 - 소환에 커서 없음. 시전이 끝나면 바로 옆에 나옴. 인게임 확인됨 2026-10-18
-- 소환수는 시전이 끝날 때 생김 → 그때 VS가 꺼져 있으면 언데드가 아닌 맨 엘리멘탈이 나올 수 있음(사용자 경고). 루프의 시작 마감은 [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절
+- 소환수는 시전이 끝날 때 생김 → 그때 VS가 꺼져 있으면 언데드가 아닌 맨 엘리멘탈이 나올 수 있음(사용자 경고). 루프의 시작 마감은 [Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절
 - 소환수 놓기: `<이름> release`라고 말하면 즉시 사라짐. 확인 gump 없음, 야생으로 남지 않음, Dismissive 마나 없음. 인게임 확인됨 2026-10-18
 - 팔로워가 꽉 찬 채 소환: 주문어 뒤에 `You have too many followers to cast that spell.` 인게임 확인됨 2026-10-18
 
@@ -71,8 +71,8 @@ Vengeful Spirit 소환, 언데드, Unholy Symbol의 서버 규칙.
 | Evil Omen | 2 | `>= 4`. 서 있고 warmode가 아닐 때 | 없음. 위 둘이 30초에 6개를 다 씀 → 사실상 이동 중 잉여로만 |
 | Poison Strike | 1 | `>= 1`. Corpse Skin이 켜져 있고, 프록 코어와 필러 뒤 | 없음. 필러 자리, 위는 이미 사용 |
 | Vampiric Embrace | 3 | `>= 9`. 이동 중에만 | 6 |
-| Vengeful Spirit | 1 | `>= 1`. 소환수가 빠졌거나 교체할 때만([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절) | 없음. 빠진 소환수가 Blood Oath보다 큼 |
-| Wither | 5 | 소환수가 빠지고 마나 20\~64일 때만. VS와 함께 `>= 6`, 우리 VS 창 처음 15초면 혼자 `>= 5`([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절) | 모으는 동안 위 능력 모두 정지(`var__hold_symbols`). 은행이 차면(10) 넘칠 몫만 허용 |
+| Vengeful Spirit | 1 | `>= 1`. 소환수가 빠졌거나 교체할 때만([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절) | 없음. 빠진 소환수가 Blood Oath보다 큼 |
+| Wither | 5 | 소환수가 빠지고 마나 20\~64일 때만. VS와 함께 `>= 6`, 우리 VS 창 처음 15초면 혼자 `>= 5`([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절) | 모으는 동안 위 능력 모두 정지(`var__hold_symbols`). 은행이 차면(10) 넘칠 몫만 허용 |
 
 - **Necro 100에서 실제로 도는 것은 Blood Oath와 Corpse Skin.** 30초에 6개 충전, 둘이 정확히 6개 사용
 - 셋 모두 4개에서 발동 → 체인 순서(Blood Oath, Corpse Skin, Evil Omen) = 우선순위
@@ -123,7 +123,7 @@ Vengeful Spirit 소환, 언데드, Unholy Symbol의 서버 규칙.
 | `You do not see any corpses near that location.` | Vampiric Embrace. 닿는 시체 없음 | `interval__embrace_miss`(5초) 뒤 재사용 | 인게임 확인됨 2026-09-28 |
 
 - **넣지 않은 것**: Strangle(4)은 Blood Oath와 심볼 경쟁, 모든 딜을 5초 늦춤. Pain Spike(5)는 **다음 몹 옆에** 시체 필요
-- Wither(5)는 비공격 주문용 마나만 → 소환에만 씀([Bard Necro Enhanced](../loops/bard-necro-enhanced.md#02.C) 02.C절)
+- Wither(5)는 비공격 주문용 마나만 → 소환에만 씀([Bard Necro Summons](../loops/bard-necro-summons.md#03) 03절)
 - **핫바의 Auto-Renew는 모두 끔.** 게임이 같은 심볼을 쓰고 우선순위가 <strong>"least expensive first"</strong>
   → 이 빌드와 정반대, Blood Oath가 맨 마지막
 - 핫바에서 심볼 수를 읽는 방법: [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.H) 01.H절

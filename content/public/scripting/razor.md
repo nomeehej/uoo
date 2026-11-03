@@ -113,7 +113,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 
 | 함정 | 증상과 근거 범위 | 대신 |
 | --- | --- | --- |
-| 중첩 반복에서 `if` 안의 `break` | 바깥 반복이 첫 단계부터 다시 돌 수 있음. CE 소스로 재현, Outlands에서도 같은지는 인게임 미확인(05절) | 시간, 존재, 입력 조건으로 끝나는 `while`. 이런 중첩 블록에서 `break`, `continue`로 `if` 건너뛰기 금지. 재확인은 [Open items](../questions/open-items.md#09) 09절 |
+| 중첩 반복에서 `if` 안의 `break` | 바깥 반복이 첫 단계부터 다시 돌 수 있음. CE 소스로 재현, Outlands에서도 같은지는 인게임 미확인(05절) | 시간, 존재, 입력 조건으로 끝나는 `while`. 이런 중첩 블록에서 `break`, `continue`로 `if` 건너뛰기 금지. 재확인은 [Lumberjack Checks](../verification/lumberjack.md#01) 01절 |
 
 #### 조건과 변수
 
@@ -134,7 +134,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 
 | 함정 | 증상 | 대신 |
 | --- | --- | --- |
-| 아이템 ignore 후 `find serial container`로 소속 판별 | ignore한 아이템이 검색에서 빠질 수 있음. 이 포크의 아이템 검색도 그런지는 확인되지 않았다(05절) | 소속 판별 먼저, 처리나 건너뛰기 뒤에 ignore. 확인은 [Open items](../questions/open-items.md#09) 09절 |
+| 아이템 ignore 후 `find serial container`로 소속 판별 | ignore한 아이템이 검색에서 빠질 수 있음. 이 포크의 아이템 검색도 그런지는 확인되지 않았다(05절) | 소속 판별 먼저, 처리나 건너뛰기 뒤에 ignore. 확인은 [Lumberjack Checks](../verification/lumberjack.md#01) 01절 |
 | 플레이어 serial의 `find`를 존재, 거리의 전제로 사용 | 유효한 플레이어 serial에도 `find` 거짓. 인게임 확인됨 2026-10-04(05절) | 수동 저장 serial과 검색 성공은 별개. `setvar! … lasttarget`으로 고른 serial 보관 후 `target`에 바로 전달. 검색 실패를 serial 무효나 거리 초과로 단정 금지 |
 | `dead serial`로 다른 플레이어 사망 검사 | 조회마다 `dead - Cannot check death status of other players`. 진단의 `dead=0`은 생존 증거 아님. 인게임 확인됨 2026-10-04 | 상대 플레이어에게 `dead` 금지. 자기 사망의 `while not dead`와 구분. Q 대상 캐시는 사망으로 자동 비우기 불가 → 플레이어 사망 시 Stop 또는 새 대상 |
 | `pvp=0`이면 다른 플레이어 정보 전부 조회 가능하다고 판단 | 대상의 `dead`, `findlayer`, `getlabel` 각각 플레이어 조회 차단 경고. 같은 serial의 저장, 복사, `noto`는 성공. 인게임 확인됨 2026-10-04. 검사별 반환값은 [03.A절](#03.A) 결과 표 | `pvp` 제한과 명령별 대상 제한을 구분. FALSE나 0이어도 경고가 있으면 실제 상태로 보지 않음 |
@@ -150,7 +150,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 - [Razor CE Options](https://www.razorce.com/help/options/#targeting-queues): `Range check Last Target`이 켜져 있으면 범위 밖 대상 요청 거부, 커서 유지. `target serial`의 거리 검사까지 보증하지는 않음
 - 이전 bard-necro-pvp는 이 경로로 Explosion과 후속 EB 요청. 지금 루프는 공격 수동([PvP Loop](../loops/pvp.md))
 - 커서가 닫혔다는 것만으로 명중, 거리, 취소 확정 금지
-- 지금 Outlands 클라이언트에서 거리 밖에서 안으로 들어올 때의 전환은 확인되지 않았다. 확인 항목: [Open items](../questions/open-items.md#08.B) 08.B절
+- 지금 Outlands 클라이언트에서 거리 밖에서 안으로 들어올 때의 전환은 확인되지 않았다. 확인 항목: [PvP Experiments](../verification/pvp-experiments.md#01.B) 01.B절
 - 공통 PvP v5: 아이템, 자기 주문, 장비 중 하나를 처리하는 조건 사슬 후 다음 패스. 반복문 안 `break`, `continue` 없음. 새 본문 동작은 아직 확인되지 않았다
 
 #### 커서와 타겟
@@ -175,7 +175,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
   - 같은 패스에서 `not queued`로 포션 여러 병을 이으면 첫 병만 나감. 하우스키핑 안의 bard-archer-enhanced가 5초 틱마다 한 병. 인게임 확인됨 2026-10-23 → `buff/potions`는 마신 다음 패스에 다시 검사
   - Object Delay를 서버의 아이템 사용 간격보다 낮추면 `You must wait to perform another action.`으로 거절(skinning에서 본 문장). Outlands 서버의 간격은 확인되지 않았다
 - v8 기본 채집: 사용자 보고로 정상. 인게임 확인됨 2026-10-05
-- v10: 오른손 제어 추가 없음, 실제 왼손과 캐시 serial 비교. 새 장착과 교체 경로의 확인 항목: [Open items](../questions/open-items.md#09) 09절
+- v10: 오른손 제어 추가 없음, 실제 왼손과 캐시 serial 비교. 새 장착과 교체 경로의 확인 항목: [Lumberjack Checks](../verification/lumberjack.md#01) 01절
 
 `insysmsg`의 소비 범위:
 
@@ -195,7 +195,7 @@ Razor CE에 없거나 CE보다 넓어진 것. 존재 여부만 기록, 인자 �
 | `Set Last Target (Harmful)`로 고른 대상을 `lasttarget`으로 읽기 | 일반 `lasttarget`은 그대로라 루프가 고른 대상을 못 따라감. `Target Closest Non-Friendly Monster`는 `lasttarget`, `lastharmful`, `lastbeneficial` 셋을 다 바꾸고, `Next Non-Friendly Monster Target`도 `lastharmful`을 바꿈(인게임 확인됨). 인게임 확인됨 2026-10-20(`debug/probe-last-targets`) | 루프는 `lastharmful`을 읽음(`fight/target`). Shift+V(Attack Last Target)와 All Kill 커서도 Harmful 대상을 따라감(인게임 확인됨 2026-10-20) |
 | 노래 커서에 백팩 찍기 | 노래 커서는 적대 커서라 `lastharmful`도 백팩으로 바뀜. 인게임 확인됨 2026-10-20(`debug/probe-last-targets`) | 루프는 사본을 써서 영향 없음, 그대로 백팩. 땅은 장소에 따라 거절([Barding](../mechanics/barding.md#01.B) 01.B절) |
 | 프로보 커서에 짝 찍기 | 프로보 커서도 적대 커서(인게임 확인됨 2026-10-20) → 지금 대상이 아닌 짝을 찍으면 `lastharmful`이 그 몹으로 바뀜 | `var__target_hold`로 빼 두고, 다음 주문이 지금 대상을 찍으며 되돌림(`bard/provo`) |
-| 네이티브 선택 커서를 색만으로 판별 | CE `OneTimeTarget`은 `_hasTarget`을 켜지만 `_curFlags`는 이전 값 유지. `Set Last Target (Beneficial)`의 커서도 이전 harmful 종류로 관찰될 수 있음. [CE Targeting 소스](https://github.com/markdwags/Razor/blob/master/Razor/Core/Targeting.cs), 2026-10-21 확인. Outlands의 중첩 동작은 미검증 | 자동 시전과 겹치는 등록의 소유권 보장 금지. 초기 사용은 warmode 수동 구간, [Open items](../questions/open-items.md#17) 17절 |
+| 네이티브 선택 커서를 색만으로 판별 | CE `OneTimeTarget`은 `_hasTarget`을 켜지만 `_curFlags`는 이전 값 유지. `Set Last Target (Beneficial)`의 커서도 이전 harmful 종류로 관찰될 수 있음. [CE Targeting 소스](https://github.com/markdwags/Razor/blob/master/Razor/Core/Targeting.cs), 2026-10-21 확인. Outlands의 중첩 동작은 미검증 | 자동 시전과 겹치는 등록의 소유권 보장 금지. 초기 사용은 warmode 수동 구간, [Provocation Checks](../verification/provocation.md#01) 01절 |
 | `setlasttarget alias__x`로 lasttarget 복원 | Razor CE 문서의 `setlasttarget ('serial')`과 달리 `Target a new 'Last Target'` 커서. 뒤의 sysmsg 줄 없음, 커서 취소마다 `Target queue cleared.`와 같은 커서가 번갈아 찍힘. 인게임 확인됨 2026-10-07(skinning-enhanced v3 Journal). 스크립트가 그 줄에서 커서 대기로 보임. 인자 무시 원인은 확인되지 않았다 | 사용 안 함. lasttarget 덮어쓰기는 기억한 대상이 없을 때만(`skinning-enhanced.razor` SKINNING) |
 
 ### <a id="03.A"></a>03.A 대상 조회 진단 핫키
@@ -430,7 +430,7 @@ flowchart TD
 
 Bard Necro 루프 적용 결과: [Bard Necro Enhanced](../loops/bard-necro-enhanced.md#01.H) 01.H절. 패스마다 `findtype` 최대 32번이던 시약 플래그 읽기를 10초에 7번으로 줄임(처음에는 30초).
 
-recycle 적용 결과, 2026-11-02: 아이템마다 `getlabel` 2~3번과 완드 뒤 재조회를 감정 한 바퀴, 분류 한 바퀴의 두 단계로 바꿔 조회를 2번으로. 완드 더블클릭 사이의 행동 큐 간격에 다음 라벨 조회가 겹침([Open items](../questions/open-items.md#13) 13절).
+recycle 적용 결과, 2026-11-02: 아이템마다 `getlabel` 2~3번과 완드 뒤 재조회를 감정 한 바퀴, 분류 한 바퀴의 두 단계로 바꿔 조회를 2번으로. 완드 더블클릭 사이의 행동 큐 간격에 다음 라벨 조회가 겹침([Recycle Checks](../verification/recycle.md#01) 01절).
 
 ## <a id="07"></a>07 PvP 제약
 

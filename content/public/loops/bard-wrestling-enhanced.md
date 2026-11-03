@@ -2,7 +2,7 @@
 name: Bard Wrestling Enhanced
 label: bard-wrestling-enhanced 루프
 group: Loops
-order: 50
+order: 40
 ---
 
 Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 요청과 재확인.
@@ -18,7 +18,7 @@ Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 �
 | [03](#03) | 피니셔, Brawl, Parry Codex, 무기 재장착 |
 | [04](#04) | 실행과 확인 범위 |
 
-인게임 확인 항목은 [Open items](../questions/open-items.md#19) 19절.
+인게임 확인 항목은 [Bard Wrestling Checks](../verification/bard-wrestling.md#01) 01절.
 
 ## <a id="01"></a>01 블록과 순서
 
@@ -43,7 +43,7 @@ Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 �
 
 ## <a id="02"></a>02 자동 자세
 
-서버의 자세 효과와 초기화 규칙은 [Combat](../mechanics/combat.md#02.G) 02.G절과 [Wrestling 위키](https://wiki.uooutlands.com/Wrestling).
+서버의 자세 효과와 초기화 규칙은 [Melee](../mechanics/melee.md#05) 05절과 [Wrestling 위키](https://wiki.uooutlands.com/Wrestling).
 아래 숫자는 게임의 고정 수치가 아닌 이 루프의 설정값.
 
 | 우선순위 | 조건 | 선택 |
@@ -105,7 +105,7 @@ Bard Wrestling 사냥 루프의 블록 순서, 자동 자세 선택, 코덱스 �
 1. 무기와 Wrestling, Parrying 코덱스를 백팩에 준비. 처음에는 Scroll을 직접 장착
 2. 코덱스에서 자세 하나와 피니셔 하나 활성화. 이후 루프가 자동 정책에 맞게 선택
 3. `combat\bard-wrestling-enhanced`를 실행하고 Z 또는 Q로 대상 선택, V로 공격
-4. 코덱스, 다수전, 회복, 재장착 검사는 [Open items](../questions/open-items.md#19) 19절
+4. 코덱스, 다수전, 회복, 재장착 검사는 [Bard Wrestling Checks](../verification/bard-wrestling.md#01) 01절
 
 - 결과물 수정 대신 모듈과 레시피 수정 후 `pnpm build`
 - 시험은 Scripts 탭에서 리로드 후 Play. 핫키 실행은 클라이언트 완전 재시작 뒤 사용([Workflow](../working/workflow.md#04.A) 04.A절)

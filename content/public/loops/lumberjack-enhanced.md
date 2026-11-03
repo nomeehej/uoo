@@ -2,11 +2,11 @@
 name: Lumberjack Enhanced
 label: lumberjack-enhanced 루프
 group: Loops
-order: 30
+order: 50
 ---
 
 벌목 루프 `gather/lumberjack-enhanced`의 설계. 템플릿의 판단은 [Lumberjack PvP](../templates/lumberjack-pvp.md).
-인게임 확인은 [Open items](../questions/open-items.md#09) 09절.
+인게임 확인은 [Lumberjack Checks](../verification/lumberjack.md#01) 01절.
 
 대상: `script/gather/lumberjack-enhanced.razor`. 옛 `lumberjack.razor`는 구버전 보존(2026-10-10부터 `script/archive/`).
 채집 루프와 PvP 자기관리 루프는 핫키를 따로 두고 수동 전환. 자동 공격과 자동 PvP 전환 없음.
@@ -40,7 +40,7 @@ order: 30
    리콜 전송 뒤의 실제 거절 문구는 같은 리콜 블록이 안내.
    시약 부족 메시지는 리콜 감지 뒤에 읽고, 같은 패스에서 시약 재확인
 6. `util/check.sh script/gather/lumberjack-enhanced.razor`, `node util/check-docs.mjs`, `git diff --check` 실행,
-   두 프로필의 XML과 오버헤드 변경 범위 확인. [Open items](../questions/open-items.md#09) 09절의 인게임 확인 항목은 이 정적 검증과 별개
+   두 프로필의 XML과 오버헤드 변경 범위 확인. [Lumberjack Checks](../verification/lumberjack.md#01) 01절의 인게임 확인 항목은 이 정적 검증과 별개
 
 ## <a id="02"></a>02 채집 근거
 
@@ -249,36 +249,9 @@ v15부터 sysmsg 기록 순서: `Lumber pack BEGIN`, 가공과 `Lumber skip`과 
 - 같은 hue의 새 Boards가 기존 묶음에 합쳐지면 원래 파우치 묶음 serial이 남을 수 있음 → 요청한 serial 소멸 = 실패로 단정하지 않음
 - 기존 파우치 묶음 자체를 다시 옮겨 합치는 로직 없음. 실제 병합 결과, 용량, 서버 응답은 인벤토리에서 확인
 
-END 뒤에도 채집이 보류되면 큐와 커서 안내, 리콜과 책과 Hunting 조건을 함께 확인. 남은 확인은 [Open items](../questions/open-items.md#09) 09절.
+END 뒤에도 채집이 보류되면 큐와 커서 안내, 리콜과 책과 Hunting 조건을 함께 확인. 남은 확인은 [Lumberjack Checks](../verification/lumberjack.md#01) 01절.
 
-#### 버전 기록
-
-- **v10** 2026-10-05: 장착 판정을 실제 왼손 슬롯과 저장한 도끼 serial의 일치로 변경.
-  목재 가공과 파우치 이동을 housekeeping에 묶음. 책, Hunting, 무게 점검은 housekeeping 주기 사용,
-  리콜 결과를 확인하지 않는 5초 안내 타이머와 그 상태는 삭제
-- **v11**: 집 문과 Stockpile의 설정, 선택, 동작, 타이머 삭제, housekeeping을 루프 끝으로 이동
-- **v12**: 채집 직전 네 겹 허용 조건 → 차단 조건 사슬 하나.
-  채집과 목재 정리의 주기 조건을 이웃한 다른 `and` 조건과 합쳐 허용 경로의 명령문 수 감소.
-  Journal 진단은 새 `config__sysmsg`로 분리, 목재 큐가 비어 있으면 대기 반복 진입 없음.
-  새 상태나 타이머 없음. 명령문 비용 근거는 [Razor](../scripting/razor.md#06) 06절
-- **v13**: v12 실행 화면에서 `BEGIN` 뒤 `convert`만 이어지고 다음 단계로 안 간다는 보고. 인게임 확인됨 2026-10-05.
-  CE 원본의 명령 단위 제어 흐름 재현 결과, `if` 안의 `break`는 현재 범위를 한 단계만 제거.
-  안쪽 반복문 범위가 남아 바깥 `for 2`가 첫 진입으로 판정하고 index를 0으로 되돌리는 경로 존재.
-  그래서 Logs 단계와 작업 타이머가 거듭 초기화되어 Boards 단계와 END에 도달 못 함.
-  v13은 목재 검색과 큐 대기를 종료 조건이 있는 `while`로 바꿔 이 블록의 `break`와 `continue` 제거.
-  앞서의 Python 모의 검사는 재귀 반복이라 범위 정리 차이를 놓침.
-  CE 흐름 재현 시 옛 본문은 반복, 새 본문은 END와 범위 정리까지 완료. Outlands 내부 구현이 CE와 같다는 확인은 아님.
-  이후 사용자 Journal에서 v13의 가공, 이동 요청, END와 채집 응답 확인. 인게임 확인됨 2026-10-05.
-  단, 두 번의 정리에서 같은 Boards serial이 이동 대상으로 거듭 기록, 사용자가 일부 미이동 보고
-- **v14**: 파우치 소속 검사 전에 ignore하던 순서 수정. 공식 문서상 ignore는 검색 제외 → 판별은 ignore 전에.
-  직접 serial 검색에 대한 적용은 [Razor](../scripting/razor.md#03) 03절에서 별도 확인.
-  지금 포크에서 이 순서가 같은 묶음 반복 이동의 실제 원인인지는 아직 확인되지 않았다.
-  근거와 재확인 범위는 [Razor](../scripting/razor.md#03) 03절과 [Open items](../questions/open-items.md#09) 09절
-- **v18** 2026-10-10: 모듈을 관심사별 폴더로 재분할하며 housekeeping 주기 삭제([Modules](../scripting/modules.md#08) 08절).
-  리콜 블록이 자기 5초 주기로 책, Hunting, 무게 점검, 음식(`buff/food`)과 목재 정리(`pack/lumber`)는 각자의 타이머를 패스마다 확인.
-  리콜 결정, 책 없음, Hunting 없음은 리콜 블록이 패스마다 `var__hold_gathering` 하나로 통합, 채집과 목재 정리는 그 값만 읽음.
-  `config__auto_recall`, `use_tracking`, `pack_lumber` 삭제. 블록을 끄려면 레시피에서 그 블록 제외.
-  음식은 skinning-enhanced와 같은 블록 → 다쳤거나 독이거나 리콜 결정 중에도 먹음. 워모드에서는 `warmode_is_manual` 1이라 안 먹음
+변경 경과와 재현 기록은 [Verification History](../history/verification.md#02) 02절.
 
 ## <a id="04"></a>04 실행 준비
 
@@ -294,13 +267,13 @@ END 뒤에도 채집이 보류되면 큐와 커서 안내, 리콜과 책과 Hunt
 5. 이 캐릭터의 `heal pot`, `walk`, `reflect` 바 확인.
    없는 바는 0으로 보임 → 이동 차단과 Reflect 재시전 제한 미준수. 설정 변경은 별도 작업
 
-상황별 기대 동작과 실패 판정: [Open items](../questions/open-items.md#09) 09절
+상황별 기대 동작과 실패 판정: [Lumberjack Checks](../verification/lumberjack.md#01) 01절
 
 #### 확인 상태와 반영
 
 - Heat of Battle 이동 제한 정본은 [PvP](../game/pvp.md#01) 01절
 - 2026-10-05 확인한 공식 문서는 Recall도 차단한다고 설명. 이번 변경은 버프를 보고 미리 막던 스크립트 동작의 삭제일 뿐, 서버의 Recall 허용 판정 아님
 - 정적 검사로는 게임 응답과 커서 소유권 증명 불가. 위 동작은 아직 인게임에서 확인되지 않았다
-- 후속 확인은 [Open items](../questions/open-items.md#09) 09절
+- 후속 확인은 [Lumberjack Checks](../verification/lumberjack.md#01) 01절
 - 반영은 [Workflow](../working/workflow.md#04.A) 04.A절. Scripts 탭 Reload all scripts 뒤 Play로 반복 확인, 외부 파일 수정 뒤 핫키 실행이면 클라이언트 재시작
 - 게임 종료 뒤 `git status --short`로 Razor가 덮어쓴 파일 확인
