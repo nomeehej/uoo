@@ -38,7 +38,7 @@ order: 110
 - 입력은 summoner 프로필 배치([Hotkeys](../game/hotkeys.md#01.E) 01.E절). 코덱스, 사격, 펫 명령, 대상 지정은 수동, 루프는 펫을 명령하지 않음
 - 바드 블록 없음
 - `[CodexHotbar`를 시작 때 한 번 요청([Commands](https://wiki.uooutlands.com/Commands) "Launches the Codex Hotbar"). 코덱스 자세와 피니셔의 자동 전환 없음
-- Full Draw: 활은 2.21초에 한 발([Melee](../mechanics/melee.md#02) 02절 표) → 15초에 6.8발 × 50% = 약 340%. Repeater 225%보다 큼. 정지 3초 조건이라 움직이며 쏘면 Repeater(`ability_main` 3)
+- Full Draw: 활은 2.21초에 한 발([Melee](../mechanics/melee.md#01) 01절 표) → 15초에 6.8발 × 50% = 약 340%. Repeater 225%보다 큼. 정지 3초 조건이라 움직이며 쏘면 Repeater(`ability_main` 3)
 - 사거리 10: 활([Archery](../mechanics/archery.md#01) 01절). `target_range`와 `ability_range` 모두 10
 - 버프는 bard-archer와 같은 RA 24, Reflect 34, Protection 26. Greater Heal 11과 Teleport 9의 20을 남김
 - 스탯 포션 기준선 STR 120, DEX 100은 기본값. 이 템플릿의 스탯은 미기록 → 다르면 레시피에서 변경

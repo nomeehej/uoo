@@ -59,6 +59,7 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | 할 일                            | 읽을 것                                                                                                                                              |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 모든 작업의 시작                 | [Workflow](content/public/working/workflow.md)                                                                                                             |
+| 목적이나 증상으로 문서 고르기 | [Guide](content/public/working/guide.md) |
 | `.razor` 수정이나 새 작성        | [Conventions](content/public/scripting/conventions.md), [Razor](content/public/scripting/razor.md). 알림을 띄우면 [Overheads](content/public/scripting/overheads.md)도 |
 | 모듈, 레시피 수정과 루프 조립    | [Modules](content/public/scripting/modules.md)                                                                                                             |
 | 새 파일과 이름 짓기              | [Conventions](content/public/scripting/conventions.md#01) 01절                                                                                             |

@@ -2,7 +2,7 @@
 name: Workflow
 label: 작업 방식
 group: How we work
-order: 10
+order: 20
 ---
 
 문서별 정본, 로컬 작업, 근거, 스크립트 수정 순서, 게임 반영과 확인.
@@ -35,6 +35,7 @@ flowchart LR
 
 | 문서 | 정본인 내용 |
 | --- | --- |
+| [Guide](guide.md) | 읽는 목적, 캐릭터와 루프, 문제 상황별 문서 진입점 |
 | [Workflow](workflow.md) | 문서별 정본, 로컬 작업, 근거의 우선순위와 참고 사이트, 스크립트 수정 순서, 변경 보고, 게임 반영과 확인 |
 | [Writing](writing.md) | 문서 작성. 새 문서, frontmatter, 짜임, 문장, Markdown, 언어와 번역본, 흐름도와 FX, 끝낼 때 확인 |
 | [Conventions](../scripting/conventions.md) | 폴더와 파일 이름, 스크립트 모양과 배너, 변수 접두, serial, 타이머 관용구, 편집기 하이라이팅 |

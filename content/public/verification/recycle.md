@@ -91,7 +91,8 @@ order: 60
 - 위 `wait__` 값은 서버 쿨다운이나 실측 속도가 아닌 스크립트 설정. `getlabel` 자체 대기 시간은 별도([Razor](../scripting/razor.md#06) 06절)
 - 정적 동일성 검사와 모의 실행은 통과
 - 보관 설정을 바꿔 재분류할 때는 해당 장비를 루팅 백으로 옮겨 실행
-- `stop` 없음. 실패는 `var__running 0`으로 이번 정리만 끝내고 공통 복귀 경로 실행
+- 현재 코드의 [RETURN 블록](https://github.com/nomeehej/uoo/blob/master/script/loot/recycle.razor#L701) 기준 `stop` 없음.
+  실패는 `var__running 0`으로 이번 정리만 끝내고 공통 복귀 경로 실행. 실제 큐 정리와 복귀 결과는 위 인게임 검사 대상
 - 실패 뒤 남은 장비 처리와 자원 드롭 생략. 같은 실행에서 아이템마다 같은 타임아웃을 반복하지 않음
 - 루팅 백에 남은 아이템은 다음 recycle 실행에서 재검사. 미확인 품목을 저품질로 간주하거나 분해하지 않음
 - 자원 드롭은 장비 처리를 마친 경우에만 기존대로 백팩 전체 검색. `config__drop_*`와 arcane essence 사용 설정 유지

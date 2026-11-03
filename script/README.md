@@ -93,7 +93,7 @@ Design notes and in-game checks are in [Skinning Checks](../content/public/verif
 ## Returning to the loop
 
 `loot/recycle` runs every hotkey named in the list `list__resume_script` when it finishes or cannot start because a
-required container or tool is missing. An unconfirmed item move, unconfirmed recycling or a stuck action queue stops without resuming:
+required container or tool is missing. A handled failure skips further item actions and resource drops, clears targets and drag state, then calls the registered loop hotkeys:
 see the [in-game checks](../content/public/verification/recycle.md#01). The farming loops fill the list at Play with their own Razor hotkey name, the one the profile
 stores (`Play Script: gather\skinning-enhanced`): `bard-necro-enhanced`, `bard-archer-enhanced`, `tamer-mage-enhanced`, `tamer-archer-enhanced`, `dexxer-basic`,
 `skinning-enhanced` and `lumberjack-enhanced`. The archived `bard-mace` and `bard-throwing` register their `Play Script: archive\…` name.

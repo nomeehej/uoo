@@ -251,6 +251,39 @@ flowchart TD
 리셋 문장에 트리거를 걸면 바도 함께 0.
 예전 `music`에 송 트리거가 섞여 서로 덮어쓰던 사고와 수정: [Barding](../mechanics/barding.md#01.I) 01.I절.
 
+아래는 메시지 트리거형 `Regular` 바의 개념도. 특수 바는 06.A절.
+
+<figure class="fx" data-fx="steps" id="fx-cooldown-evidence" aria-label="서버 문장으로 시작하고 리셋하는 로컬 바와 그 값을 읽는 루프의 관계">
+<div class="fx__stage">
+<div class="fx-row">
+<span class="fx-chip" data-hl="1 3">서버 문장</span><span class="fx-chip" data-hl="1-3">로컬 바</span><span class="fx-chip" data-hl="2 4">루프의 조건</span>
+</div>
+<div class="fx-cols">
+<div class="fx-box">
+<p class="fx-label">클라이언트가 받은 것</p>
+<div class="fx-swap">
+<span data-on="1">설정한 트리거와 맞는 문장</span><span data-on="2">서버의 남은 시간을 직접 받은 것은 아님</span>
+<span data-on="3">바를 리셋하도록 설정한 문장</span><span data-on="4-">다른 경우: 트리거 누락이나 잘못된 바 이름</span>
+</div>
+</div>
+<div class="fx-box">
+<p class="fx-label">바와 루프에서 볼 수 있는 것</p>
+<div class="fx-swap">
+<span data-on="1">정의한 길이로 바 시작</span><span data-on="2"><code>cooldown "이름"</code>으로 로컬 바의 대기 여부 확인</span>
+<span data-on="3">리셋 트리거가 맞으면 바도 0</span><span data-on="4-">바의 값만으로 서버의 사용 허용 여부를 확정할 수 없음</span>
+</div>
+</div>
+</div>
+</div>
+<ol class="fx__captions">
+<li>서버 문장이 설정한 트리거에 맞으면 클라이언트가 정의된 길이로 바를 시작. 같은 문장의 프로필 오버헤드는 별도 경로</li>
+<li>루프는 이 바를 읽어 행동 조건을 판단. 바의 길이는 설정값이며 서버의 남은 시간을 직접 조회한 결과가 아님</li>
+<li>쿨 리셋 문장도 트리거에 연결하면 바가 함께 초기화. 실제 바딩 사례는 <a href="../mechanics/barding.md#01.G">Barding 01.G절</a></li>
+<li>바가 비어 있어도 트리거 누락이나 이름 불일치부터 확인. 바의 값과 나머지 실행 조건을 함께 판단</li>
+</ol>
+<figcaption>메시지와 바의 관계를 설명하는 모형. 재생 간격은 게임 시간과 무관. 바딩의 구체적인 트리거는 <a href="../mechanics/barding.md#01.I">Barding 01.I절</a></figcaption>
+</figure>
+
 ### <a id="06.C"></a>06.C 바 목록
 
 `config/indian/classicuo/nomeehej/cooldowns.xml`의 항목 105개, 파일 순서. 정본은 이 파일. `nomeehui`도 같은 이름, 같은 순서.

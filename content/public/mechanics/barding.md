@@ -224,7 +224,7 @@ findbuff "song of peacemaking"
 |   | 0s | `Your barding skill cooldowns` |
 
 - 바 길이는 위키 값(01.A절)과 조금 다름. 송과 Peace, Provo 성공은 10초가 아닌 11초
-- 송 쿨의 정확한 길이는 아직 미측정([Bard Necro Checks](../verification/bard-necro.md#01) 01절 남은 측정 2)
+- 송 쿨의 정확한 길이는 아직 미측정([Bard Necro Checks](../verification/bard-necro.md#01) 01절의 `송 쿨 길이` 행)
 - 항목 순서: **바가 자주 뜨는 순서.** `skill`, `music`, `disco`, `peace/provo`, `song` 다음, 이 루프가 읽는 바를 `magic arrow`, `harm`,
   `fireball`, `lightning`, `mush`, `heal pot` 순서
 

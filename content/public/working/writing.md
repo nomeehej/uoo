@@ -2,7 +2,7 @@
 name: Writing
 label: 문서 쓰는 법
 group: How we work
-order: 20
+order: 30
 ---
 
 설계 문서 작성 기준. 문서는 [for-humanity](https://for-humanity.fyi) Markdown, `pnpm docs:dev`로 읽음.
@@ -33,7 +33,7 @@ order: 20
 
 | 폴더 | 묶음 | 내용 |
 | --- | --- | --- |
-| `working/` | How we work | 작업 순서, 문서 쓰는 법 |
+| `working/` | How we work | 읽는 목적별 안내, 작업 순서, 문서 쓰는 법 |
 | `scripting/` | Scripting | 스크립트 규칙, Razor 문법, 모듈 조립, 머리 위 알림 |
 | `game/` | Game reference | 게임 규칙과 자료. PvP, 핫키, 아이템 번호 |
 | `mechanics/` | Mechanics | 스킬 계열별 서버 규칙. 바딩, 네크로, 매저리 |
@@ -163,7 +163,7 @@ order: {묶음 안 순서}
 
 ## <a id="06"></a>06 Markdown
 
-- 본문은 GFM. 문단, 목록, 표, 코드, 인용(`>`). 원시 HTML은 제목 앵커, 아래 강조 예외, 홈 소개의 가운데 정렬(`div`)과 로고(`img`)만
+- 본문은 GFM. 문단, 목록, 표, 코드, 인용(`>`). 원시 HTML은 제목 앵커, 아래 강조 예외, 홈 소개의 가운데 정렬(`div`)과 로고(`img`), 09절의 FX에 사용
 - 강조 뒤에 문장부호나 코드가 오고 바로 한글이 붙으면 CommonMark가 강조로 읽지 않음(`**(A OR B)**다`) → `<strong>…</strong>`
 - 범위의 `~`는 `\~`. GFM이 한 문단 안의 `~` 둘을 취소선으로 읽음(`3~5초, 7~9초`)
 - 코드 밖의 `*`, `_`, `[`, 영문자 앞 `<`는 `\`로 막음. 식별자와 값은 코드(`var__fighting`)로
