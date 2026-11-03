@@ -63,13 +63,15 @@ flowchart LR
 | [Bard Archer Enhanced](../loops/bard-archer-enhanced.md) | bard-archer-enhanced 루프의 블록 순서, 여러 마리 판정, Virtuoso 유지 |
 | [Bard Wrestling](../templates/bard-wrestling.md) | Bard Wrestling의 스킬 계획, 무기와 코덱스 선택 |
 | [Bard Wrestling Enhanced](../loops/bard-wrestling-enhanced.md) | 바드 레슬링 루프의 자동 자세, Parry Codex, 능력과 장착 조건 |
+| [Recycle](../routines/recycle.md) | 감정과 분류 범위, 보관과 분해, 실패 처리, 등록 루프 복귀, 설정과 상태 |
+| [Loadout and Regear](../routines/loadout.md) | 일회성 보급과 장비 복구의 준비, 실행 순서, 설정과 누락 처리 |
 | [Open items](../questions/open-items.md) | 답이 필요한 질문, 보류한 일, 인게임 검사 문서 색인 |
 | [PvP Experiments](../verification/pvp-experiments.md) | TK, Reflect, 포션 부착과 커서 복구 실험 |
 | [Lumberjack Checks](../verification/lumberjack.md) | 벌목, 목재 정리, Tracking과 리콜 검사 |
 | [PvP Checks](../verification/pvp.md) | 공통 pvp의 입력 보호, 자기관리와 장비 복구 검사 |
 | [Skinning Checks](../verification/skinning.md) | 칼질, 회복, 코덱스와 루팅 검사 |
 | [Tamer Mage Checks](../verification/tamer-mage.md) | 테이머 메이지의 시전, 수의사 키트와 버프 검사 |
-| [Recycle Checks](../verification/recycle.md) | 감정과 분류, agent 완료와 대상 목록 검사 |
+| [Recycle Checks](../verification/recycle.md) | 감정, 보관과 분해, 실패 뒤 복귀 검사 |
 | [Bard Necro Checks](../verification/bard-necro.md) | 바드 네크로의 교전과 이동, 마나, 이름과 재소환 검사 |
 | [Loadout Checks](../verification/loadout.md) | loadout, regear와 aspect 검사 |
 | [Bard Archer Checks](../verification/bard-archer.md) | 바드 아처의 자세, 회복과 장비 복구 검사 |

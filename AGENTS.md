@@ -85,6 +85,8 @@ Ultima Online Outlands용 Razor 스크립트 저장소.
 | bard-archer-enhanced 루프 설계   | [Bard Archer Enhanced](content/public/loops/bard-archer-enhanced.md)                                                                                       |
 | Bard Wrestling 캐릭터와 코덱스 | [Bard Wrestling](content/public/templates/bard-wrestling.md) |
 | bard-wrestling-enhanced 루프 설계 | [Bard Wrestling Enhanced](content/public/loops/bard-wrestling-enhanced.md) |
+| 감정과 재활용, 정리 뒤 루프 복귀 | [Recycle](content/public/routines/recycle.md) |
+| 출발 전 보급과 부활 뒤 장비 복구 | [Loadout and Regear](content/public/routines/loadout.md) |
 | 키 배치                          | [Hotkeys](content/public/game/hotkeys.md)                                                                                                                  |
 | `findtype` 인자(graphic id, hue) | [Item list](content/public/game/item-list.md)                                                                                                              |
 | 문서 수정이나 새 문서            | [Writing](content/public/working/writing.md)                                                                                                               |

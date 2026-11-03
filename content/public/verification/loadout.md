@@ -18,7 +18,7 @@ order: 80
 
 ## <a id="01"></a>01 검사와 통과 기준
 
-모듈과 일회성 레시피 구조는 [Modules](../scripting/modules.md#03.A) 03.A절, 동작 설명은 각 모듈 머리 주석.
+준비와 실행 순서, 설정은 [Loadout and Regear](../routines/loadout.md). 모듈과 일회성 레시피 구조는 [Modules](../scripting/modules.md#03.A) 03.A절.
 
 | 검사 | 하는 것 | 통과 기준 | 상태 |
 | --- | --- | --- | --- |
@@ -42,12 +42,10 @@ order: 80
 | 파우치 못 가져옴 | 시체에서 보급 파우치나 루팅 백을 못 가져옴 | 묻지 않고 `[ supplies, out ]`, `[ loot bag, out ]`(`pouches_ask` 0) | 확인되지 않았다 |
 | 보급 파우치 없음 | 보급 파우치 없이 regear | 보급품은 백팩에 그대로, aspect까지 계속. 다음 loadout에서 새 파우치를 고름 | 확인되지 않았다 |
 
-#### 메모
+#### 실행 설계의 위치
 
-- regear 순서: 먼저 힐(`recovery/heal-first`), 옷(`gear/dress`, `gear/cosmetic`), 정리(`pack/pouches`, `pack/sorting`), aspect(`gear/aspect`)
-- loadout과 regear는 같은 `gear/aspect` 블록을 씀
-- aspect 근거: [Aspect Mastery](https://wiki.uooutlands.com/Aspect_Mastery). 켤 때마다 Arcane Essence 5, 죽으면 장비의 aspect가 풀림
-- Activate 버튼 번호와 이유는 `module/gear/aspect.razor` 머리 주석
+regear 순서와 두 루틴의 공통 블록은 [Loadout and Regear](../routines/loadout.md#02) 02절.
+aspect의 코드와 기존 관찰 근거는 같은 문서 [05절](../routines/loadout.md#05).
 
 ## <a id="02"></a>02 변경 경과
 

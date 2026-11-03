@@ -125,6 +125,14 @@ order: 20
 - 2026-10-21 검색 범위 축소, 보관 위치 통합, 고정 대기 제거. 처리 실패도 공통 정리 뒤 루프 복귀
 - 2026-11-02 감정과 분류를 두 단계로. 완드 뒤 라벨 재조회와 `wait__label` 제거, 라벨 조회는 아이템당 두 번. Container ID wand와 Item ID 스킬은 쓰지 않음(사용자 결정, 비용과 횟수)
 
+#### 이전 구조에서 제거한 것
+
+- 품목별 storage 17개와 백팩 보관 대체 경로, `config__skip_supply_pouch` 제거. 보급 파우치 한 곳과 공통 처리 코드로 통합
+- Item Identification 스킬 경로의 `config__min_item_id_skill`, `wait__item_id` 제거
+- 단계별 타이머 대신 `timer__recycle` 하나 초기화. `timer__recycle_identify` 제거
+- 느린 요인으로 기록한 아이템마다의 `getlabel` 2\~3번과 완드, 도구 더블클릭 두 번. `getlabel` 한 번에 0.5초 이상 걸린 관찰은 [Razor](../scripting/razor.md#06) 06절
+- 당시 정적 동일성 검사와 모의 실행 통과 기록. 실제 아이템 반환과 복귀 성공의 확인 상태는 현재 검사표에 보관
+
 ## <a id="07"></a>07 바드 네크로 인게임 확인
 
 현재 검사: [Bard Necro Checks](../verification/bard-necro.md).

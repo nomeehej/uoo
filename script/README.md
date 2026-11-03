@@ -92,35 +92,16 @@ Design notes and in-game checks are in [Skinning Checks](../content/public/verif
 
 ## Returning to the loop
 
-`loot/recycle` runs every hotkey named in the list `list__resume_script` when it finishes or cannot start because a
-required container or tool is missing. A handled failure skips further item actions and resource drops, clears targets and drag state, then calls the registered loop hotkeys:
-see the [in-game checks](../content/public/verification/recycle.md#01). The farming loops fill the list at Play with their own Razor hotkey name, the one the profile
-stores (`Play Script: gather\skinning-enhanced`): `bard-necro-enhanced`, `bard-archer-enhanced`, `tamer-mage-enhanced`, `tamer-archer-enhanced`, `dexxer-basic`,
-`skinning-enhanced` and `lumberjack-enhanced`. The archived `bard-mace` and `bard-throwing` register their `Play Script: archive\…` name.
-It is a list because a variable reads a word back as 4294967295 (content/public/scripting/razor.md part 3).
-It lasts until the client closes, and with nothing registered recycle just ends. `combat/pvp` does not register,
-so recycling during a fight returns to the farming loop.
+`loot/recycle` identifies and sorts loot, then resumes the registered hunting or gathering loop.
+The [Recycle guide](../content/public/routines/recycle.md) owns its scope, two passes, failure handling and resume rules.
+Live verification is tracked in [Recycle Checks](../content/public/verification/recycle.md#01).
 
 ## Loadout and regear
 
-[restock/loadout.razor](restock/loadout.razor) is a routine built from `recipe/loadout-recipe.razor`: edit the modules
-and the recipe, then `pnpm build`. Its choices are settings of its blocks, listed by
-`node util/build-scripts.mjs --settings recipe/loadout-recipe.razor`.
-
-- `config__use_sewing_kit_and_id_wand` (`restock/tools`) controls both tools together. `1` keeps one Sewing Kit and one
-  ID Wand: duplicates go back to the supply box, and missing tools are fetched. `0` skips both. `pack/sorting` still
-  arranges tools already in the backpack.
-- `config__id_wand_spare` (`restock/tools`): `1` also carries a spare ID Wand once the carried one is down to 40 uses
-  or fewer, `0` keeps one.
-- `config__carry_magic_instrument` (`restock/instrument`): `1` keeps exactly one magic instrument, `0` leaves
-  instruments alone.
-- `config__use_runebook_refill` (`restock/runebook`): `0` skips refilling runebooks, and the scroll box is not asked for.
-- `config__aspect_hand_row` (`gear/aspect`): the `[aspect` gump row pressed for the held item, `2` spellbook (default),
-  `1` weapon, `0` none. Set the weapon and spellbook rows to the same aspect: activating either turns both.
-
-[hotkey/regear.razor](hotkey/regear.razor) (Alt+0), built from `recipe/regear-recipe.razor`, is for after a death:
-it heals to full, puts back on the suit loadout recorded, sorts the backpack and turns the aspects back on.
-A supply pouch or loot bag that did not come back from the corpse is reported, not asked for.
+[restock/loadout.razor](restock/loadout.razor) prepares for a trip and records the worn suit.
+[hotkey/regear.razor](hotkey/regear.razor) restores it after a death and corpse recovery.
+Preparation, execution order and settings are in [Loadout and Regear](../content/public/routines/loadout.md).
+Both are assembled routines: edit their modules or recipes, then `pnpm build`.
 
 ## Personal values never go into a script
 

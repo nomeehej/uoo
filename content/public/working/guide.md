@@ -11,12 +11,12 @@ order: 10
 
 | 절 | 내용 |
 | --- | --- |
-| [01](#01) | 캐릭터와 루프에 맞는 문서 고르기 |
+| [01](#01) | 캐릭터, 루프와 일회성 작업의 문서 고르기 |
 | [02](#02) | 사용 중 생긴 문제 찾기 |
 | [03](#03) | 설정, 블록, 문서 수정 |
 | [04](#04) | 근거, 인게임 검사, 남은 질문과 기록 |
 
-## <a id="01"></a>01 캐릭터와 루프
+## <a id="01"></a>01 실행할 스크립트
 
 캐릭터 구성은 Templates, 실제 실행 순서는 Loops, 상황별 통과 기준은 Verification.
 
@@ -32,6 +32,16 @@ order: 10
 검사 문서는 [Open items](../questions/open-items.md#08) 08절의 색인.
 바드 네크로의 소환수 구현은 [Bard Necro Summons](../loops/bard-necro-summons.md).
 
+#### 일회성 작업
+
+준비, 실행 순서와 실패 처리는 Routines, 실제 통과 기준과 확인 상태는 Verification.
+
+| 하려는 일 | 실행 안내 | 인게임 검사 |
+| --- | --- | --- |
+| 전리품 감정, 보관과 분해 | [Recycle](../routines/recycle.md) | [Recycle Checks](../verification/recycle.md) |
+| 집에서 출발 전 보급 | [Loadout and Regear](../routines/loadout.md#01) 01절 | [Loadout Checks](../verification/loadout.md) |
+| 부활 뒤 장비 복구 | [Loadout and Regear](../routines/loadout.md#02) 02절 | [Loadout Checks](../verification/loadout.md) |
+
 ## <a id="02"></a>02 사용 중 문제
 
 | 증상이나 찾는 것 | 먼저 읽을 곳 |
@@ -45,7 +55,8 @@ order: 10
 | 고른 대상과 자동 프로보 대상이 섞임 | [Barding](../mechanics/barding.md#03.A) 03.A절, [Provocation Checks](../verification/provocation.md) |
 | Razor 오류나 alias 범위 문제 | [Razor](../scripting/razor.md#03) 03절의 확인된 함정 |
 | 무기 피해와 코덱스 효과를 비교 | [Melee](../mechanics/melee.md), 방어 스킬은 [Combat](../mechanics/combat.md) |
-| 감정과 재활용 뒤 복귀를 확인 | [Recycle Checks](../verification/recycle.md) |
+| 감정과 재활용 뒤 복귀를 확인 | [Recycle](../routines/recycle.md#04) 04절, [Recycle Checks](../verification/recycle.md) |
+| 부활 뒤 파우치나 aspect가 복구되지 않음 | [Loadout and Regear](../routines/loadout.md#04) 04절 |
 
 ## <a id="03"></a>03 수정할 때
 
